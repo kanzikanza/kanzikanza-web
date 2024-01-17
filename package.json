@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
     "axios": "^1.6.5",
     "next": "14.0.4",
     "openvidu-browser": "^2.29.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "@types/node": "^20",

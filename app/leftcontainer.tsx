@@ -1,6 +1,6 @@
 'use client'
 import React from "react"
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 
 
 let nominator : number = 12;
@@ -8,6 +8,7 @@ let denominator : number = 12;
 // 얘를 안쪽에 넣으면
 export default function leftcontainer(props : { size : number }) {
     let val : number = props.size;
+    
     useEffect(() => {
         // props.someProp가 변경되었을 때 실행되는 코드
         console.log('Props 변경 감지:', props.size);
@@ -21,6 +22,7 @@ export default function leftcontainer(props : { size : number }) {
             nominator /= 3
             denominator /= 3
         }
+        
         
         console.log(nominator, denominator)
         

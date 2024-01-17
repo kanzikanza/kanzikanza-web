@@ -4,9 +4,9 @@ import './page.css'
 import axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import UserVideoComponent from './UserVideoComponent';
+import UserVideoComponent from './UserVideo';
 
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'https://demos.openvidu.io/';
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? 'http://localhost:5000' : 'https://demos.openvidu.io/';
 
 export default function App() {
     const [mySessionId, setMySessionId] = useState('SessionA')
@@ -46,15 +46,20 @@ export default function App() {
         
         // mySession OV.current.initSession의 리턴객체는 
         mySession.on('streamCreated', (event) => {
+
+            console.log( "=======================================================")
+            console.log( event )
+            console.log( "=======================================================")
+
             const subscriber = mySession.subscribe(event.stream, undefined);
             setSubscribers((subscribers) => [...subscribers, subscriber]);
         });
         // Subscriber을 추가함
 
         // 한 스트림이 사라졌을 경우에 
-        mySession.on('streamDestroyed', (event) => {
-            deleteSubscriber(event.stream.streamManager);
-        });
+        // mySession.on('streamDestroyed', (event) => {
+        //     deleteSubscriber(event.stream.streamManager);
+        // });
         // stream 매니저에서 스트림 지움
         mySession.on('exception', (exception) => {
             console.warn(exception);
@@ -220,11 +225,11 @@ export default function App() {
                     </div>
                     <div id="join-dialog" className="jumbotron vertical-center">
                         <h1> Join a video session </h1>
-                        <form className="form-group" onSubmit={joinSession}>
+                        <form className="form-group max-w-sm mx-auto" onSubmit={joinSession}>
                             <p>
-                                <label>Participant: </label>
+                                <label className='label_form'>Participant: </label>
                                 <input
-                                    className="form-control"
+                                    className="form-control input_form"
                                     type="text"
                                     id="userName"
                                     value={myUserName}
@@ -233,9 +238,9 @@ export default function App() {
                                 />
                             </p>
                             <p>
-                                <label> Session: </label>
+                                <label className='label_form'> Session: </label>
                                 <input
-                                    className="form-control"
+                                    className="form-control  input_form"
                                     type="text"
                                     id="sessionId"
                                     value={mySessionId}
