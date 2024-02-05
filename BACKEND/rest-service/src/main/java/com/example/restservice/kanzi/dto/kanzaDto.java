@@ -6,11 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.example.restservice.kanzi.model.kanza;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 
-public class kanzaDto<T> {
+public class kanzaDto {
     private String KANZA;
     private String MEAN;
     private String SOUND;
@@ -19,5 +20,13 @@ public class kanzaDto<T> {
         this.KANZA = entity.getKANZA();
         this.MEAN = entity.getMEAN();
         this.SOUND = entity.getSOUND();
+    }
+
+    public static kanza toKanza(final kanzaDto dto) {
+        return kanza.builder()
+                .KANZA(dto.getKANZA())
+                .MEAN(dto.getMEAN())
+                .SOUND(dto.getSOUND())
+                .build();
     }
 }
