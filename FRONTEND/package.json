@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/cache": "^11.11.0",
+    "@mui/material-nextjs": "^5.15.9",
     "@stomp/stompjs": "^7.0.0",
-    "axios": "^1.6.5",
+    "axios": "^1.6.7",
     "next": "14.0.4",
     "openvidu-browser": "^2.29.1",
     "react": "^18",

@@ -19,15 +19,14 @@ export default function RootLayout({
 
     <html lang="en">
       <head>
-        <script src='openvidu-webcomponent-{VERSION}.js'></script>
-        <link rel="stylesheet" href="openvidu-webcomponent-{VERSION}.css"></link>
+
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} style={{ height : ''}}>
         <Navbar />
 
         {children}
 
-        
+
         </body>
     </html>
   )

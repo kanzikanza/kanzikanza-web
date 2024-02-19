@@ -14,7 +14,7 @@ export default function Navbar() {
                     <Image
                         src={logo}
                         alt="시작"
-                        className='h-5 w-7'  
+                        className='h-5 w-7'
                     />
                 <span className="self-center text-2xl font-semibold text-font whitespace-nowrap ">한자 한 자</span>
             </a>
@@ -30,7 +30,7 @@ export default function Navbar() {
                 <a href="/" className="block py-2 px-3 text-font bg-main rounded md:bg-transparent md:p-0" aria-current="page">Home</a>
                 </li>
                 <li>
-                <a href="/broadcase" className="block py-2 px-3 text-font  bg-main rounded md:hover:bg-transparent md:p-0 md:border-0 md:dark:hover:bg-transparent">시험 보기</a>
+                <a href="/Test" className="block py-2 px-3 text-font  bg-main rounded md:hover:bg-transparent md:p-0 md:border-0 md:dark:hover:bg-transparent">시험 보기</a>
                 </li>
             </ul>
             </div>

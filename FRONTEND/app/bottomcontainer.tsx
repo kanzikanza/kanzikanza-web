@@ -5,18 +5,14 @@ import Rightcontainer from "./rightcontainer"
 
 
 
-function containers() {
-    
-}    
-
 export default function bottomcontainer(){
     // let left : number = 5;
     // let right : number = 5;
     // useEffect(() => {
         
         // }, [left, right])
-        const [left, setLeft] = useState(6)
-        const [right, setRight] = useState(6)
+        const [left, setLeft] = useState<number>(6)
+        const [right, setRight] = useState<number>(6)
         
         const increaseLeft = () => {
             setLeft(a => a + 1);
@@ -26,7 +22,6 @@ export default function bottomcontainer(){
         const increaseRight = () => {
             setRight(a => a + 1);
             setLeft(a => a - 1);
-
         }
 
 
@@ -44,7 +39,7 @@ export default function bottomcontainer(){
         <Leftcontainer
             size = {left}
         />
-        <Rightcontainer 
+        <Rightcontainer
             size = {right}
         />
 
