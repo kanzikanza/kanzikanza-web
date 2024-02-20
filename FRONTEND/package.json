@@ -10,13 +10,18 @@
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/icons-material": "^5.15.10",
+    "@mui/material": "^5.15.10",
     "@mui/material-nextjs": "^5.15.9",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.16",
     "@stomp/stompjs": "^7.0.0",
     "axios": "^1.6.7",
     "next": "14.0.4",
     "openvidu-browser": "^2.29.1",
     "react": "^18",
     "react-dom": "^18",
+    "styled-components": "^6.1.8",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

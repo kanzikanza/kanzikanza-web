@@ -3,7 +3,7 @@ import Image
  from 'next/image'
 
 import logo from '@/public/japa.svg'
-export default function Navbar() {
+export default function Navbars() {
     
     return(
 
