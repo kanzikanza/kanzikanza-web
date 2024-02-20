@@ -95,16 +95,15 @@ export default function Test() {
                 <div>
                     <div className="flex">
                         {
-                            isEnd ? 
+                            isEnd ?
                                 <div>
-
 
                                 </div>
                                 
                                 
                                 
                                 :
-                                <div>
+                        <div>
                             <div className="w-1/2 flex content-center justify-center ">
                                 {
                                     kanzas.length > 0 ?
@@ -116,30 +115,30 @@ export default function Test() {
                             
                             <div className="w-1/2 h-full">
 
-                                <div className="w-full flex content-center justify-center flex-col">
-                                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 h-1/5">
+                                    <div className="w-full flex content-center justify-center flex-col">
+                                        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 h-1/5">
                                         <div className="bg-blue-600 h-2.5 rounded-full" style={{width: `${index/20 * 100}%`}}></div>
                                     </div>
                                         
-                                <p className="text-center text-3xl">다음 한자의 { QuestionType.current ? '뜻' : '음'}을 적으시오</p>
-                                        <form className="w-full mx-auto" onSubmit={handleSubmit}>
-                                            <textarea
-                                                id="message"
-                                                rows="4"
-                                                className="block p-2.5 w-full text-sm bg-background rounded-lg border border-gray-300 dark:bg-background dark:border-gray-600 dark:placeholder-gray-400 dark:text-font"
-                                                placeholder="Leave a comment..."
-                                                value={inputValue}
-                                                onChange={(e) => setInputValue(e.target.value)}
-                                                onKeyDown={handleKeyDown}
-                                    ></textarea>
-                                        <button className="button w-full" type="submit">제출</button>
-                                        </form>
-                                        </div>
-                                        </div>
-                            }
+                                    <p className="text-center text-3xl">다음 한자의 { QuestionType.current ? '뜻' : '음'}을 적으시오</p>
+                                    <form className="w-full mx-auto" onSubmit={handleSubmit}>
+                                        <textarea
+                                            id="message"
+                                            rows="4"
+                                            className="block p-2.5 w-full text-sm bg-background rounded-lg border border-gray-300 dark:bg-background dark:border-gray-600 dark:placeholder-gray-400 dark:text-font"
+                                            placeholder="Leave a comment..."
+                                            value={inputValue}
+                                            onChange={(e) => setInputValue(e.target.value)}
+                                            onKeyDown={handleKeyDown}
+                                        ></textarea>
+                                            <button className="button w-full" type="submit">제출</button>
+                                    </form>
                             </div>
-                    </div>
+                        </div>
+                        </div>
+                        }
                 </div>
+            </div>
             </div>
         </div>
     )

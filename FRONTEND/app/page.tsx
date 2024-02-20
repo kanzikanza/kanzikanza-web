@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import Maincarousel from './maincarousel'
-import Bottomcontainer from './bottomcontainer'
+import Maincarousel from './Carousel'
+import Bottomcontainer from './Bottom'
 
 export default function Home() {
   return (

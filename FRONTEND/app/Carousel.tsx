@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function maincarousel() {
+export default function Carousel() {
     
 
     return(

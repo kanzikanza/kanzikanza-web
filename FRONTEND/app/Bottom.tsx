@@ -1,11 +1,11 @@
 'use client'
 import { useState, useEffect } from "react"
-import Leftcontainer from "./leftcontainer"
-import Rightcontainer from "./rightcontainer"
+import Leftcontainer from "./Left"
+import Rightcontainer from "./Right"
 
 
 
-export default function bottomcontainer(){
+export default function Bottom(){
     // let left : number = 5;
     // let right : number = 5;
     // useEffect(() => {
