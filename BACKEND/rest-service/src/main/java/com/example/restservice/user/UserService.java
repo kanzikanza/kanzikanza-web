@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
     public UserEntity create(final UserEntity userEntity) {
         if (userEntity == null || userEntity.getUsername() == null) {
             throw new RuntimeJsonMappingException("Invalid arguments");

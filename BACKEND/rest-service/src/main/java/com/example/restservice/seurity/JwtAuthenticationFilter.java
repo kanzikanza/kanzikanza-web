@@ -31,10 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         try {
             String token = parseBearerToken(request);
             log.info("Filter is running");
-            if (token != null && !token.equalsIgnoreCase(null))
+            if (token != null && !token.equalsIgnoreCase("null"))
             {
+                // 여기서 userId를 가져온다., 안될경우 에러를 리턴할 것 
                 String userId = tokenProvider.validateAndGetUserId(token);
                 log.info("Authenticated user ID : " + userId);
+                // authentication ( 인증 ) 토큰 ?을 가져오고 아닐경우에는 에러를 리턴함
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, AuthorityUtils.NO_AUTHORITIES);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -47,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         }
         filterChain.doFilter(request, response);
     }
+    
     private String parseBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         
@@ -55,5 +58,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             return bearerToken.substring(7);
         }
     }   
-
 }
