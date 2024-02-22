@@ -1,4 +1,4 @@
-package com.example.restservice.seurity;
+package com.example.restservice.config.jwt;
 
 import com.example.restservice.user.UserEntity;
 import io.jsonwebtoken.Claims;
