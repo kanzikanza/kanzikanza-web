@@ -21,6 +21,7 @@ public class kanza {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String KANZA;
     private String MEAN;
     private String SOUND;

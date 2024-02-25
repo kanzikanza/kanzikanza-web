@@ -1,33 +1,52 @@
 package com.example.restservice.user;
 
-import com.example.restservice.user.UserEntity;
-import com.example.restservice.user.UserRepository;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.restservice.user.model.UserModel;
+import com.example.restservice.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.catalina.mbeans.UserMBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 @Slf4j
 @Service
 public class UserService {
+
     @Autowired
-    private UserRepository userRepository;
-    public UserEntity create(final UserEntity userEntity) {
-        if (userEntity == null || userEntity.getUsername() == null) {
-            throw new RuntimeJsonMappingException("Invalid arguments");
+    UserRepository userRepository;
+
+    private static final String EXISTING_EMAIL = "test@test.com";
+
+    public UserModel create(final UserModel userModel) {
+        if (userModel == null || userModel.getEmail() == null) {
+            throw new RuntimeJsonMappingException("Invalid argument");
         }
-        final String username = userEntity.getUsername();
-        if (userRepository.existsByUsername(username)) {
-            log.warn("Username already exists {}", username);
+        final String email = userModel.getEmail();
+        if (userRepository.existsByEmail(email)) {
+            log.warn("email already existss {}", email);
             throw new RuntimeJsonMappingException("Username Already exists");
         }
-        return userRepository.save(userEntity);
+        userModel.setRole("ROLE_GUEST");
+        return userRepository.save(userModel);
     }
 
-    public UserEntity getByCredentials(final String username, final String password) {
-        return userRepository.findByUsernameAndPassword(username, password);
+    public Optional<UserModel> findByEmail(String email) {
+        var user = userRepository.findByEmail(email);
+        if (user.equals(null))
+            return Optional.empty();
+        // userRepository.findByEmail(email);
+        // var user = new UserModel();
+        // user.setId(1L);
+        // user.setEmail(EXISTING_EMAIL);
+        // user.setPassword("$2a$12$BfaDWPgHgVMTlEqvWtgNWuMPhHJ3OUkeaKT.8OyM6Rzf4yTISd.wa");
+        // // test
+        // user.setRole("ROLE_ADMIN");
+        // user.setExtraInfo("My DD");
+        return Optional.of(user);
+
     }
+
 }

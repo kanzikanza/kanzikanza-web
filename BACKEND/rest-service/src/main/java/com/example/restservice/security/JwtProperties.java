@@ -1,16 +1,15 @@
-package com.example.restservice.config.jwt;
+package com.example.restservice.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Component
-@ConfigurationProperties("jwt")
+@Configuration
+@ConfigurationProperties("security.jwt")
 public class JwtProperties {
-    private String issuer;
     private String secretKey;
 }
