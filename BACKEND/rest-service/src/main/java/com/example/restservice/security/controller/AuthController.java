@@ -1,6 +1,7 @@
 package com.example.restservice.security.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.restservice.global.dto.ResponseDTO;
 import com.example.restservice.security.JwtIssuer;
@@ -27,9 +28,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
         private final PasswordEncoder passwordEncoder;
@@ -83,5 +89,18 @@ public class AuthController {
                 }
 
         }
+        @GetMapping("/auth/Oauth2/KakaoLogin")
+        public ResponseEntity<String>  ClientKakaoLogin() {
+            //TODO: process POST request
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity("https://kauth.kakao.com/oauth/authorize", String.class);
+            return response;
+        }
+        @GetMapping("/auth/Oauth2/KakaoToken")
+        public String KakaoLoginServer(@RequestParam String param) {
+            return new String();
+        }
+        
+
 
 }

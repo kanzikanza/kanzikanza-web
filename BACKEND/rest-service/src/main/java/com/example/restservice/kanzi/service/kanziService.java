@@ -54,6 +54,5 @@ public class kanziService {
             log.warn("추가될 수가 없음");
             throw new RuntimeJsonMappingException("kanza cannot be null");
         }
-
     }
 }
