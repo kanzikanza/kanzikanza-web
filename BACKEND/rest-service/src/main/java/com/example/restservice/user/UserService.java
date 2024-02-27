@@ -46,7 +46,10 @@ public class UserService {
         // user.setRole("ROLE_ADMIN");
         // user.setExtraInfo("My DD");
         return Optional.of(user);
-
+    }
+    public boolean existsByEmail(String email)
+    {
+        return userRepository.existsByEmail(email);
     }
 
 }
