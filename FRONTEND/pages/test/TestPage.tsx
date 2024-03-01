@@ -1,9 +1,9 @@
-// 필요한 모듈을 import 합니다.
 import { style } from '@vanilla-extract/css';
 import { useRef, useEffect, useState } from "react";
-import { Button, Grid, Typography, styled, TextField, InputAdornment } from '@mui/material/';
+import { Button, Grid, Typography, styled, TextField, InputAdornment, LinearProgress } from '@mui/material/';
 import { Edit } from '@mui/icons-material'
 import * as StompJs from "@stomp/stompjs";
+import CongratulationModal from '@/component/Modal/CongratulationModal';
 import axios from 'axios';
 
 // 타입 정의
@@ -30,21 +30,45 @@ const InputGrid = styled(Grid)`
   color: #3e3e3e;
 `
 
-const InputForm = styled(TextField)`
+const InputForm = styled('form')`
+  height: 100px;
+  display: flex;
+  align-items: center;
+`
+const InputText = styled(TextField)`
   width: 500px;
 `
 
 // 테스트 페이지 컴포넌트
 function TestPage() {
   // 상태 변수 선언
-  const [kanzas, setKanzas] = useState<kanza[]>([]);
-  const [index, setIndex] = useState<number>(0);
-  const [inputValue, setInputValue] = useState("");
-  const [isEnd, setIsEnd] = useState<boolean>(false);
+  const [kanzas, setKanzas] = useState<kanza[]>([])
+  const [index, setIndex] = useState<number>(0)
+  const [inputValue, setInputValue] = useState("")
+  const [isEnd, setIsEnd] = useState<boolean>(false)
+  const [isInputValid, setIsInputValid] = useState<boolean>(true)
+
+  // progress 관련
+  const [totalQuestions, setTotalQuestions] = useState<number>(10);
+  const [progress, setProgress] = useState<number>(0);
 
   // useRef를 사용하여 값이 바뀌어도 리렌더링이 일어나지 않도록 설정
-  const HowMany = useRef<number>(0);
+  // const HowMany = useRef<number>(0);
+  const [count, setCount] = useState<number>(0);
   const QuestionType = useRef<number>(0);
+
+  // 다 맞혀서 축하하는 모달을 표시할지 여부를 저장하는 state
+  const [showCongratulationModal, setShowCongratulationModal] = useState<boolean>(false);
+
+  // 10문제 다 맞혔을 때 호출되는 함수
+  const handleCorrectAnswers = () => {
+    setShowCongratulationModal(true);
+  };
+
+  // 모달을 닫을 때 호출되는 함수
+  const handleCloseCongratulationModal = () => {
+    setShowCongratulationModal(false);
+  };
 
   // 엔터 키 다운 이벤트 핸들러
   const handleKeyDown = (event) => {
@@ -57,22 +81,54 @@ function TestPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    // 입력값이 비어있는 경우 경고 메시지 표시
+    if (!inputValue.trim()) {
+      setIsInputValid(false);
+      return;
+    }
+
+    // 입력값이 있는 경우 경고 메시지 숨김
+    setIsInputValid(true)
+
     console.log("Submitted:", inputValue);
 
     if (!QuestionType.current) {
       if (inputValue === kanzas[index].mean) {
-        HowMany.current += 1;
+        // setHowMany(howMany+1);
       }
       setIndex((prev) => prev + 1);
     } else {
       if (inputValue === kanzas[index].sound) {
-        HowMany.current += 1;
+        // setHowMany(howMany + 1);
       }
       setIndex((prev) => prev + 1);
     }
     QuestionType.current = getRandomInt(0, 2);
     setInputValue("");
+
+    setCount(count+1)
   };
+
+  useEffect(() => {
+    // 제출할 때마다 진행 상황을 업데이트
+    setProgress((count / totalQuestions) * 100);
+    console.log(`진행상황: ${progress}`);
+  }, [count, totalQuestions, progress]);
+
+
+  useEffect(() => {
+    // 총 문제 수가 10이고, 현재 문제 번호가 0부터 시작하므로, 
+    // 10문제까지 완료하면 100%가 되도록 설정
+    if (index >= totalQuestions) {
+      setProgress(100);
+      setIsEnd(true);
+
+      // 여기에 추가: 10문제 다 맞췄을 때 모달 띄우기
+      if (count === totalQuestions) {
+        setShowCongratulationModal(true);
+      }
+    }
+  }, [index, totalQuestions, count]);
 
   // 랜덤 정수 반환 함수
   function getRandomInt(min: number, max: number) {
@@ -96,14 +152,21 @@ function TestPage() {
     fetchData();
   }, []);
 
-  // 다음 문제로 넘어가기
-  function goNext() {
-    setIndex((prev) => prev + 1);
-  }
+  // 열 문제 다 맞히면 정답 현황 알려주는 모달 등장 
+  const fullAnswer = styled('div')`
+    
+  `
+
+  // // 다음 문제로 넘어가기
+  // function goNext() {
+  //   setIndex((prev) => prev + 1);
+  // }
 
   return (
     // JSX로 화면 렌더링
     <div>
+      {/* 다 맞혀서 축하하는 모달 */}
+      <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} />
       {isEnd ? (
         <div>
           {/* 게임 종료 화면 */}
@@ -120,15 +183,24 @@ function TestPage() {
           <InputGrid item xs={5}>
               <Typography variant='h4'>다음 한자의 {QuestionType.current ? '뜻' : '음'}을 적으시오</Typography>
               <br /><br />
-              <form className="w-full mx-auto" onSubmit={handleSubmit}>
-                <InputForm
+              {/* 진행 상황 */}
+              <Typography variant='h3'>
+                {progress}%
+              </Typography>
+              <InputForm onSubmit={handleSubmit}>
+                <InputText
                   id="message"
                   placeholder="입력창"
                   multiline
                   color="warning"
                   value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={(e) => {
+                    setInputValue(e.target.value)
+                    setIsInputValid(true) // 입력이 변경되면 경고 메시지를 숨김
+                  }}
                   onKeyDown={handleKeyDown}
+                  error={!isInputValid}
+                  helperText={!isInputValid ? "입력값이 필요합니다." : ""}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -146,9 +218,9 @@ function TestPage() {
                       </InputAdornment>
                     ),
                   }}
-                ></InputForm>
+                />
                 
-              </form>
+              </InputForm>
           </InputGrid>
         </Grid>
       )}

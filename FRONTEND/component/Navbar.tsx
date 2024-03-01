@@ -5,7 +5,7 @@ import { styled, Grid } from '@mui/material'
 const Nav = styled(Grid)`
   height: 50px;
   background-color: #ffdd9e;
-  margin: 0 0 30px 0;
+  margin: 0 0 50px 0;
   padding: 0 20px 0 20px;  
   display: flex;
   align-items: center; 
