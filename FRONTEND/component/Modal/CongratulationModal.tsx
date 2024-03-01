@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, Paper, Modal, Typography, IconButton } from "@mui/material";
+import { styled, Paper, Modal, Typography, IconButton, CircularProgress } from "@mui/material";
 import { Close } from "@mui/icons-material"
 
 const StyledModal = styled(Modal)`
@@ -11,8 +11,8 @@ const ModalContainer = styled('div')`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 500px;
-  min-height: 500px;
+  width: 400px;
+  min-height: 400px;
   text-align: center;
   background-color: none;
   box-shadow: none;
@@ -34,14 +34,14 @@ const BackgroundImage = styled("div")`
 const CloseButton = styled(IconButton)`
   display: flex;
   align-items: flex-end;
-  padding-right: 70px;
-  padding-top: 70px;
+  margin-top: 15px;
+  margin-right: 15px;
   margin-left: auto;
 `
 
 const Content = styled(Typography)`
   z-index: 1001;
-  padding: 20px 50px 90px 50px;
+  padding: 20px 50px 60px 50px;
 `
 
 const CongratulationModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
@@ -49,20 +49,20 @@ const CongratulationModal: React.FC<{ open: boolean; onClose: () => void }> = ({
   return (
     <StyledModal
       open={open}
-      onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
-      BackdropComponent={() => null}
+      // BackdropComponent={() => null}
     >
       <ModalContainer>
         <BackgroundImage />
-        <CloseButton>
+        <CloseButton onClick={onClose}>
           <Close />
         </CloseButton>
         <Content variant="h6" component="h2">
           <p>점수를 계산 중입니다... </p>
           <p>잠시만 기다려 주세요 👩‍🦰</p>
         </Content>
+        <CircularProgress style={{ color: "orange" }} />
         {/* <Button onClick={onClose}>Close</Button> */}
       </ModalContainer>
     </StyledModal>

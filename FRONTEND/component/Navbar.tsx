@@ -39,7 +39,7 @@ export default function Navbar() {
         <MenuLink href="/test">시험 보기</MenuLink>
       </LeftMenu>
       <RightMenu item>
-        <MenuLink href="/join">회원가입</MenuLink>
+        <MenuLink href="/login">로그인</MenuLink>
       </RightMenu>
     </Nav>
   );

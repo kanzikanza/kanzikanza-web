@@ -5,6 +5,7 @@ import { Edit } from '@mui/icons-material'
 import * as StompJs from "@stomp/stompjs";
 import CongratulationModal from '@/component/Modal/CongratulationModal';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 // 타입 정의
 type kanza = {
@@ -41,6 +42,7 @@ const InputText = styled(TextField)`
 
 // 테스트 페이지 컴포넌트
 function TestPage() {
+  const router = useRouter();
   // 상태 변수 선언
   const [kanzas, setKanzas] = useState<kanza[]>([])
   const [index, setIndex] = useState<number>(0)
@@ -68,6 +70,8 @@ function TestPage() {
   // 모달을 닫을 때 호출되는 함수
   const handleCloseCongratulationModal = () => {
     setShowCongratulationModal(false);
+    // router.push('/test')
+    window.location.reload();
   };
 
   // 엔터 키 다운 이벤트 핸들러
@@ -166,10 +170,10 @@ function TestPage() {
     // JSX로 화면 렌더링
     <div>
       {/* 다 맞혀서 축하하는 모달 */}
-      <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} />
+      {/* <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} /> */}
       {isEnd ? (
         <div>
-          {/* 게임 종료 화면 */}
+          <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} />
         </div>
       ) : (
         <Grid container>
@@ -228,5 +232,5 @@ function TestPage() {
   );
 }
 
-export default TestPage;
+export default TestPage
 
