@@ -107,7 +107,8 @@ public class AuthController {
         //     return response;
         Map<String, String> links = new HashMap<>();
         links.put("link", "https://kauth.kakao.com/oauth/authorize");
-        links.put("redirect", "http://localhost:8080/auth/Oauth2/KakaoToken");
+        // links.put("redirect", "http://localhost:8080/auth/Oauth2/KakaoToken");
+        links.put("redirect", "http://localhost:3000/auth");
         
         return ResponseEntity.status(HttpStatus.OK).body(links);
         }

@@ -37,7 +37,7 @@ public class UserService {
         var user = userRepository.findByEmail(email);
         if (user.equals(null))
             return Optional.empty();
-        // userRepository.findByEmail(email);
+        // userRepository.findByEmail(email);       
         // var user = new UserModel();
         // user.setId(1L);
         // user.setEmail(EXISTING_EMAIL);
