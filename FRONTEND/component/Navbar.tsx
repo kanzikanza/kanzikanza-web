@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 const Nav = styled(Grid)`
   height: 50px;
   background-color: #ffdd9e;
-  margin: 0 0 30px 0;
+  margin: 0 0 50px 0;
   padding: 0 20px 0 20px;  
   display: flex;
   align-items: center; 
@@ -60,6 +60,7 @@ export default function Navbar() {
         <MenuLink href="/test">시험 보기</MenuLink>
       </LeftMenu>
       <RightMenu item>
+        <MenuLink href="/login">로그인</MenuLink>
         <MenuLink href="/join">회원가입</MenuLink>
         <button onClick={handleLogin}>임시 카카오</button>
       </RightMenu>
