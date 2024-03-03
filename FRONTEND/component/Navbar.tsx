@@ -42,14 +42,13 @@ export default function Navbar() {
       .then(response => {
         // 받은 HTML을 DOM에 추가하여 렌더링
         // document.getElementById('kakao-login-container').innerHTML = response.data;
-        const newPopup = window.open('', '_blank', 'width=600,height=400');
-        newPopup.document.write(response.data);
-        setPopup(newPopup);
+        console.log(response.data)
+        const api_key = "e0fa9c3226566a2dcda49e672fe892ac"
+        let queryString = `${response.data.link}?response_type=code&client_id=${api_key}&redirect_uri=${response.data.redirect}`
+        console.log(queryString)
+        window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
 
       });
-      // const url = response.data;
-      // console.log(url)
-      // window.open(url, '_blank', 'width=600,height=600');
     } catch (error) {
       console.error('Error initiating Kakao OAuth:', error);
     }
