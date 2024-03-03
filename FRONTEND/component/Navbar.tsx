@@ -1,6 +1,9 @@
+'use-client'
 import Link from 'next/link';
 // import { style } from '@vanilla-extract/css';
 import { styled, Grid } from '@mui/material'
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
 const Nav = styled(Grid)`
   height: 50px;
@@ -32,6 +35,24 @@ const MenuLink = styled(Link)`
 
 
 export default function Navbar() {
+  const [popup, setPopup] = useState(null);
+  const handleLogin = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/auth/Oauth2/KakaoLogin')
+      .then(response => {
+        // 받은 HTML을 DOM에 추가하여 렌더링
+        // document.getElementById('kakao-login-container').innerHTML = response.data;
+        console.log(response.data)
+        const api_key = "e0fa9c3226566a2dcda49e672fe892ac"
+        let queryString = `${response.data.link}?response_type=code&client_id=${api_key}&redirect_uri=${response.data.redirect}`
+        console.log(queryString)
+        window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
+
+      });
+    } catch (error) {
+      console.error('Error initiating Kakao OAuth:', error);
+    }
+  };
   return (
     <Nav container>
       <LeftMenu item xs={3}>
@@ -40,6 +61,8 @@ export default function Navbar() {
       </LeftMenu>
       <RightMenu item>
         <MenuLink href="/login">로그인</MenuLink>
+        <MenuLink href="/join">회원가입</MenuLink>
+        <button onClick={handleLogin}>임시 카카오</button>
       </RightMenu>
     </Nav>
   );
