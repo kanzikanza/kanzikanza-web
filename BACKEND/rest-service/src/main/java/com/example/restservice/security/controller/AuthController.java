@@ -1,8 +1,6 @@
 package com.example.restservice.security.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
 import com.example.restservice.config.kakao.KakaoApi;
 import com.example.restservice.config.kakao.KakaoApi.KakaoOpenIdToken;
 import com.example.restservice.config.kakao.KakaoApi.OAuthToken;
@@ -13,6 +11,7 @@ import com.example.restservice.security.dto.LoginRequest;
 import com.example.restservice.security.dto.UserPrincipal;
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
+import com.example.restservice.usercustomize.persistence.usercustomizeRepository;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 
 import lombok.RequiredArgsConstructor;
@@ -20,15 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Collections;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,6 +49,7 @@ public class AuthController {
         private final AuthenticationManager authenticationManager;
         private final UserService userService;
         private final KakaoApi kakaoApi;
+        private final usercustomizeRepository UsercustomizeRepository;
 
         @PostMapping("/auth/login")
         public LoginReqponse login(@RequestBody @Validated LoginRequest request) {
@@ -86,6 +82,7 @@ public class AuthController {
                                         .password(passwordEncoder.encode(request.getPassword()))
                                         .build();
                         UserModel registerUserModel = userService.create(user);
+                        UsercustomizeRepository.insertUserCustomize(registerUserModel.getId());
                         var token = jwtIssuer.issue(registerUserModel.getId(),
                                         registerUserModel.getEmail(),
                                         Arrays.stream(registerUserModel.getRole().split(", "))
@@ -107,8 +104,8 @@ public class AuthController {
         //     return response;
         Map<String, String> links = new HashMap<>();
         links.put("link", "https://kauth.kakao.com/oauth/authorize");
-        // links.put("redirect", "http://localhost:8080/auth/Oauth2/KakaoToken");
-        links.put("redirect", "http://localhost:3000/auth");
+        links.put("redirect", "http://localhost:8080/auth/Oauth2/KakaoToken");
+        // links.put("redirect", "http://localhost:3000/auth");
         
         return ResponseEntity.status(HttpStatus.OK).body(links);
         }
@@ -116,13 +113,11 @@ public class AuthController {
         @GetMapping("/auth/Oauth2/KakaoToken")
         public ResponseEntity<?> KakaoLoginServer(@RequestParam String code) {
                 try
-                {
-
+                {       
                         OAuthToken token = kakaoApi.getOAuthToken(code);  
                         String str = token.getId_token();
                         String[] whatIneed = str.split("\\.");
                         KakaoOpenIdToken kakaoOpenIdToken = kakaoApi.getOpenIdToken(new String(Base64.getDecoder().decode(whatIneed[1]), StandardCharsets.UTF_8));
-                        
                         if (userService.existsByEmail(kakaoOpenIdToken.getSub()) == false)
                         {
                                 UserModel user = UserModel.builder()
@@ -131,6 +126,7 @@ public class AuthController {
                                 .build();
                 
                                 UserModel registerUserModel = userService.create(user);
+                                UsercustomizeRepository.insertUserCustomize(registerUserModel.getId());
                                 var MyAccesstoken = jwtIssuer.issue(registerUserModel.getId(),
                                                 registerUserModel.getEmail(),
                                                 Arrays.stream(registerUserModel.getRole().split(", "))
@@ -148,7 +144,6 @@ public class AuthController {
                                 var roles = principal.getAuthorities().stream()
                                                 .map(GrantedAuthority::getAuthority)
                                                 .toList();
-                
                                 var MyAccesstoken = jwtIssuer.issue(principal.getUserId(), principal.getEmail(), roles);
                                 return ResponseEntity.ok().body(LoginReqponse.builder()
                                 .accessToken(MyAccesstoken)

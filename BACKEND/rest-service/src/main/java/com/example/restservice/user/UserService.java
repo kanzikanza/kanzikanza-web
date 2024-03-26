@@ -18,8 +18,6 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    private static final String EXISTING_EMAIL = "test@test.com";
-
     public UserModel create(final UserModel userModel) {
         if (userModel == null || userModel.getEmail() == null) {
             throw new RuntimeJsonMappingException("Invalid argument");
