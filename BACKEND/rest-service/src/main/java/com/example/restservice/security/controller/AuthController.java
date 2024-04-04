@@ -113,7 +113,7 @@ public class AuthController {
         @GetMapping("/auth/Oauth2/KakaoToken")
         public ResponseEntity<?> KakaoLoginServer(@RequestParam String code) {
                 try
-                {       
+                {       010
                         OAuthToken token = kakaoApi.getOAuthToken(code);  
                         String str = token.getId_token();
                         String[] whatIneed = str.split("\\.");

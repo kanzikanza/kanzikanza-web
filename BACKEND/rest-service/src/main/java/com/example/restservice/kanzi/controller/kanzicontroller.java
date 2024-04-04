@@ -37,7 +37,6 @@ public class kanzicontroller {
         kanziDto<String> response = kanziDto.<String>builder().data(list).build();
         return ResponseEntity.ok().body(response);
     }
-
     @PostMapping("/kanza")
     public ResponseEntity<?> createKanza(@RequestBody kanzaDto kanza) {
         // TODO: process POST request

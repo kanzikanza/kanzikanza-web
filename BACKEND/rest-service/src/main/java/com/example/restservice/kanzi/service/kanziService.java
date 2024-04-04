@@ -49,6 +49,8 @@ public class kanziService {
         return repository.findTop20ByOrderByIdDesc();
     }
 
+
+    public List<kanza> getRandom20() { return repository.findRandom20(); }
     private void validate(final kanza kanza) {
         if (kanza == null) {
             log.warn("추가될 수가 없음");

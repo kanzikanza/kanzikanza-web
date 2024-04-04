@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Random;
 
 @Repository
 public interface kanzaRepository extends JpaRepository<kanza, Integer> {
@@ -18,4 +19,7 @@ public interface kanzaRepository extends JpaRepository<kanza, Integer> {
     List<kanza> findByKANZA(String KANZA);
 
     List<kanza> findTop20ByOrderByIdDesc();
+
+    @Query(value = "select * from kanza ORDER BY RAND() limit 20" , nativeQuery = true)
+    List<kanza> findRandom20();
 }
