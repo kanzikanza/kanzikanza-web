@@ -1,5 +1,6 @@
 package com.example.restservice.security.controller;
 
+import com.example.restservice.usercustomize.repository.UserCustomizeRepository;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.restservice.config.kakao.KakaoApi;
 import com.example.restservice.config.kakao.KakaoApi.KakaoOpenIdToken;
@@ -11,7 +12,6 @@ import com.example.restservice.security.dto.LoginRequest;
 import com.example.restservice.security.dto.UserPrincipal;
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
-import com.example.restservice.usercustomize.persistence.usercustomizeRepository;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class AuthController {
         private final AuthenticationManager authenticationManager;
         private final UserService userService;
         private final KakaoApi kakaoApi;
-        private final usercustomizeRepository UsercustomizeRepository;
+        private final UserCustomizeRepository usercustomizeRepository;
 
         @PostMapping("/auth/login")
         public LoginReqponse login(@RequestBody @Validated LoginRequest request) {
@@ -82,7 +82,7 @@ public class AuthController {
                                         .password(passwordEncoder.encode(request.getPassword()))
                                         .build();
                         UserModel registerUserModel = userService.create(user);
-                        UsercustomizeRepository.insertUserCustomize(registerUserModel.getId());
+                        usercustomizeRepository.CreateAllRelationsByUser(registerUserModel.getId());
                         var token = jwtIssuer.issue(registerUserModel.getId(),
                                         registerUserModel.getEmail(),
                                         Arrays.stream(registerUserModel.getRole().split(", "))
@@ -126,7 +126,7 @@ public class AuthController {
                                 .build();
                 
                                 UserModel registerUserModel = userService.create(user);
-                                UsercustomizeRepository.insertUserCustomize(registerUserModel.getId());
+                                usercustomizeRepository.CreateAllRelationsByUser(registerUserModel.getId());
                                 var MyAccesstoken = jwtIssuer.issue(registerUserModel.getId(),
                                                 registerUserModel.getEmail(),
                                                 Arrays.stream(registerUserModel.getRole().split(", "))

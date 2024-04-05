@@ -1,4 +1,9 @@
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
   datasource:
     url: jdbc:mysql://localhost:3306/KANZIKANZA
     username: ssafy

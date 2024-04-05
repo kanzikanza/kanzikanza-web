@@ -1,7 +1,8 @@
 package com.example.restservice.usercustomize.model;
 
-import com.example.restservice.user.model.UserModel;
 import com.example.restservice.kanzi.model.Kanza;
+import com.example.restservice.user.model.UserModel;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,18 +25,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "usercustomize")
-public class usercustomizeModel {
+public class UserCustomize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserModel user;
-
     @ManyToOne
-    @JoinColumn(name = "kanza_id")
-    private Kanza kanza;
+    private UserModel userId;
 
-    private Long parameter;
+    @JoinColumn(name = "kanzi_id")
+    @ManyToOne
+    private Kanza kanziId;
+
+    private Integer parameter;
+
 }

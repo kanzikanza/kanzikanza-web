@@ -3,6 +3,9 @@ package com.example.restservice.user;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.example.restservice.user.model.UserModel;
@@ -35,15 +38,19 @@ public class UserService {
         var user = userRepository.findByEmail(email);
         if (user.equals(null))
             return Optional.empty();
-        // userRepository.findByEmail(email);       
-        // var user = new UserModel();
-        // user.setId(1L);
-        // user.setEmail(EXISTING_EMAIL);
-        // user.setPassword("$2a$12$BfaDWPgHgVMTlEqvWtgNWuMPhHJ3OUkeaKT.8OyM6Rzf4yTISd.wa");
-        // // test
-        // user.setRole("ROLE_ADMIN");
-        // user.setExtraInfo("My DD");
         return Optional.of(user);
+    }
+
+    public UserModel findCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        Optional<UserModel> userOptional = findByEmail(username);
+        UserModel user = null;
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+        }
+        return user;
     }
     public boolean existsByEmail(String email)
     {

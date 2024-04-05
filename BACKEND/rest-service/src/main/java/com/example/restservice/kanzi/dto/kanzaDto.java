@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.example.restservice.kanzi.model.kanza;
+import com.example.restservice.kanzi.model.Kanza;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,14 +16,14 @@ public class kanzaDto {
     private String MEAN;
     private String SOUND;
 
-    public kanzaDto(final kanza entity) {
+    public kanzaDto(final Kanza entity) {
         this.KANZA = entity.getKANZA();
         this.MEAN = entity.getMEAN();
         this.SOUND = entity.getSOUND();
     }
 
-    public static kanza toKanza(final kanzaDto dto) {
-        return kanza.builder()
+    public static Kanza toKanza(final kanzaDto dto) {
+        return Kanza.builder()
                 .KANZA(dto.getKANZA())
                 .MEAN(dto.getMEAN())
                 .SOUND(dto.getSOUND())
