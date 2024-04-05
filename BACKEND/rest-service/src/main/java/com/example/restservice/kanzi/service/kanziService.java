@@ -45,7 +45,7 @@ public class KanziService {
     }
 
     public List<Kanza> getTOP20() {
-        return kanzaRepository.findTop20ByOrderByIdDesc();
+        return kanzaRepository.getKanzasByRandom(20);
     }
 
     private void validate(final Kanza kanza) {

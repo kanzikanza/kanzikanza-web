@@ -96,24 +96,27 @@ public class AuthController {
                                         .body(responseDTO);
                 }
         }
+
         @GetMapping("/auth/Oauth2/KakaoLogin")
-        public ResponseEntity<Map<String,String>>  ClientKakaoLogin() {
-            //TODO: process POST request
-        //     RestTemplate restTemplate = new RestTemplate();
-        //     ResponseEntity<String> response = restTemplate.getForEntity("https://kauth.kakao.com/oauth/authorize", String.class);
-        //     return response;
-        Map<String, String> links = new HashMap<>();
-        links.put("link", "https://kauth.kakao.com/oauth/authorize");
-        links.put("redirect", "http://localhost:8080/auth/Oauth2/KakaoToken");
-        // links.put("redirect", "http://localhost:3000/auth");
-        
-        return ResponseEntity.status(HttpStatus.OK).body(links);
+        public ResponseEntity<Map<String, String>> ClientKakaoLogin() {
+                // TODO: process POST request
+                // RestTemplate restTemplate = new RestTemplate();
+                // ResponseEntity<String> response =
+                // restTemplate.getForEntity("https://kauth.kakao.com/oauth/authorize",
+                // String.class);
+                // return response;
+                Map<String, String> links = new HashMap<>();
+                links.put("link", "https://kauth.kakao.com/oauth/authorize");
+                links.put("redirect", "http://localhost:8080/auth/Oauth2/KakaoToken");
+                // links.put("redirect", "http://localhost:3000/auth");
+
+                return ResponseEntity.status(HttpStatus.OK).body(links);
         }
 
         @GetMapping("/auth/Oauth2/KakaoToken")
         public ResponseEntity<?> KakaoLoginServer(@RequestParam String code) {
                 try
-                {       010
+                {
                         OAuthToken token = kakaoApi.getOAuthToken(code);  
                         String str = token.getId_token();
                         String[] whatIneed = str.split("\\.");
@@ -157,7 +160,5 @@ public class AuthController {
                                         .body(responseDTO);
                 }
         }
-        
-
 
 }
