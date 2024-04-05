@@ -55,8 +55,7 @@ public class KanziService {
         }
     }
 
-    public Kanza findByKANZA(String KANZA)
-    {
+    public Kanza findByKANZA(String KANZA) {
         return kanzaRepository.findByKANZA(KANZA);
     }
 }
