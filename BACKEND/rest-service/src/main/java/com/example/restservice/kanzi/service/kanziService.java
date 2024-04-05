@@ -45,7 +45,7 @@ public class KanziService {
     }
 
     public List<Kanza> getTOP20() {
-        return kanzaRepository.getKanzasByRandom(20);
+        return kanzaRepository.findTop20ByOrderByIdDesc();
     }
 
     private void validate(final Kanza kanza) {
@@ -55,7 +55,8 @@ public class KanziService {
         }
     }
 
-    public Kanza findByKANZA(String KANZA) {
+    public Kanza findByKANZA(String KANZA)
+    {
         return kanzaRepository.findByKANZA(KANZA);
-    }
+    }BACKEND/rest-service/src/main/java/com/example/restservice/kanzi/persistence/KanzaRepository.java
 }
