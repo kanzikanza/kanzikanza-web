@@ -21,4 +21,5 @@ public interface KanzaRepository extends JpaRepository<Kanza, Integer> {
 
     @Query(value = "select * from kanza order by rand() limit :problemNum ", nativeQuery = true)
     List<Kanza> getKanzasByRandom(@Param("problemNum") Integer problemNum);
+    // 커밋 에러가 있어요
 }
