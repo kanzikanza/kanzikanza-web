@@ -6,9 +6,20 @@
 ---
 
 ### 👨‍👩‍👦 팀원 소개
-<table width="100%">
+<table width="100%">  
   <tr>
-  <td width="33%" align="center">
+    <td width="33%" align="center">
+      <h3>BE</h3>
+    </td>
+    <td width="33%" align="center">
+      <h3>Infra</h3>
+    </td>
+    <td width="33%" align="center">
+      <h3>FE</h3>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center">
       <img src="img/ksb.jpg" width="100%"/>
       <b><a href="https://github.com/sangbumlikeagod">김상범</a></b> 
     </td>
@@ -19,18 +30,6 @@
     <td width="33%" align="center">
       <img src="img/lgh.jpg" width="100%"/>
       <b><a href="https://github.com/goldbutnew">이금현</a></b> 
-    </td>
-
-  </tr>
-  <tr>
-    <td width="33%" align="center">
-      backend
-    </td>
-    <td width="33%" align="center">
-      infra
-    </td>
-    <td width="33%" align="center">
-      frontend
     </td>
   </tr>
 </table>
