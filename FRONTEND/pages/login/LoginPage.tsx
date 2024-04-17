@@ -21,7 +21,7 @@ const GoJoin = styled('p')`
   margin-top: 30px;
 `
 
-export default function login() {
+export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
@@ -42,13 +42,11 @@ export default function login() {
   };
 
   return (
-    <Layout>
-      <MainContainer>
-        <Image src={kakaoLoginImage} alt="Kakao Login" />
-        <GoJoin>
-          보유한 아이디가 없으신가요? 카카오톡으로 1초만에 <SmallButton onClick={handleLogin}>가입</SmallButton>하기!
-        </GoJoin>
-      </MainContainer>
-    </Layout>
+    <MainContainer>
+      <Image src={kakaoLoginImage} alt="Kakao Login" />
+      <GoJoin>
+        보유한 아이디가 없으신가요? 카카오톡으로 1초만에 <SmallButton onClick={handleLogin}>가입</SmallButton>하기!
+      </GoJoin>
+    </MainContainer>
   )
 }

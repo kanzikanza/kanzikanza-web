@@ -1,15 +1,11 @@
-/* styles/globals.css */
-
-/* Reset some default styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Apply the global font */
-body {
-  font-family: 'YourChosenFont', sans-serif; /* Replace 'YourChosenFont' with the actual font name or import it */
-}
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
 
-/* Add any other global styles as needed */
+body {
+  font-family: 'Black Han Sans', sans-serif; /* Black Han Sans 폰트를 전체 페이지에 적용 */
+}

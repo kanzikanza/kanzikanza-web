@@ -8,4 +8,12 @@
   border: none;
   background: #F2F2F2;
   border-radius: 5px;
+  transition: background-color 0.3s; /* 배경색 변경에 대한 트랜지션 효과 추가 */
+
+  /* 호버 효과 */
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #D9D9D9; /* 호버 시 배경색 변경 */
 }
