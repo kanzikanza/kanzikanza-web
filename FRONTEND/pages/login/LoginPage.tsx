@@ -1,9 +1,9 @@
 import Layout from "@/component/Layout";
-import Image from "next/image"; // Import the next/image module
-import axios from 'axios';
-import kakaoLoginImage from "@/public/assets/kakao_login_large_narrow.png";
-import { styled } from "@mui/material";
-import SmallButton from "@/component/Button/SmallButton";
+import Image from "next/image"
+import axios from 'axios'
+import kakaoLoginImage from "@/public/assets/kakao_login_large_narrow.png"
+import { styled } from "@mui/material"
+import SmallButton from "@/component/Button/SmallButton"
 
 const MainContainer = styled('div')`
   min-height: 400px;
