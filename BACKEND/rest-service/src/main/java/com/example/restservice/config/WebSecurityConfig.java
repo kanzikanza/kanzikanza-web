@@ -42,7 +42,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/Oauth2/KakaoToken").permitAll()
                         .requestMatchers("/auth/Oauth2/KakaoLogin").permitAll()
                         .requestMatchers("/auth/login", "/auth/signup")
-                        .permitAll().anyRequest().authenticated());
+                        .permitAll().anyRequest().permitAll());
         return http.build();
 
     }

@@ -117,7 +117,6 @@ public class AuthController {
         public ResponseEntity<?> KakaoLoginServer(@RequestParam String code) {
                 try
                 {
-
                         OAuthToken token = kakaoApi.getOAuthToken(code);  
                         String str = token.getId_token();
                         String[] whatIneed = str.split("\\.");
