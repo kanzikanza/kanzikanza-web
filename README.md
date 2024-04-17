@@ -9,13 +9,13 @@
 <table width="100%">  
   <tr>
     <td width="33%" align="center">
-      <h3>BE</h3>
+      <b>BE</b>
     </td>
     <td width="33%" align="center">
-      <h3>Infra</h3>
+      <b>Infra</b>
     </td>
     <td width="33%" align="center">
-      <h3>FE</h3>
+      <b>FE</b>
     </td>
   </tr>
   <tr>
