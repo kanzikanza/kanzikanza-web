@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import localFont from 'next/font/local';
 import Navbar from "../component/navbar/Navbar";
 import * as style from './layout.css';
 
 const inter = Inter({ subsets: ["latin"] });
+
+const pretendard = localFont({
+  src: "../assets/fonts/Pretendard-Regular.woff",
+  display: "swap",
+  weight: "45 920",
+});
 
 export const metadata: Metadata = {
   title: "한자 한 자",
@@ -19,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body style={{ margin: 0 }}>
         <Navbar />
-        <div className={style.container}>
+        <div className={pretendard.className}>
           {children}
         </div>
       </body>
