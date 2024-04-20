@@ -1,11 +1,13 @@
+'use client';
+
 import { style } from '@vanilla-extract/css';
 import { useRef, useEffect, useState } from "react";
 import { Button, Grid, Typography, styled, TextField, InputAdornment, LinearProgress } from '@mui/material/';
 import { Edit } from '@mui/icons-material'
 import * as StompJs from "@stomp/stompjs";
-import CongratulationModal from '@/component/Modal/CongratulationModal';
+import CongratulationModal from '@/src/component/Modal/CongratulationModal';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import SmallButton from '../../component/Button/SmallButton';
 
 // 타입 정의
 type kanza = {
@@ -41,8 +43,7 @@ const InputText = styled(TextField)`
 `
 
 // 테스트 페이지 컴포넌트
-function TestPage() {
-  const router = useRouter();
+function ExamPage() {
   // 상태 변수 선언
   const [kanzas, setKanzas] = useState<kanza[]>([])
   const [index, setIndex] = useState<number>(0)
@@ -185,46 +186,47 @@ function TestPage() {
           </KanjiGrid>
 
           <InputGrid item xs={5}>
-              <Typography variant='h4'>다음 한자의 {QuestionType.current ? '뜻' : '음'}을 적으시오</Typography>
-              <br /><br />
-              {/* 진행 상황 */}
-              <Typography variant='h3'>
-                {progress}%
-              </Typography>
-              <InputForm onSubmit={handleSubmit}>
-                <InputText
-                  id="message"
-                  placeholder="입력창"
-                  multiline
-                  color="warning"
-                  value={inputValue}
-                  onChange={(e) => {
-                    setInputValue(e.target.value)
-                    setIsInputValid(true) // 입력이 변경되면 경고 메시지를 숨김
-                  }}
-                  onKeyDown={handleKeyDown}
-                  error={!isInputValid}
-                  helperText={!isInputValid ? "입력값이 필요합니다." : ""}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Edit />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Button 
-                          type="submit"
-                          color="warning"
-                        >
-                          제출
-                        </Button>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                
-              </InputForm>
+            <Typography variant='h4'>다음 한자의 {QuestionType.current ? '뜻' : '음'}을 적으시오</Typography>
+            <br /><br />
+            {/* 진행 상황 */}
+            <Typography variant='h3'>
+              {progress}%
+            </Typography>
+
+            <InputForm onSubmit={handleSubmit}>
+              <InputText
+                id="message"
+                placeholder="입력창"
+                multiline
+                color="warning"
+                value={inputValue}
+                onChange={(e) => {
+                  setInputValue(e.target.value)
+                  setIsInputValid(true) // 입력이 변경되면 경고 메시지를 숨김
+                }}
+                onKeyDown={handleKeyDown}
+                error={!isInputValid}
+                helperText={!isInputValid ? "입력값이 필요합니다." : ""}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Edit />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button 
+                        type="submit"
+                        color="warning"
+                      >
+                        제출
+                      </Button>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              
+            </InputForm>
           </InputGrid>
         </Grid>
       )}
@@ -232,5 +234,5 @@ function TestPage() {
   );
 }
 
-export default TestPage
+export default ExamPage
 

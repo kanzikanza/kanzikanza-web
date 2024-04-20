@@ -16,7 +16,7 @@
     "@mui/material-nextjs": "^5.15.9",
     "@mui/styled-engine-sc": "^6.0.0-alpha.16",
     "@stomp/stompjs": "^7.0.0",
-    "@vanilla-extract/css": "^1.14.1",
+    "@vanilla-extract/css": "^1.14.2",
     "axios": "^1.6.7",
     "next": "14.0.4",
     "openvidu-browser": "^2.29.1",

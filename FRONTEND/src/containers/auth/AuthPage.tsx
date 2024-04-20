@@ -1,14 +1,15 @@
-import Layout from "@/component/Layout";
+'use client'
 
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation'
 import axios from "axios";
 
-export default function Auth() {
+export default function AuthPage() {
   const router = useRouter();
+  const params = useParams()
 
   useEffect(() => {
-    const code = router.query.code;
+    const code = params.code;
 
     if (code) {
       console.log(`code: ${code}`)
@@ -21,12 +22,10 @@ export default function Auth() {
           console.error('Failed to send code to server:', error);
         });
     }
-  }, [router.query.code]);
+  }, [params.code]);
 
   
   return (
-    <Layout>
-      테스팅
-    </Layout>
+      <div>테스트 페이지</div>
   );
 }
