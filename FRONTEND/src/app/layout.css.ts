@@ -1,5 +1,4 @@
 // import { style, globalStyle } from '@vanilla-extract/css';
-import { style } from '@vanilla-extract/css';
 
 // // 전역 스타일 설정
 // globalStyle('html', {
@@ -16,7 +15,6 @@ import { style } from '@vanilla-extract/css';
 //   fontFamily: 'pretendard',
 // });
 
-// customContainer 스타일을 CSS 클래스로 할당
 // export const container = style({
 //   minHeight: 500,
 //   padding: 20,
