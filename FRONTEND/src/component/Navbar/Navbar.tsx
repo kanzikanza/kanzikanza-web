@@ -1,15 +1,15 @@
 import React from 'react';
-import './navbar.css';
+import * as style from './navbar.css';
 
 export default function Navbar() {
   return (
-    <nav className="navbar">
-      <div className="left-menu">
-        <a href="/" className="menu-link">홈</a>
-        <a href="/exam" className="menu-link">시험 보기</a>
+    <nav className={style.navbar}>
+      <div className={style.leftMenu}>
+        <a href="/" className={style.menuLink}>홈</a>
+        <a href="/exam" className={style.menuLink}>시험 보기</a>
       </div>
-      <div className="right-menu">
-        <a href="/login" className="menu-link">로그인</a>
+      <div className={style.rightMenu}>
+        <a href="/login" className={style.menuLink}>로그인</a>
       </div>
     </nav>
   );

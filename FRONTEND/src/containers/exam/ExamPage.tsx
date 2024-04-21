@@ -16,9 +16,21 @@ type kanza = {
   sound: string;
 }
 
+const GridContainer = styled(Grid)`
+  min-width: 768px;
+  margin: 0 auto;
+  max-width: 100%;
+  align-items: center;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 const KanjiGrid = styled(Grid)`
   height: 500px;
   display: flex;
+  margin: 0;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   color: #3e3e3e;
@@ -27,6 +39,7 @@ const KanjiGrid = styled(Grid)`
 const InputGrid = styled(Grid)`
   height: 500px;
   display: flex;
+  margin: 0;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
@@ -177,7 +190,8 @@ function ExamPage() {
           <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} />
         </div>
       ) : (
-        <Grid container>
+        <GridContainer container>
+
           {/* 한자 등장 */}
           <KanjiGrid item xs={5}>
             {kanzas.length > 0 ? (
@@ -185,6 +199,8 @@ function ExamPage() {
             ) : null}
           </KanjiGrid>
 
+
+          {/* 그외 */}
           <InputGrid item xs={5}>
             <Typography variant='h4'>다음 한자의 {QuestionType.current ? '뜻' : '음'}을 적으시오</Typography>
             <br /><br />
@@ -228,7 +244,7 @@ function ExamPage() {
               
             </InputForm>
           </InputGrid>
-        </Grid>
+        </GridContainer>
       )}
     </div>
   );
