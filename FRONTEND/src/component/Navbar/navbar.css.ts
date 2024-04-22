@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css';
 export const navbar = style({
   height: '50px',
   backgroundColor: '#ffdd9e',
-  margin: '0 0 50px 0',
+  margin: 0,
   padding: '0 20px 0 20px',
   display: 'flex',
   alignItems: 'center',
