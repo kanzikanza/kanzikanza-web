@@ -1,6 +1,7 @@
 package com.example.restservice.kanzi.persistence;
 
 import com.example.restservice.kanzi.model.Kanza;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +17,9 @@ public interface KanzaRepository extends JpaRepository<Kanza, Integer> {
     @Query("select k from Kanza k where k.KANZA = ?1")
     Kanza findByKANZA(String KANZA);
 
+
     List<Kanza> findTop20ByOrderByIdDesc();
+
+    @Query(value = "select * from kanza order by rand() limit :problemNum", nativeQuery = true)
+    List<Kanza> findKanzasByRandom(@Param("problemNum") Integer problemNum);
 }

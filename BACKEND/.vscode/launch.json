@@ -9,6 +9,16 @@
       "projectName": "rest-service",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-KanzakanzaApplication<rest-service>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.example.restservice.KanzakanzaApplication",
+      "projectName": "rest-service",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }

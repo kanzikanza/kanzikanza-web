@@ -1,14 +1,12 @@
 package com.example.restservice.kanzi.model;
 
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import lombok.experimental.Accessors;
 
 @Builder
 @Data

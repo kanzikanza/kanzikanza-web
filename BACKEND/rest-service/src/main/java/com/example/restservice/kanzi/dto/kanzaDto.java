@@ -1,14 +1,12 @@
 package com.example.restservice.kanzi.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.example.restservice.kanzi.model.Kanza;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 @Data
 
 public class kanzaDto {
