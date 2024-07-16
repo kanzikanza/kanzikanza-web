@@ -2,17 +2,16 @@ package com.example.restservice.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Data
 @Getter
@@ -25,12 +24,32 @@ import lombok.Setter;
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer userIndex;
 
-    private String email;
+    private String userEmail;
 
     @JsonIgnore
-    private String password;
-    private String role;
-    private String extraInfo;
+    private LocalDateTime userCreatedAt;
+
+
+    @Column(nullable = true)
+    private Integer userStreakDays;
+    @Column(nullable = true)
+    private String userRefreshToken;
+    @Column(nullable = true)
+    private Integer userLevel;
+    @Column(nullable = true)
+    private Integer userStreakfreeze;
+    @Column(nullable = true)
+    private String userNickname;
+    @Column(nullable = true)
+    private Integer userProfileChoice;
+
+    @PrePersist
+    protected void onCreate()
+    {
+        if (userCreatedAt == null) {
+            userCreatedAt = LocalDateTime.now();
+        }
+    }
 }

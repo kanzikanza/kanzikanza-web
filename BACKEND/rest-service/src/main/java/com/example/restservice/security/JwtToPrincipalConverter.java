@@ -11,8 +11,8 @@ import java.util.List;
 public class JwtToPrincipalConverter {
     public UserPrincipal convert(DecodedJWT jwt) {
         return UserPrincipal.builder()
-                .userId(Long.valueOf(jwt.getSubject()))
-                .email(jwt.getClaim("e").asString())
+                .userIndex(Integer.valueOf(jwt.getSubject()))
+                .userEmail(jwt.getClaim("e").asString())
                 .authorities(null)
                 .build();
     }

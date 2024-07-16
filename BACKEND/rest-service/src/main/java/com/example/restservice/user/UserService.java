@@ -1,5 +1,6 @@
 package com.example.restservice.user;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,31 +18,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserService {
-
     @Autowired
     UserRepository userRepository;
-
     public UserModel create(final UserModel userModel) {
-        if (userModel == null || userModel.getEmail() == null) {
+        if (userModel == null || userModel.getUserEmail() == null) {
             throw new RuntimeJsonMappingException("Invalid argument");
         }
-        final String email = userModel.getEmail();
-        if (userRepository.existsByEmail(email)) {
+        final String email = userModel.getUserEmail();
+        if (userRepository.existsByUserEmail(email)) {
             log.warn("email already existss {}", email);
             throw new RuntimeJsonMappingException("Username Already exists");
         }
-        userModel.setRole("ROLE_GUEST");
+//        userModel.setRole("ROLE_GUEST");
         return userRepository.save(userModel);
     }
 
     public Optional<UserModel> findByEmail(String email) {
-        var user = userRepository.findByEmail(email);
+        var user = userRepository.findByUserEmail(email);
         if (user.equals(null))
             return Optional.empty();
         return Optional.of(user);
     }
 
-    public UserModel findCurrentUser() {
+    public UserModel findCurrentUser() throws NoSuchElementException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
@@ -54,7 +53,7 @@ public class UserService {
     }
     public boolean existsByEmail(String email)
     {
-        return userRepository.existsByEmail(email);
+        return userRepository.existsByUserEmail(email);
     }
 
 }

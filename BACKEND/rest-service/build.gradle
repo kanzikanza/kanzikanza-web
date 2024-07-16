@@ -26,12 +26,18 @@ dependencies {
     api libs.org.springframework.boot.spring.boot.starter.webflux
     api libs.com.google.code.gson.gson
     api libs.mysql.mysql.connector.java
+    api 'org.springframework.boot:spring-boot-starter-data-neo4j:3.2.1'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     runtimeOnly libs.io.jsonwebtoken.jjwt.jackson
     runtimeOnly libs.io.jsonwebtoken.jjwt.impl
     testImplementation libs.org.springframework.boot.spring.boot.starter.test
     compileOnly libs.org.projectlombok.lombok
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+
 
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.2.1'
 }
@@ -57,8 +63,14 @@ publishing {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
 }
 
 tasks.withType(Javadoc) {
     options.encoding = 'UTF-8'
+}
+
+test {
+//    include 'com/example/restservice/*Test.class'
+    useJUnitPlatform()
 }

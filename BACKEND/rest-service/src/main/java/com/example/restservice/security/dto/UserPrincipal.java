@@ -13,8 +13,10 @@ import java.util.Collection;
 @Builder
 public class UserPrincipal implements UserDetails {
 
-    private final Long userId;
-    private final String email;
+    private final Integer userIndex;
+    private final String userEmail;
+
+    @JsonIgnore
     private final Collection<? extends GrantedAuthority> authorities;
 
     @JsonIgnore
@@ -27,10 +29,11 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return userEmail;
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

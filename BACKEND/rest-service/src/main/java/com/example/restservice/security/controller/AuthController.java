@@ -1,13 +1,14 @@
 package com.example.restservice.security.controller;
 
-import com.example.restservice.usercustomize.repository.UserCustomizeRepository;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.restservice.security.dto.ProfileRequest;
+import com.example.restservice.userKanza.repository.UserKanzaRepository;
+import org.springframework.web.bind.annotation.*;
 import com.example.restservice.config.kakao.KakaoApi;
 import com.example.restservice.config.kakao.KakaoApi.KakaoOpenIdToken;
 import com.example.restservice.config.kakao.KakaoApi.OAuthToken;
 import com.example.restservice.global.dto.ResponseDTO;
 import com.example.restservice.security.JwtIssuer;
-import com.example.restservice.security.dto.LoginReqponse;
+import com.example.restservice.security.dto.LoginResponse;
 import com.example.restservice.security.dto.LoginRequest;
 import com.example.restservice.security.dto.UserPrincipal;
 import com.example.restservice.user.UserService;
@@ -18,10 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.HashMap;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +30,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import java.util.Base64;
 
 @Slf4j
 @RestController
@@ -49,10 +42,30 @@ public class AuthController {
         private final AuthenticationManager authenticationManager;
         private final UserService userService;
         private final KakaoApi kakaoApi;
-        private final UserCustomizeRepository usercustomizeRepository;
+        private final UserKanzaRepository usercustomizeRepository;
 
+
+        @PatchMapping("/auth/setDefaultProfile")
+        public ResponseEntity<?> setDefaultProfile(@RequestBody ProfileRequest profileRequest)
+        {
+                try
+                {
+                        UserModel userModel = userService.findCurrentUser();
+                        userModel.setUserNickname(profileRequest.getNickname());
+                        userModel.setUserProfileChoice(profileRequest.getProfileIndex());
+                        return ResponseEntity.ok("프로필 변경이 완료되었습니다");
+                }
+                catch (NoSuchElementException e)
+                {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자를 찾을 수 없습니다");
+                }
+                catch (Exception e)
+                {
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+                }
+        }
         @PostMapping("/auth/login")
-        public LoginReqponse login(@RequestBody @Validated LoginRequest request) {
+        public LoginResponse login(@RequestBody @Validated LoginRequest request) {
                 // TODO: process POST request
 
                 var authentication = authenticationManager.authenticate(
@@ -64,8 +77,8 @@ public class AuthController {
                                 .map(GrantedAuthority::getAuthority)
                                 .toList();
 
-                var token = jwtIssuer.issue(principal.getUserId(), principal.getEmail(), roles);
-                return LoginReqponse.builder()
+                var token = jwtIssuer.issue(principal.getUserIndex(), principal.getUserEmail(), roles);
+                return LoginResponse.builder()
                                 .accessToken(token)
                                 .build();
         }
@@ -78,17 +91,16 @@ public class AuthController {
                                 throw new RuntimeJsonMappingException("INVALID PASSWORD");
                         }
                         UserModel user = UserModel.builder()
-                                        .email(request.getEmail())
-                                        .password(passwordEncoder.encode(request.getPassword()))
+                                        .userEmail(request.getEmail())
                                         .build();
                         UserModel registerUserModel = userService.create(user);
-                        usercustomizeRepository.CreateAllRelationsByUser(registerUserModel.getId());
-                        var token = jwtIssuer.issue(registerUserModel.getId(),
-                                        registerUserModel.getEmail(),
-                                        Arrays.stream(registerUserModel.getRole().split(", "))
+                        usercustomizeRepository.CreateAllRelationsByUser(registerUserModel.getUserIndex());
+                        String token = jwtIssuer.issue(registerUserModel.getUserIndex(),
+                                        registerUserModel.getUserEmail(),
+                                        Arrays.stream("".split(", "))
                                                         .collect((Collectors.toList())));
-                        LoginReqponse loginReqponse = LoginReqponse.builder().accessToken(token).build();
-                        return ResponseEntity.ok().body(loginReqponse);
+                        LoginResponse loginResponse = LoginResponse.builder().accessToken(token).build();
+                        return ResponseEntity.ok().body(loginResponse);
                 } catch (Exception e) {
                         ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
                         return ResponseEntity
@@ -124,18 +136,17 @@ public class AuthController {
                         if (userService.existsByEmail(kakaoOpenIdToken.getSub()) == false)
                         {
                                 UserModel user = UserModel.builder()
-                                .email(kakaoOpenIdToken.getSub())
-                                .password(passwordEncoder.encode(kakaoOpenIdToken.getSub()))
-                                .build();
+                                        .userEmail(kakaoOpenIdToken.getSub())
+                                        .build();
                 
                                 UserModel registerUserModel = userService.create(user);
-                                usercustomizeRepository.CreateAllRelationsByUser(registerUserModel.getId());
-                                var MyAccesstoken = jwtIssuer.issue(registerUserModel.getId(),
-                                                registerUserModel.getEmail(),
-                                                Arrays.stream(registerUserModel.getRole().split(", "))
+                                usercustomizeRepository.CreateAllRelationsByUser(registerUserModel.getUserIndex());
+                                String MyAccesstoken = jwtIssuer.issue(registerUserModel.getUserIndex(),
+                                                registerUserModel.getUserEmail(),
+                                                Arrays.stream("".split(", "))
                                                                 .collect((Collectors.toList())));
-                                LoginReqponse loginReqponse = LoginReqponse.builder().accessToken(MyAccesstoken).build();
-                                return ResponseEntity.ok().body(loginReqponse);
+                                LoginResponse loginResponse = LoginResponse.builder().accessToken(MyAccesstoken).build();
+                                return ResponseEntity.ok().body(loginResponse);
                         }
                         else
                         {
@@ -147,8 +158,8 @@ public class AuthController {
                                 var roles = principal.getAuthorities().stream()
                                                 .map(GrantedAuthority::getAuthority)
                                                 .toList();
-                                var MyAccesstoken = jwtIssuer.issue(principal.getUserId(), principal.getEmail(), roles);
-                                return ResponseEntity.ok().body(LoginReqponse.builder()
+                                var MyAccesstoken = jwtIssuer.issue(principal.getUserIndex(), principal.getUserEmail(), roles);
+                                return ResponseEntity.ok().body(LoginResponse.builder()
                                 .accessToken(MyAccesstoken)
                                 .build());
                         }

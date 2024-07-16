@@ -1,4 +1,7 @@
 spring:
+  config:
+    import:
+    - application-private.yaml
   data:
     redis:
       host: localhost
