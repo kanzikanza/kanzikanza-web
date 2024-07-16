@@ -1,6 +1,6 @@
 package com.example.restservice.controllers;
 
-import com.example.restservice.dtos.UniteDtos;
+import com.example.restservice.dtos.UserUniteDtos;
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
 import com.example.restservice.userKanza.service.UserKanzaService;
@@ -9,8 +9,6 @@ import com.example.restservice.userTest.service.UserTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +32,8 @@ public class UserRelatedController {
                 UserModel userModel = userService.findCurrentUser();
                 List<UserTestModel> userTestModels = userTestService.findUserTestModelsByUserModel(userModel);
 
-                UniteDtos.UserTestDtos.UserTestDto userTestDto =  UniteDtos.UserTestDtos.UserTestDto.builder().build();
-                userTestModels.forEach(x -> userTestDto.testLevels.add(UniteDtos.UserTestDtos.toTestLevelDto(x)));
+                UserUniteDtos.UserTestDtos.UserTestDto userTestDto =  UserUniteDtos.UserTestDtos.UserTestDto.builder().build();
+                userTestModels.forEach(x -> userTestDto.testLevels.add(UserUniteDtos.UserTestDtos.toTestLevelDto(x)));
 
                 return ResponseEntity.status(HttpStatus.OK).body(userTestDto);
 

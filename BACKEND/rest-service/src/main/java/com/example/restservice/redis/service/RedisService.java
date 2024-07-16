@@ -2,7 +2,6 @@ package com.example.restservice.redis.service;
 
 
 import com.example.restservice.kanza.dto.KanzaDto;
-import com.example.restservice.kanza.dto.KanziDto;
 import com.example.restservice.kanza.model.KanzaModel;
 import com.example.restservice.kanza.persistence.KanzaRepository;
 import com.example.restservice.kanza.service.KanziService;

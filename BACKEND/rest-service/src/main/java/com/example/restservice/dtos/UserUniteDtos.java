@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.util.List;
 
-public class UniteDtos {
+public class UserUniteDtos {
 
 
 

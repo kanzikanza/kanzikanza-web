@@ -1,6 +1,6 @@
 package com.example.restservice.kanza.controller;
 
-import com.example.restservice.kanza.dto.InpDto;
+import com.example.restservice.dtos.KanzaUniteDtos;
 import com.example.restservice.redis.service.RedisService;
 import com.example.restservice.userKanza.service.UserKanzaService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 // import com.example.restservice.kanzi.persistence.kanzaRepository;
 import com.example.restservice.kanza.service.KanziService;
 import com.example.restservice.kanza.dto.KanzaDto;
-import com.example.restservice.kanza.dto.KanziDto;
 import com.example.restservice.kanza.model.KanzaModel;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class Kanzicontroller {
         String str = kanziService.kanziservice(kanza, mean, sound);
         List<String> list = new ArrayList<>();
         list.add(str);
-        KanziDto<String> response = KanziDto.<String>builder().data(list).build();
+        KanzaUniteDtos.KanziDto<String> response = KanzaUniteDtos.KanziDto.<String>builder().data(list).build();
         return ResponseEntity.ok().body(response);
     }
     @PostMapping("/kanza")
@@ -48,11 +47,11 @@ public class Kanzicontroller {
             KanzaModel tmp = KanzaDto.toKanza(kanza);
             List<KanzaModel> entities = kanziService.create(tmp);
             List<KanzaDto> dtos = entities.stream().map(KanzaDto::new).collect(Collectors.toList());
-            KanziDto<KanzaDto> response = KanziDto.<KanzaDto>builder().data(dtos).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().data(dtos).build();
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             String error = e.getMessage();
-            KanziDto<KanzaDto> response = KanziDto.<KanzaDto>builder().error(error).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -63,12 +62,12 @@ public class Kanzicontroller {
 
             List<KanzaModel> entities = kanziService.getAllofThem();
             List<KanzaDto> dtos = entities.stream().map(KanzaDto::new).collect(Collectors.toList());
-            KanziDto<KanzaDto> response = KanziDto.<KanzaDto>builder().data(dtos).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().data(dtos).build();
 
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             String error = e.getMessage();
-            KanziDto<KanzaDto> response = KanziDto.<KanzaDto>builder().error(error).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -83,19 +82,19 @@ public class Kanzicontroller {
             // List<KanzaDto> dtos =
             // entities.stream().map(KanzaDto::new).collect(Collectors.toList());
 
-            KanziDto<KanzaDto> response = KanziDto.<KanzaDto>builder().data(dtos).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().data(dtos).build();
 
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
             String error = e.getMessage();
-            KanziDto<KanzaDto> response = KanziDto.<KanzaDto>builder().error(error).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
     }
 
     @PatchMapping("/isRight")
-    public ResponseEntity<?> isRight(@RequestBody InpDto.isRight inpDto)
+    public ResponseEntity<?> isRight(@RequestBody KanzaUniteDtos.InpDto.isRight inpDto)
     {
         try
         {
