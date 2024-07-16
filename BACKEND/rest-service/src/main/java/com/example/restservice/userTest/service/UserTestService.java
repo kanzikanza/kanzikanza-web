@@ -21,7 +21,7 @@ public class UserTestService {
         userTestRepository.CreateUserTestOnUser(userModel.getUserIndex());
     }
 
-    List<UserTestModel> findUserTestModelsByUserModel(UserModel userModel)
+    public List<UserTestModel> findUserTestModelsByUserModel(UserModel userModel)
     {
         return userTestRepository.findUserTestModelsByUserModel(userModel);
     }
