@@ -1,6 +1,5 @@
 package com.example.restservice.neo4j.service;
 
-import com.example.restservice.neo4j.entity.KanzaModelNeo4j;
 import com.example.restservice.neo4j.entity.KanzaWord;
 import com.example.restservice.neo4j.repository.KanzaWordRepository;
 import lombok.RequiredArgsConstructor;

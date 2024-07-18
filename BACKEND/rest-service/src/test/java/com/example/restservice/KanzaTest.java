@@ -1,7 +1,7 @@
 package com.example.restservice;
 
 
-import com.example.restservice.kanza.controller.Kanzicontroller;
+import com.example.restservice.controllers.KanzaRelatedController;
 import com.example.restservice.neo4j.controller.Neo4jController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ public class KanzaTest
     private WebApplicationContext context;
 
     @Autowired
-    private Kanzicontroller kanzicontroller;
+    private KanzaRelatedController kanzaRelatedController;
 
     @Autowired
     private Neo4jController neo4jController;

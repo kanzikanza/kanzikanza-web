@@ -1,7 +1,7 @@
 package com.example.restservice.neo4j.controller;
 
 import com.example.restservice.kanza.model.KanzaModel;
-import com.example.restservice.kanza.service.KanziService;
+import com.example.restservice.kanza.service.KanzaService;
 import com.example.restservice.neo4j.entity.KanzaModelNeo4j;
 import com.example.restservice.neo4j.entity.KanzaWord;
 import com.example.restservice.neo4j.entity.relationship.KanzaIncluded;
@@ -17,14 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
 @Slf4j
 @RestController
 @RequestMapping("neo4j")
 @RequiredArgsConstructor
 public class Neo4jController {
-    private final KanziService kanziService;
+    private final KanzaService kanzaService;
     private final KanzaModelNeo4jService kanzaModelNeo4jService;
     private final KanzaWordService kanzaWordService;
     private final KanzaIncludedService kanzaIncludedService;
@@ -35,7 +34,7 @@ public class Neo4jController {
             //
             ArrayList<String> kanziArray = new ArrayList<>(Arrays.asList("針", "小", "棒", "大"));
             kanziArray.forEach(x -> {
-                KanzaModel kanzaModel = kanziService.findByKANZA(x);
+                KanzaModel kanzaModel = kanzaService.findByKANZA(x);
                 if (!kanzaModelNeo4jService.existsById(kanzaModel.getKanzaLetter()))
                 {
                     kanzaModelNeo4jService.Create(

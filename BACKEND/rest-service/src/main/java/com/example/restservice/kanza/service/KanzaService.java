@@ -6,6 +6,7 @@ import com.example.restservice.kanza.persistence.KanzaRepository;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import lombok.extern.slf4j.Slf4j;
 import java.util.List;
+import java.util.Random;
 // import org.hibernate.mapping.List;
 
 import com.example.restservice.kanza.model.KanzaModel;
@@ -13,7 +14,7 @@ import com.example.restservice.kanza.model.KanzaModel;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KanziService {
+public class KanzaService {
     private final KanzaRepository kanzaRepository;
 
     public String kanziservice(String kanzi, String mean, String sound) {
@@ -37,7 +38,6 @@ public class KanziService {
         }
         // return kanzaRepository.findById(kanza.getId());
         return kanzaRepository.findByKanzaSound(kanza.getKanzaSound());
-
     }
 
     public KanzaModel findByKanzaIndex(Integer kanzaIndex)
@@ -63,4 +63,30 @@ public class KanziService {
     public KanzaModel findByKANZA(String KANZA) {
         return kanzaRepository.findByKanzaLetter(KANZA);
     }
+
+
+    public List<KanzaModel> getTestProblems(Integer level, Integer length)
+    {
+        // 다행히 급수와 레벨은 거의 같기 떄문에 그것만 맞춰서 해주면됨
+        return kanzaRepository.findKanzaModelsByLevel(length, level + 1);
+    }
+
+
+    public KanzaModel findRelatedKanza(Integer kanzaIndex)
+    {
+        // 1단계 구현 인덱스가 비슷한 한자
+        Integer minIndex = kanzaRepository.findMinKanzaIndex();
+        Integer maxIndex = kanzaRepository.findMaxKanzaIndex();
+        Random random = new Random();
+        while (true)
+        {
+            int nextIndex = kanzaIndex + random.nextInt(100) - 50;
+            if (nextIndex < minIndex || nextIndex > maxIndex)
+            {
+                continue;
+            }
+            return kanzaRepository.findByKanzaIndex(nextIndex);
+        }
+    }
+
 }

@@ -3,10 +3,7 @@ package com.example.restservice.userStreak.dtos;
 import com.example.restservice.userStreak.model.UserStreakModel;
 import lombok.*;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter

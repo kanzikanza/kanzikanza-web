@@ -3,20 +3,16 @@ package com.example.restservice.redis.service;
 
 import com.example.restservice.kanza.dto.KanzaDto;
 import com.example.restservice.kanza.model.KanzaModel;
-import com.example.restservice.kanza.persistence.KanzaRepository;
-import com.example.restservice.kanza.service.KanziService;
+import com.example.restservice.kanza.service.KanzaService;
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Node;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -27,7 +23,7 @@ import java.util.Optional;
 public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserService userService;
-    private final KanziService kanziService;
+    private final KanzaService kanzaService;
     public void putToCache(String key, String data)
     {
         HashOperations<String, String, Object> values = redisTemplate.opsForHash();
@@ -196,7 +192,7 @@ public class RedisService {
                 }
             }
              log.info("2");
-            KanzaModel kanzaModel = kanziService.findByKanzaIndex(Integer.valueOf(kanzaIndex));
+            KanzaModel kanzaModel = kanzaService.findByKanzaIndex(Integer.valueOf(kanzaIndex));
 
             KanzaDto kanzaDto = KanzaDto.builder()
                     .KANZA(kanzaModel.getKanzaLetter())

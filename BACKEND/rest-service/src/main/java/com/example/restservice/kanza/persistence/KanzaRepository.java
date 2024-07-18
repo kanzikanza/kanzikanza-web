@@ -19,9 +19,16 @@ public interface KanzaRepository extends JpaRepository<KanzaModel, Integer> {
 
     KanzaModel findByKanzaIndex(Integer kanzaIndex);
 
-    List<KanzaModel> findTop20ByOrderByKanzaIndexDesc();
 
+    @Query(value = "select * from kanza order by rand() limit :problemNum where kanza.test_index = :level", nativeQuery = true)
+    List<KanzaModel> findKanzaModelsByLevel(@Param("problemNum") Integer problemNum, @Param("level") Integer level);
 
     @Query(value = "select * from kanza order by rand() limit :problemNum", nativeQuery = true)
     List<KanzaModel> findKanzasByRandom(@Param("problemNum") Integer problemNum);
+
+    @Query("SELECT MIN(k.kanzaIndex) FROM KanzaModel k")
+    Integer findMinKanzaIndex();
+
+    @Query("SELECT MAX(k.kanzaIndex) FROM KanzaModel k")
+    Integer findMaxKanzaIndex();
 }

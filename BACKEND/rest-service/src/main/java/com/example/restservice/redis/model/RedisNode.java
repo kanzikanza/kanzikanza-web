@@ -1,6 +1,5 @@
 package com.example.restservice.redis.model;
 
-import com.example.restservice.kanza.dto.KanzaDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
