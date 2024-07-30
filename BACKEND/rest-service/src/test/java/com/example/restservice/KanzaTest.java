@@ -93,4 +93,7 @@ public class KanzaTest
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url));
         resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+
+
 }

@@ -3,6 +3,8 @@ package com.example.restservice.controllers;
 import com.example.restservice.dtos.KanzaUniteDtos;
 import com.example.restservice.kanza.service.KanzaService;
 import com.example.restservice.redis.service.RedisService;
+import com.example.restservice.user.UserService;
+import com.example.restservice.user.model.UserModel;
 import com.example.restservice.userKanza.service.UserKanzaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class KanzaRelatedController {
     private final KanzaService kanzaService;
     private final UserKanzaService userCustomizeService;
     private final RedisService redisService;
+    private final UserService userService;
 
 
     @GetMapping("/kanza")
@@ -129,7 +132,18 @@ public class KanzaRelatedController {
     public ResponseEntity<?> getTestProblems(@RequestParam(required = true) Integer levels, Integer days)
     {
         Integer length = 20;
+
+        UserModel userModel = userService.findCurrentUser();
         // 캐시에서 문제가 있다면 가져오는 과정을 걸침
+        try {
+            length -= redisService.getCachedNumber(userModel.getUserIndex().toString());
+        } catch (NullPointerException e)
+        {
+            log.error("에러 발생");
+            length = 20;
+        }
+
+
         Integer cachedProblem = 0;
         Integer availableProblemType = 3;
         int maxAnswerOption = 4;

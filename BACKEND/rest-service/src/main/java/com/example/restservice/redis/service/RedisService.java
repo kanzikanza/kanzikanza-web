@@ -102,6 +102,18 @@ public class RedisService {
         }
     }
 
+    public Integer getCachedNumber(String userIndex) throws NullPointerException
+    {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        try
+        {
+            return Integer.valueOf(values.get(userIndex + "::LinkedList::Cache" + "::meta::Length").toString());
+        } catch (NullPointerException e)
+        {
+            throw e;
+        }
+    }
+
     public String getNextNode(String nodeName)
     {
         return "이스터에그다 시발아";
@@ -132,6 +144,8 @@ public class RedisService {
         values.set(Node1 + "::Next", ((Integer) (index + 1)).toString(), duration);
         values.set(Node2 + "::Before", index.toString(), duration);
     }
+
+
 
 
     public void redisCacheDelete(String nodeKey)
@@ -171,6 +185,9 @@ public class RedisService {
         Duration duration = Duration.ofSeconds(100);
         redisTemplate.execute((RedisCallback<? extends Object>) connection -> {
             ValueOperations<String, Object> values = redisTemplate.opsForValue();
+            // 연결리스트 없으면 만드는 코드
+
+
             checkLinkedList(userIndex);
 
             String linkedList = userIndex + "::LinkedList";
