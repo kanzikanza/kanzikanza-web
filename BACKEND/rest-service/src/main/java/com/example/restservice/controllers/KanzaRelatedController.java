@@ -136,18 +136,34 @@ public class KanzaRelatedController {
         UserModel userModel = userService.findCurrentUser();
         // 캐시에서 문제가 있다면 가져오는 과정을 걸침
         try {
-            length -= redisService.getCachedNumber(userModel.getUserIndex().toString());
+            Integer fromCache = redisService.getCachedNumber(userModel.getUserIndex().toString());
+            if (fromCache < 4)
+            {
+                length -= fromCache;
+            }
+            else if (fromCache < 6)
+            {
+                length -= 3;
+            }
+            else
+            {
+                length -= 5;
+            }
         } catch (NullPointerException e)
         {
             log.error("에러 발생");
             length = 20;
         }
+        List<KanzaModel> kanzaModels = kanzaService.getTestProblems(levels, length );
 
+        List<KanzaDto> kanzaDtos = redisService.redisGetNCache(userModel.getUserIndex().toString(), 20 - length);
 
-        Integer cachedProblem = 0;
-        Integer availableProblemType = 3;
+        for (KanzaDto kanzaDto : kanzaDtos) {
+            KanzaModel kanzaModel = kanzaService.findByKANZA(kanzaDto.getKANZA());
+            kanzaModels.add(kanzaModel);
+        }
+        int availableProblemType = 3;
         int maxAnswerOption = 4;
-        List<KanzaModel> kanzaModels = kanzaService.getTestProblems(levels, length - cachedProblem);
         KanzaUniteDtos.TestProblems testProblems =  KanzaUniteDtos.TestProblems.builder().build();
 
         testProblems.setTestLevel(levels);
@@ -157,6 +173,9 @@ public class KanzaRelatedController {
         List<KanzaUniteDtos.Problem> problems = new ArrayList<>();
         Random random = new Random();
 
+
+        // 캐시로 받은 문제들을 어떻게 할지를 고민 일단 리스트에 전부 합칠건데 이 로직을 분리하는게 나을듯
+        // ToDo : x에서 problem만드는 로직을 fromCache냐 아니냐에 따라서 나눌 필요가 있음 새로운 함수 생성
         kanzaModels.forEach(x ->
                 {
                     int problemType = random.nextInt(availableProblemType);

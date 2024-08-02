@@ -15,6 +15,9 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -38,6 +41,7 @@ public class RedisService {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         values.set(key, data, duration);
     }
+
 
 
 
@@ -114,10 +118,7 @@ public class RedisService {
         }
     }
 
-    public String getNextNode(String nodeName)
-    {
-        return "이스터에그다 시발아";
-    }
+
     public void make2Node(String userIndex)
     {
 
@@ -147,6 +148,36 @@ public class RedisService {
 
 
 
+
+    public List<KanzaDto> redisGetNCache(String userIndex, int n)
+    {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        String linkedList = userIndex + "::LinkedList";
+        checkLinkedList(userIndex);
+        Integer size = Integer.valueOf(values.get(linkedList + "::Cache" + "::meta::Length").toString());
+
+        List<KanzaDto> kanzaDtos = new ArrayList<>();
+        for (; n > 0; n--)
+        {
+            kanzaDtos.add(popKanzaCache(linkedList));
+        }
+        values.set(linkedList + "::Cache" + "::meta::Length", size);
+        return kanzaDtos;
+    }
+
+    public KanzaDto popKanzaCache(String linkedList)
+    {
+        KanzaDto node =  redisTemplate.execute((RedisCallback<KanzaDto>) connection -> {
+            ValueOperations<String, Object> values = redisTemplate.opsForValue();
+
+            Object popNode = values.get(linkedList + "::Cache" + "::Tail::Before");
+            KanzaDto popNodeKanzaDto = (KanzaDto) popNode;
+            String popNodeKey = popNode.toString();
+            redisCacheDelete(popNodeKey);
+            return popNodeKanzaDto;
+        });
+        return node;
+    }
 
     public void redisCacheDelete(String nodeKey)
     {
@@ -208,7 +239,6 @@ public class RedisService {
                     size--;
                 }
             }
-             log.info("2");
             KanzaModel kanzaModel = kanzaService.findByKanzaIndex(Integer.valueOf(kanzaIndex));
 
             KanzaDto kanzaDto = KanzaDto.builder()
@@ -216,7 +246,6 @@ public class RedisService {
                     .SOUND(kanzaModel.getKanzaSound())
                     .MEAN(kanzaModel.getKanzaMean())
                     .build();
-             log.info("3");
 
             redisCachePutHead(linkedList + "::Cache" + "::Head", possibleNodeKey, kanzaDto);
             size++;
