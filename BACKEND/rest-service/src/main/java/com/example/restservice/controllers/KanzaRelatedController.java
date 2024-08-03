@@ -8,6 +8,7 @@ import com.example.restservice.user.model.UserModel;
 import com.example.restservice.userKanza.service.UserKanzaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import com.example.restservice.kanza.dto.KanzaDto;
 import com.example.restservice.kanza.model.KanzaModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -128,6 +130,8 @@ public class KanzaRelatedController {
     }
 
 
+
+
     @GetMapping("/getTestProblems")
     public ResponseEntity<?> getTestProblems(@RequestParam(required = true) Integer levels, Integer days)
     {
@@ -155,137 +159,60 @@ public class KanzaRelatedController {
             length = 20;
         }
         List<KanzaModel> kanzaModels = kanzaService.getTestProblems(levels, length );
-
         List<KanzaDto> kanzaDtos = redisService.redisGetNCache(userModel.getUserIndex().toString(), 20 - length);
 
-        for (KanzaDto kanzaDto : kanzaDtos) {
-            KanzaModel kanzaModel = kanzaService.findByKANZA(kanzaDto.getKANZA());
-            kanzaModels.add(kanzaModel);
-        }
-        int availableProblemType = 3;
-        int maxAnswerOption = 4;
+
         KanzaUniteDtos.TestProblems testProblems =  KanzaUniteDtos.TestProblems.builder().build();
+
 
         testProblems.setTestLevel(levels);
         testProblems.setDays(days);
         testProblems.setLength(length);
 
         List<KanzaUniteDtos.Problem> problems = new ArrayList<>();
-        Random random = new Random();
 
+        for (KanzaDto kanzaDto : kanzaDtos) {
+            KanzaModel kanzaModel = kanzaService.findByKANZA(kanzaDto.getKANZA());
+            KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(kanzaModel, 1);
+            problem.setProblemIndex(problems.size());
+            problems.add(problem);
+        }
 
         // 캐시로 받은 문제들을 어떻게 할지를 고민 일단 리스트에 전부 합칠건데 이 로직을 분리하는게 나을듯
-        // ToDo : x에서 problem만드는 로직을 fromCache냐 아니냐에 따라서 나눌 필요가 있음 새로운 함수 생성
         kanzaModels.forEach(x ->
                 {
-                    int problemType = random.nextInt(availableProblemType);
-                    int answerOption = random.nextInt(maxAnswerOption);
-
-                    KanzaUniteDtos.Problem problem =  KanzaUniteDtos.Problem.builder()
-                            .problemType(problemType)
-                            .answer(answerOption)
-                            .isFromCache(0)
-                            .build();
-                    List<String> options = new ArrayList<>();
-                    problem.setProblemIndex(x.getKanzaIndex());
-
-
-                    if (problemType == 0)
-                    {
-                        problem.setProblemContent(x.getKanzaMean() + " " + x.getKanzaSound());
-                        for (int i = 0; i < maxAnswerOption; i++){
-                            if (i == answerOption)
-                            {
-                                options.add(x.getKanzaLetter());
-                            }
-                            else
-                            {
-                                boolean isOverlap = false;
-                                while (true)
-                                {
-                                    KanzaModel wrongAnswerKanza = kanzaService.findRelatedKanza(x.getKanzaIndex());
-                                    for (String option : options) {
-                                        if (option.equals(wrongAnswerKanza.getKanzaLetter()))
-                                        {
-                                            isOverlap = true;
-                                            break;
-                                        }
-                                    }
-                                    if (isOverlap)
-                                    {
-                                        continue;
-                                    }
-                                    options.add(wrongAnswerKanza.getKanzaLetter());
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else if (problemType == 1)
-                    {
-                        problem.setProblemContent(x.getKanzaLetter());
-                        for (int i = 0; i < maxAnswerOption; i++){
-                            if (i == answerOption)
-                            {
-                                options.add(x.getKanzaMean());
-                            }
-                            else
-                            {
-                                boolean isOverlap = false;
-                                    while (true) {
-                                        KanzaModel wrongAnswerKanza = kanzaService.findRelatedKanza(x.getKanzaIndex());
-                                        for (String option : options) {
-                                            if (option.equals(wrongAnswerKanza.getKanzaMean()))
-                                            {
-                                                isOverlap = true;
-                                                break;
-                                            }
-                                        }
-                                        if (isOverlap)
-                                        {
-                                            continue;
-                                        }
-                                        options.add(wrongAnswerKanza.getKanzaMean());
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                    else if (problemType == 2)
-                    {
-                        problem.setProblemContent(x.getKanzaLetter());
-                        for (int i = 0; i < maxAnswerOption; i++){
-                            if (i == answerOption)
-                            {
-                                options.add(x.getKanzaSound());
-                            }
-                            else
-                            {
-                                boolean isOverlap = false;
-                                while (true) {
-                                    KanzaModel wrongAnswerKanza = kanzaService.findRelatedKanza(x.getKanzaIndex());
-                                    for (String option : options) {
-                                        if (option.equals(wrongAnswerKanza.getKanzaSound()))
-                                        {
-                                            isOverlap = true;
-                                            break;
-                                        }
-                                    }
-                                    if (isOverlap)
-                                    {
-                                        continue;
-                                    }
-                                    options.add(wrongAnswerKanza.getKanzaSound());
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    problem.setOptions(options);
+                    KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(x, 0);
+                    problem.setProblemIndex(problems.size());
                     problems.add(problem);
                 });
+
+        // 렌덤으로 섞는것 추가
+        Collections.shuffle(problems);
         testProblems.setProblems(problems);
         return ResponseEntity.ok().body(testProblems);
     }
+
+    @PostMapping("/logTest")
+    public ResponseEntity<?> logTest(@RequestBody(required = true)KanzaUniteDtos.LogApi logApi)
+    {
+        UserModel userModel = userService.findCurrentUser();
+        // 일단 사용자의 테스트로그는 시험 시작 API에 맡긴다 여기서는 있다고 가정함
+
+        // Todo: 나중에 세션 아이디 검증해야함
+        // 틀렸을때도 업데이트를 해주긴 해야함 그니까 redisService에서 로직을 다처리하는게 맞음
+        KanzaUniteDtos.ProblemLog problemLog = logApi.getProblem();
+        Integer dResult = redisService.redisUpdateTestSession(userModel.getUserIndex().toString(), problemLog.getKanzaIndex().toString(),
+                problemLog.getIsRight());
+        if (dResult.equals(1))
+        {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("적용 성공");
+        }
+        else
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("시험 업데이트 실패");
+        }
+    }
+
+
 
 }

@@ -195,6 +195,8 @@ public class RedisService {
             return null;
         });
     }
+
+
     public void redisCachePutHead(String headKey, String nodeKey, KanzaDto kanzaDto)
     {
         Duration duration = Duration.ofSeconds(100);
@@ -211,6 +213,7 @@ public class RedisService {
         });
     }
 
+    // PutHead를 감싸고 최대 로직을 감싸는 내용
     public void redisCachePut(String userIndex, String kanzaIndex)
     {
         Duration duration = Duration.ofSeconds(100);
@@ -254,4 +257,54 @@ public class RedisService {
             return null;
         });
     }
+
+
+    public void redisCheckTestSession(String userIndex)
+    {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+//        redisTemplate.delete(userIndex + "::LinkedList");
+//        Duration duration = Duration.ofSeconds(1000);
+        if (values.get(userIndex + "::TestSession") == null)
+        {
+            values.set(userIndex + "::TestSession", "1");
+            values.set(userIndex + "::TestSession" + "::Id", "1");
+            values.set(userIndex + "::TestSession" + "::meta", "1");
+            values.set(userIndex + "::TestSession" + "::meta" + "::Progress" , "0");
+            values.set(userIndex + "::TestSession" + "::meta" + "::Length" , "20");
+            values.set(userIndex + "::TestSession" + "::meta" + "::Score" , "0");
+        }
+    }
+
+    public Integer redisUpdateTestSession(String userIndex, String kanzaIndex, Integer isRight)
+    {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+
+        Integer result = 0;
+        redisCheckTestSession(userIndex);
+        String testSession = userIndex + "::TestSession";
+        if (values.get(testSession + "::meta" + "::Progress").equals("20"))
+        {
+            return result;
+        }
+        if (isRight.equals(0))
+        {
+            redisCachePut(userIndex, kanzaIndex);
+        }
+        try {
+            Integer previousProgress = (Integer) values.get(testSession + "::meta" + "::Progress");
+            previousProgress += 1;
+            values.set(testSession + "::meta" + "::Progress", previousProgress.toString());
+
+            Integer previousScore = (Integer) values.get(testSession + "::meta" + "::Score");
+            previousProgress += isRight;
+            values.set(testSession + "::meta" + "::Score", previousProgress.toString());
+        }
+        catch (Exception e)
+        {
+            return result;
+        }
+        result = 1;
+        return result;
+    }
+
 }
