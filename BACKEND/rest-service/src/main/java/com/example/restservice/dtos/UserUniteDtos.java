@@ -9,7 +9,7 @@ public class UserUniteDtos {
 
 
 
-    public class UserTestDtos
+    public static class UserTestDtos
     {
         @Builder
         @Setter

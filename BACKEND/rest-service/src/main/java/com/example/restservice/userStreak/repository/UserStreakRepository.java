@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface UserStreakRepository extends JpaRepository<UserStreakModel, Integer>
 {
-    @Query("SELECT u FROM UserStreakModel u WHERE u.userStreakCreatedAt >= :date and u.userModel = :user ")
-    List<UserStreakModel> findAllWithCreationDateBefore(@Param("date") LocalDateTime date, @Param("user") UserModel userModel);
+    @Query("SELECT u FROM UserStreakModel u WHERE u.userStreakCreatedAt >= :date and u.userModel = :user")
+    List<UserStreakModel> findAllWithCreationDateBefore(@Param("date") LocalDateTime date, @Param("user") UserModel user);
 }
