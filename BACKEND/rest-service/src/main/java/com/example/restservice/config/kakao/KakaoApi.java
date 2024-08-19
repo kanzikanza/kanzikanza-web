@@ -1,5 +1,8 @@
 package com.example.restservice.config.kakao;
 
+import com.google.gson.JsonSyntaxException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParser;
 
 import org.springframework.context.annotation.Bean;
@@ -12,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
@@ -20,8 +25,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.security.PublicKey;
+import java.time.LocalDateTime;
+
+@Slf4j
 @Component
 public class KakaoApi {
+    @Value("${kakao.api_key}")
+    private String clientId;
 
     // public String getAccessToken(String code) {
     // String accessToken = "";
@@ -81,7 +92,7 @@ public class KakaoApi {
         // HttpBody 오브젝트
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "e0fa9c3226566a2dcda49e672fe892ac");
+        params.add("client_id", clientId);
         params.add("redirect_uri", "http://localhost:8080/auth/Oauth2/KakaoToken");
         params.add("code", code);
 
@@ -99,10 +110,74 @@ public class KakaoApi {
         return oAuthToken;
     }
 
+    public OAuthToken updateToken(String code) throws RestClientException, JsonSyntaxException
+    {
+        String reqUrl = "https://kauth.kakao.com/oauth/token";
+        RestTemplate rt = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", clientId);
+        params.add("refresh_token", code);
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+        try {
+            ResponseEntity<String> response = rt.exchange(reqUrl, HttpMethod.POST, kakaoTokenRequest, String.class);
+
+            // 상태 코드가 200 OK가 아닌 경우 예외 발생
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new RestClientException("Failed to update token. HTTP Status: " + response.getStatusCode());
+            }
+
+            // JSON 파싱 및 객체 생성
+            String responseBody = response.getBody();
+            Gson gson = new Gson();
+            return gson.fromJson(responseBody, OAuthToken.class);
+
+        } catch (HttpClientErrorException | JsonSyntaxException e) {
+            // 구체적인 예외 처리
+            throw new RestClientException("Failed to update token due to an error: " + e.getMessage(), e);
+        }
+    }
+
+
     public KakaoOpenIdToken getOpenIdToken(String code) {
         Gson gson = new Gson();
         KakaoOpenIdToken kakaoOpenIdToken = gson.fromJson(code, KakaoOpenIdToken.class);
         return kakaoOpenIdToken;
+    }
+
+    public KakaoUserInfo getKakaoUserInfo(String code) throws RestClientException, JsonSyntaxException
+    {
+        String reqUrl = "https://kapi.kakao.com/v2/user/me";
+        RestTemplate rt = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", "Bearer " + code);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        try {
+            ResponseEntity<String> response = rt.exchange(reqUrl, HttpMethod.POST, kakaoTokenRequest, String.class);
+
+            // 상태 코드가 200 OK가 아닌 경우 예외 발생
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new RestClientException("Failed to update token. HTTP Status: " + response.getStatusCode());
+            }
+            // JSON 파싱 및 객체 생성
+            String responseBody = response.getBody();
+            Gson gson = new Gson();
+            return gson.fromJson(responseBody, KakaoUserInfo.class);
+
+        } catch (HttpClientErrorException | JsonSyntaxException e) {
+            // 구체적인 예외 처리
+            throw new RestClientException("Failed to update token due to an error: " + e.getMessage(), e);
+        }
+
+
     }
 
     @Getter
@@ -114,7 +189,6 @@ public class KakaoApi {
         private int expires_in;
         private String refresh_token;
         private String scope;
-
         // 생성자, 게터, 세터 등 필요한 코드 작성
     }
 
@@ -130,4 +204,31 @@ public class KakaoApi {
         private String iat;
     }
 
+    @Getter
+    @Setter
+    public static class KakaoUserInfo {
+        private Long id;
+        private String connected_at;
+        private  KakaoAccountInfo kakao_account;
+    }
+
+    @Getter
+    @Setter
+    public static class KakaoAccountInfo {
+        private Boolean profile_nickname_needs_agreement;
+        private Boolean email_needs_agreement;
+        private Boolean is_email_valid;
+        private Boolean is_email_verified;
+
+        private KakaoProfile kakaoProfile;
+
+        private String email;
+    }
+
+    @Getter
+    @Setter
+    public static class KakaoProfile {
+        private Boolean profile_nickname_needs_agreement;
+        private String nickname;
+    }
 }

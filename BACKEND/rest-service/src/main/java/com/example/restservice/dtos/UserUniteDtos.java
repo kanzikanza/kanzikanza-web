@@ -9,6 +9,7 @@ public class UserUniteDtos {
 
 
 
+
     public static class UserTestDtos
     {
         @Builder
@@ -40,5 +41,23 @@ public class UserUniteDtos {
                     .build();
         }
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginResponse {
+        private String accessToken;
+        private String refreshToken;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateRequest {
+        private String refreshToken;
+    }
+
 
 }

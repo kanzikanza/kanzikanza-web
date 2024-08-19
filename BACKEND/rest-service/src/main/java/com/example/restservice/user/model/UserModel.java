@@ -50,5 +50,17 @@ public class UserModel {
         if (userCreatedAt == null) {
             userCreatedAt = LocalDateTime.now();
         }
+
+        if (userStreakDays == null) {
+            userStreakDays = 0;
+        }
+
+        if (userStreakfreeze == null){
+            userStreakfreeze = 0;
+        }
+
+        if (userLevel == null) {
+            userLevel = 0;
+        }
     }
 }
