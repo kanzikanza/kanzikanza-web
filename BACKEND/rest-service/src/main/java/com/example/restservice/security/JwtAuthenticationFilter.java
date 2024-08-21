@@ -1,5 +1,7 @@
 package com.example.restservice.security;
 
+import com.example.restservice.config.kakao.KakaoApi;
+import com.example.restservice.dtos.UserUniteDtos;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,7 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtDecoder jwtDecoder;
     private final JwtToPrincipalConverter jwtToPrincipalConverter;
-
+    private final KakaoApi kakaoApi;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,6 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .map(jwtToPrincipalConverter::convert)
                 .map(UserPrincipalAuthenticationToken::new)
                 .ifPresent(authentication -> SecurityContextHolder.getContext().setAuthentication(authentication));
+
+        String token = extractAuthoritiesFromClaim(request).orElseThrow();
+        UserUniteDtos.ValidateResponse validateResponse = kakaoApi.getValidUser(token);
         filterChain.doFilter(request, response);
     }
 

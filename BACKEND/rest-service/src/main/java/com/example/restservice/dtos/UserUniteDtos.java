@@ -59,5 +59,15 @@ public class UserUniteDtos {
         private String refreshToken;
     }
 
-
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ValidateResponse {
+            private Integer expiresInMillis;
+            private Integer id;
+            private Integer expires_in;
+            private Integer app_id;
+            private Integer appId;
+    }
 }

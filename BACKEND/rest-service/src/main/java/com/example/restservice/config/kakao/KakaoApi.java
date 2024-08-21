@@ -1,5 +1,6 @@
 package com.example.restservice.config.kakao;
 
+import com.example.restservice.dtos.UserUniteDtos;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,10 +107,28 @@ public class KakaoApi {
 
         Gson gson = new Gson();
         OAuthToken oAuthToken = gson.fromJson(responseBody, OAuthToken.class);
-
+        log.info(oAuthToken.getId_token());
         return oAuthToken;
     }
 
+    public UserUniteDtos.ValidateResponse getValidUser(String token) throws  RestClientException
+    {
+        String reqUrl = "https://kapi.kakao.com/v1/user/access_token_info";
+        RestTemplate rt = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> response = rt.exchange(reqUrl, HttpMethod.GET, kakaoTokenRequest, String.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new RestClientException("Failed to update token. HTTP Status: " + response.getStatusCode());
+        }
+        String responseBody = response.getBody();
+        Gson gson = new Gson();
+        return gson.fromJson(responseBody, UserUniteDtos.ValidateResponse.class);
+
+    }
     public OAuthToken updateToken(String code) throws RestClientException, JsonSyntaxException
     {
         String reqUrl = "https://kauth.kakao.com/oauth/token";

@@ -148,7 +148,17 @@ public class AuthRelatedController {
         }
 
 
-
+        @GetMapping("/auth/debug/getUserName")
+        public ResponseEntity<?> getUserName()
+        {
+                try {
+                        return ResponseEntity.status(HttpStatus.OK).body(userService.findCurrentUser().getUserEmail());
+                }
+                catch (Exception e)
+                {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                }
+        }
 
         @GetMapping("/auth/Oauth2/KakaoToken")
         public ResponseEntity<?> KakaoLoginServer(@RequestParam String code) {
