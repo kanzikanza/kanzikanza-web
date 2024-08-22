@@ -13,7 +13,7 @@ import java.util.Collection;
 @Builder
 public class UserPrincipal implements UserDetails {
 
-    private final Integer userIndex;
+    private final Long userIndex;
     private final String userEmail;
 
     @JsonIgnore

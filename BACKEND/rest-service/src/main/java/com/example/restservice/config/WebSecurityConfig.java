@@ -40,15 +40,11 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(manage -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
-                .securityMatcher("/**")
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/login/page").permitAll()
                         .requestMatchers("/auth/Oauth2/KakaoToken").permitAll()
                         .requestMatchers("/auth/Oauth2/KakaoLogin").permitAll()
-                        .requestMatchers("/auth/login", "/auth/signup").permitAll()
-                        .requestMatchers("/kanzi/problem")
-                        .permitAll().anyRequest().authenticated());
+                        .anyRequest().authenticated());
         return http.build();
     }
 

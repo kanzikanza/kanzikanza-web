@@ -22,6 +22,7 @@ public class AuthService {
         KakaoApi.KakaoUserInfo kakaoUserInfo = kakaoApi.getKakaoUserInfo(accessToken);
 
         String userEmail = kakaoUserInfo.getKakao_account().getEmail();
+        Long userKakaoSerial = kakaoUserInfo.getId();
         if (userService.existsByEmail(userEmail))
         {
             return;
@@ -29,8 +30,10 @@ public class AuthService {
 
         UserModel user = UserModel.builder()
                 .userEmail(userEmail)
+                .userKakaoSerial(userKakaoSerial)
                 .build();
         UserModel registerUserModel = userService.create(user);
         userKanzaRepository.CreateAllRelationsByUser(registerUserModel.getUserIndex());
     }
+
 }

@@ -31,6 +31,8 @@ public class UserModel {
     private LocalDateTime userCreatedAt;
 
 
+    @Column(nullable = false)
+    private Long userKakaoSerial;
     @Column(nullable = true)
     private Integer userStreakDays;
     @Column(nullable = true)

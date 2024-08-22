@@ -1,5 +1,6 @@
 package com.example.restservice.security;
 
+import com.example.restservice.user.model.UserModel;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,16 @@ import java.util.List;
 public class JwtToPrincipalConverter {
     public UserPrincipal convert(DecodedJWT jwt) {
         return UserPrincipal.builder()
-                .userIndex(Integer.valueOf(jwt.getSubject()))
-                .userEmail(jwt.getClaim("e").asString())
+                .userIndex(Long.valueOf(jwt.getSubject()))
+                .authorities(null)
+                .build();
+    }
+
+    public UserPrincipal convertUserModel(UserModel userModel)
+    {
+        return UserPrincipal.builder()
+                .userIndex(userModel.getUserKakaoSerial())
+                .userEmail(userModel.getUserEmail())
                 .authorities(null)
                 .build();
     }

@@ -8,6 +8,7 @@ import com.example.restservice.user.model.UserModel;
 public interface UserRepository extends JpaRepository<UserModel, Long> {
     UserModel findByUserEmail(String email);
 
+    UserModel findUserModelByUserKakaoSerial(Long id);
 
     boolean existsByUserEmail(String email);
 }

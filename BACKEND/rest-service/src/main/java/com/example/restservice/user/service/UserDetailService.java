@@ -20,7 +20,7 @@ public class UserDetailService implements UserDetailsService {
         var user = userService.findByEmail(username).orElseThrow();
 
         return UserPrincipal.builder()
-                .userIndex(user.getUserIndex())
+                .userIndex(user.getUserKakaoSerial())
                 .userEmail(user.getUserEmail())
                 .build();
     }

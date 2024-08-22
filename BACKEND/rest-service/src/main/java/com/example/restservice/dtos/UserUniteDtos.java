@@ -65,7 +65,7 @@ public class UserUniteDtos {
     @AllArgsConstructor
     public static class ValidateResponse {
             private Integer expiresInMillis;
-            private Integer id;
+            private Long id;
             private Integer expires_in;
             private Integer app_id;
             private Integer appId;

@@ -33,6 +33,11 @@ public class UserService {
         return userRepository.save(userModel);
     }
 
+    public UserModel findUserModelByUserKakaoSerial(Long id)
+    {
+        return userRepository.findUserModelByUserKakaoSerial(id);
+    }
+
     public Optional<UserModel> findByEmail(String email) {
         var user = userRepository.findByUserEmail(email);
         if (user.equals(null))
