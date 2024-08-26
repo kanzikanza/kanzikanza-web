@@ -5,9 +5,9 @@ import { useRef, useEffect, useState } from "react";
 import { Button, Grid, Typography, styled, TextField, InputAdornment, LinearProgress } from '@mui/material/';
 import { Edit } from '@mui/icons-material'
 import * as StompJs from "@stomp/stompjs";
-import CongratulationModal from '@/src/component/Modal/CongratulationModal';
+import CongratulationModal from '@/src/components/Modal/CongratulationModal';
 import axios from 'axios';
-import SmallButton from '../../component/Button/SmallButton';
+import SmallButton from '../../components/Button/SmallButton';
 
 // 타입 정의
 type kanza = {
