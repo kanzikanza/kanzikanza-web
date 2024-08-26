@@ -7,7 +7,7 @@ import {container} from './layout.css.ts';
 const inter = Inter({ subsets: ["latin"] });
 
 const pretendard = localFont({
-  src: "../assets/fonts/Pretendard-Regular.woff",
+  src: "../../public/fonts/Pretendard-Regular.otf",
   display: "swap",
   weight: "45 920",
 });
