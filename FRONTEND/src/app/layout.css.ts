@@ -18,6 +18,6 @@ globalStyle('body', {
 
 export const container = style({
   minHeight: 500,
-  margin: vars.space['3x'],
-  padding: vars.space['3x'],
+  margin: `0 ${vars.space['3x']}`,
+  // padding: vars.space['3x'],
 });

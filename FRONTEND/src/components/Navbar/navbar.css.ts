@@ -20,17 +20,17 @@ export const rightMenu = style({
 });
 
 export const menuLink = style({
-  color: '#333',
+  color: vars.colors.black,
   textDecoration: 'none',
-  fontSize: '16px',
-  margin: '0 15px',
+  fontSize: vars.fontSize['1x'],
+  margin: `0 ${vars.space['2x']}`,
   transition: 'color 0.3s ease',
 });
 
 export const menuLinkHover = style({
   selectors: {
     '&:hover': {
-      color: '#ff6347',
+      color: vars.colors.orange,
     },
   },
 });
