@@ -1,10 +1,11 @@
 import { style } from '@vanilla-extract/css';
+import { vars } from '@/src/styles/vars.css';
 
 export const navbar = style({
   height: '50px',
-  backgroundColor: '#ffdd9e',
+  backgroundColor: vars.colors.lightOrange,
   margin: 0,
-  padding: '0 20px 0 20px',
+  padding: `0 ${vars.space['3x']}`,
   display: 'flex',
   alignItems: 'center',
 });

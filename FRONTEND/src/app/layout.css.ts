@@ -1,25 +1,23 @@
 import { style, globalStyle } from '@vanilla-extract/css';
+import { vars } from '../styles/vars.css';
 
-// 전역 스타일 설정
 globalStyle('html', {
-  backgroundColor: '#FFFFFF',
+  backgroundColor: vars.colors.white,
 });
 
 globalStyle('body', {
   margin: '0 auto',
-  padding: 0,
-  backgroundColor: '#FFFFFF',
+  padding: vars.space.none,
+  backgroundColor: vars.colors.white,
 });
 
-globalStyle('textarea', {
-  fontFamily: 'pretendard',
-});
+// 이게 적용되는지 모르겠네
+// globalStyle('textarea', {
+//   fontFamily: 'pretendard',
+// });
 
 export const container = style({
   minHeight: 500,
-  margin: 30,
-  padding: 20,
-  border: '2px solid orange',
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-  borderRadius: 10,
+  margin: vars.space['3x'],
+  padding: vars.space['3x'],
 });
