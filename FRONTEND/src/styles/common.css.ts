@@ -2,6 +2,10 @@ import { style, globalStyle } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { vars } from "./vars.css";
 
+export const pageTitle = style({
+  fontSize: vars.fontSize['4x'],
+})
+
 export const plainLine = style({
   width: '100%',
   margin: `${vars.space['1x']} 0 ${vars.space['1x']} 0`,
