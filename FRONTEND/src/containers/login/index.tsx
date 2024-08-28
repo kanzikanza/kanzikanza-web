@@ -1,11 +1,9 @@
 'use client'
 
-import LoginPage from './LoginPage';
-
 export default function Login() {
   return (
     <div>
-      <LoginPage />
+      로그인
     </div>
   );
 };

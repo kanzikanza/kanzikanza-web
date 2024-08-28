@@ -17,6 +17,9 @@ globalStyle('body', {
 // });
 
 export const container = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   minHeight: 500,
   margin: `0 ${vars.space['3x']}`,
   // padding: vars.space['3x'],
