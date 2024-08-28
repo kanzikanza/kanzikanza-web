@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { vars } from '@/src/styles/vars.css';
+import { vars } from '@/styles/vars.css';
 
 export const container = style({
   height: '90vh',
@@ -13,7 +13,7 @@ export const section = style({
   justifyContent: 'center',
   alignItems: 'center',
   transition: 'transform 0.6s ease-in-out',
-  fontSize: vars.fontSize['2x']
+  fontSize: vars.fontSize['3x']
 });
 
 export const button = style({

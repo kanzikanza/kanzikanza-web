@@ -1,8 +1,8 @@
 import { style } from '@vanilla-extract/css';
-import { vars } from '@/src/styles/vars.css';
+import { vars } from '@/styles/vars.css';
 
 export const navbar = style({
-  height: '50px',
+  height: '70px',
   backgroundColor: vars.colors.lightOrange,
   margin: 0,
   padding: `0 ${vars.space['3x']}`,
@@ -22,7 +22,7 @@ export const rightMenu = style({
 export const menuLink = style({
   color: vars.colors.black,
   textDecoration: 'none',
-  fontSize: vars.fontSize['1x'],
+  fontSize: vars.fontSize['1.5x'],
   margin: `0 ${vars.space['2x']}`,
   transition: 'color 0.3s ease',
 });
