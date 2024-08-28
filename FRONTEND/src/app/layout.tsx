@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from 'next/font/local';
 import Navbar from "../components/navbar/Navbar";
-import {container} from './layout.css.ts';
+import * as styles from './layout.css.ts';
+import '@/styles/reset.css'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body style={{ margin: 0 }}>
         <Navbar />
-        <div className={`${pretendard.className} ${container}`}>
+        <div className={`${pretendard.className} ${styles.container}`}>
           {children}
         </div>
       </body>
