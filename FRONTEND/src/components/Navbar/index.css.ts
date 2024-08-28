@@ -1,6 +1,8 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from '@/styles/vars.css';
+import { columnWrapper } from '@/styles/wrapper.css';
 
+// 메인 네비바
 export const navbar = style({
   height: '70px',
   backgroundColor: vars.colors.lightOrange,
@@ -34,3 +36,11 @@ export const menuLinkHover = style({
     },
   },
 });
+
+// 버티컬 네비바
+export const verticalContainer = style([
+  columnWrapper,
+  {
+    color: vars.colors.lightOrange,
+  }
+])
