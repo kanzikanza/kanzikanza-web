@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { pageTitle } from "@/src/styles/common.css";
 import Image from "next/image";
+import * as styles from './index.css'
 import kakaoLogin from '#/images/kakao_login_large_narrow.png';
 import Script from 'next/script';
 
@@ -26,7 +27,7 @@ export default function Login() {
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       <Script 
         src="https://developers.kakao.com/sdk/js/kakao.min.js" 
         strategy="beforeInteractive"

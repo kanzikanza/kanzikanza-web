@@ -2,7 +2,7 @@ import { flex } from './common.css';
 
 export const columnWrapper = flex({
   direction: 'column',
-  justify: 'center',
+  align: 'center',
 });
 
 export const rowWrapper = flex({
