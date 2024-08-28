@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from 'next/font/local';
-import Navbar from "../components/navbar/Navbar";
+import Navbar from "../components/Navbar";
 import * as styles from './layout.css.ts';
 import '@/styles/reset.css'
 
