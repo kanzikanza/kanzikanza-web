@@ -8,10 +8,10 @@ import { plainLine } from "@/styles/common.css";
 export default function VerticalNavbar() {
   return (
     <div className={styles.verticalContainer}>
-      <div>칸지칸자</div>
+      <a href="/dashboard" className={styles.menuLink}>한자, 한 자</a>
       <hr className={plainLine} />
-      <div>시험 보기</div>
-      <div>복습하기</div>
+      <a href="/exam" className={styles.menuLink}>시험 보기</a>
+      <a href="/review" className={styles.menuLink}>복습</a>
     </div>
   );
 }

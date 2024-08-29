@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from 'next/font/local';
-import Navbar from "../components/Navbar";
+import Navbar from "@/components/Navbar/index.tsx";
 import * as styles from './layout.css.ts';
 import '@/styles/reset.css'
 
 const inter = Inter({ subsets: ["latin"] });
 
 const pretendard = localFont({
-  src: "../../public/fonts/Pretendard-Regular.otf",
+  src: "../../../public/fonts/Pretendard-Regular.otf",
   display: "swap",
   weight: "45 920",
 });
