@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className={`${styles.layout} ${pretendard.className}`}>
         <VerticalNavbar />
         <div className={styles.container}>
-          {children}
+         {children}
         </div>
       </body>
     </html>
