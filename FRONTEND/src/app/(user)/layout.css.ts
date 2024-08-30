@@ -22,4 +22,5 @@ export const layout = style({
 
 export const container = style({
   flexGrow: 1,
+  padding: `${vars.space['4x']} ${vars.space['5x']} `,
 });
