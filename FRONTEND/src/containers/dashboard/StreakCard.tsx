@@ -9,11 +9,18 @@ import * as styles from './index.css';
 
 export default function StreakCard() {
   return (
-    <Card>
-      <div className={styles.StreakText}>
-        <Image src={fireIcon} alt="불 아이콘" width={30} height={30} />
-        627일째 도전 중  
-      </div>
-    </Card>
+    <div>
+      <Card>
+        <div className={styles.StreakText}>
+          <Image src={fireIcon} alt="불 아이콘" width={30} height={30} />
+          627일째 도전 중  
+        </div>
+      </Card>
+      <Card>
+        <div className={styles.StreakCalendar}>
+          S M T W T F S
+        </div>
+      </Card>
+    </div>
   );
 }
