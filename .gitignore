@@ -3,6 +3,7 @@
 
 ### NextJS ###
 # dependencies
+/venv
 /node_modules
 /.pnp
 .pnp.js
