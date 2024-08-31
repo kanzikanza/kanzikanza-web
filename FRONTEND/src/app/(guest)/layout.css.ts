@@ -1,5 +1,5 @@
 import { style, globalStyle } from '@vanilla-extract/css';
-import { vars } from '../styles/vars.css';
+import { vars } from '../../styles/vars.css';
 
 globalStyle('html', {
   backgroundColor: vars.colors.white,

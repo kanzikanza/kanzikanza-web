@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { pageTitle } from "@/src/styles/common.css";
+import { pageTitle } from '@/styles/common.css';
 import Image from "next/image";
 import * as styles from './index.css'
 import kakaoLogin from '#/images/kakao_login_large_narrow.png';
