@@ -1,7 +1,7 @@
 import { createGlobalTheme } from '@vanilla-extract/css';
 
 export const vars = createGlobalTheme(':root', {
-  margin: {
+  space: {
     none: '0',
     '0.5x': '4px',
     '1x': '8px',
@@ -9,21 +9,15 @@ export const vars = createGlobalTheme(':root', {
     '3x': '24px',
     '4x': '32px',
     '5x': '40px',
-  },
-
-  padding: {
-    none: '0',
-    '0.5x': '4px',
-    '1x': '8px',
-    '2x': '16px',
-    '3x': '24px',
-    '4x': '32px',
-    '5x': '40px',
+    '6x': '48px',
+    '7x': '56px',
+    '8x': '64px',
   },
 
   colors: {
     white: '#ffffff',
     black: '#000000',
+    lightOrange: '#ffdd9e',
     orange: "#ff9800",
     darkOrange: "#e65100",
   },
@@ -45,6 +39,7 @@ export const vars = createGlobalTheme(':root', {
   fontSize: {
     '0x': '8px',
     '1x': '16px',
+    '1.5x': '20px',
     '2x': '24px',
     '3x': '32px',
     '4x': '40px',
