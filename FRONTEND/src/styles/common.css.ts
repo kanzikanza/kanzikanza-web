@@ -6,12 +6,8 @@ export const pageTitle = style({
   fontSize: vars.fontSize['4x'],
 })
 
-export const plainLine = style({
-  width: '100%',
-  margin: `${vars.space['1x']} 0 ${vars.space['1x']} 0`,
-  padding: 0,
-  border: 'none',
-  borderBottom: `1px solid ${vars.colors.black}`,
+export const pageMiniTitle = style({
+  fontSize: vars.fontSize['2x'],
 })
 
 export const flex = recipe({

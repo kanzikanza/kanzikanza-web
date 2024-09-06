@@ -2,14 +2,15 @@
 
 import React from "react";
 
-import StreakCard from "./streakCard";
+import StreakCard from "./StreakCard";
 import * as styles from './index.css';
+import DayList from "./DayList";
 
 export default function Dashboard() {
   return (
-    <div>
+    <div className={styles.DashboardContainer}>
       <StreakCard />
-      대시보드 페이지입니다~~~~ㅋ
+      <DayList />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import * as styles from './index.css'
 
 interface CardProps {
   children: React.ReactNode;
+  className?: string;
 }
 
 export default function Card({children}: CardProps) {

@@ -17,9 +17,10 @@ export const vars = createGlobalTheme(':root', {
   colors: {
     white: '#ffffff',
     black: '#000000',
+    gray: '#ccc',
     lightOrange: '#ffdd9e',
     orange: "#ff9800",
-    darkOrange: "#e65100",
+    darkOrange: "#E6C9A6",
   },
 
   borderRadius: {

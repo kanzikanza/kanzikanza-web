@@ -1,4 +1,5 @@
 import { globalStyle } from '@vanilla-extract/css';
+import { vars } from './vars.css';
 
 globalStyle('input, textarea, button, a', {
   all: 'unset', 
@@ -17,4 +18,12 @@ globalStyle('input, textarea, button, a', {
 
 globalStyle('button, a', {
   cursor: 'pointer',
+})
+
+globalStyle ('hr', {
+  width: '100%',
+  margin: `${vars.space['1x']} 0 ${vars.space['1x']} 0`,
+  padding: 0,
+  border: 'none',
+  borderBottom: `1px solid ${vars.colors.darkOrange}`,
 })

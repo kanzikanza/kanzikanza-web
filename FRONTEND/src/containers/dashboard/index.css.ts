@@ -1,17 +1,11 @@
-import { rowWrapper } from '@/styles/wrapper.css';
+import { vars } from '@/styles/vars.css';
+import { columnWrapper, rowWrapper } from '@/styles/wrapper.css';
 import { style } from '@vanilla-extract/css';
 
-// StreakCard
-export const StreakText = style([
-  rowWrapper,
+export const DashboardContainer = style([
+  columnWrapper,
   {
-  
+    gap: vars.space['3x']
   }
 ])
 
-export const StreakCalendar = style([
-  rowWrapper,
-  {
-  
-  }
-])

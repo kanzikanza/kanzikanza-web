@@ -2,12 +2,10 @@ import { flex } from './common.css';
 
 export const columnWrapper = flex({
   direction: 'column',
-  align: 'center',
 });
 
 export const rowWrapper = flex({
   direction: 'row',
-  align: 'center',
 })
 
 export const centerWrapper = flex({
