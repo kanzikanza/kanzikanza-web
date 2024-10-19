@@ -10,5 +10,7 @@ public interface KanzaModelNeo4jRepository extends Neo4jRepository<KanzaModelNeo
     @Override
     boolean existsById(String s);
 
+
+    boolean existsByKanzaLetter(String s);
     KanzaModelNeo4j findKanzaModelNeo4jByKanzaLetter(String kanzaLetter);
 }

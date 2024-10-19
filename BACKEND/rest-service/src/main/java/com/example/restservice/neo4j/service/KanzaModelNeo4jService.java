@@ -11,14 +11,19 @@ import org.springframework.stereotype.Service;
 public class KanzaModelNeo4jService {
     private final KanzaModelNeo4jRepository kanzaModelNeo4jRepository;
 
-    public void Create(KanzaModelNeo4j kanzaModelNeo4j)
+    public KanzaModelNeo4j Create(KanzaModelNeo4j kanzaModelNeo4j)
     {
-        kanzaModelNeo4jRepository.save(kanzaModelNeo4j);
+        return kanzaModelNeo4jRepository.save(kanzaModelNeo4j);
     }
 
     public boolean existsById(String s)
     {
         return kanzaModelNeo4jRepository.existsById(s);
+    }
+
+    public boolean existsByKanzaLetter(String s)
+    {
+        return kanzaModelNeo4jRepository.existsByKanzaLetter(s);
     }
 
     public KanzaModelNeo4j findKanzaModelNeo4jByKanzaLetter(String kanzaLetter){

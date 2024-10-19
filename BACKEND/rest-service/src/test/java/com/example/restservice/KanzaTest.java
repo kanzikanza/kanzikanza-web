@@ -3,6 +3,10 @@ package com.example.restservice;
 
 import com.example.restservice.controllers.KanzaRelatedController;
 import com.example.restservice.neo4j.controller.Neo4jController;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +20,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.io.FileReader;
+import java.io.Reader;
 
 @SpringBootTest // url을 통해서 할 수 있다.
 @AutoConfigureMockMvc // 서버를 실행하지 않고도 테스트할 수있게해주는 앱
@@ -94,6 +101,12 @@ public class KanzaTest
         resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-
+    @DisplayName("Json파일 읽고 Neo4j로 시작할 준비")
+    @Test
+    public void jsonNeo4jTest() throws Exception {
+        final String url = "/neo4j/wordTest";
+        final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url));
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
 }

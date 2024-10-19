@@ -8,6 +8,10 @@ import com.example.restservice.neo4j.entity.relationship.KanzaIncluded;
 import com.example.restservice.neo4j.service.KanzaIncludedService;
 import com.example.restservice.neo4j.service.KanzaModelNeo4jService;
 import com.example.restservice.neo4j.service.KanzaWordService;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileReader;
+import java.io.Reader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -33,9 +40,10 @@ public class Neo4jController {
         try {
             //
             ArrayList<String> kanziArray = new ArrayList<>(Arrays.asList("針", "小", "棒", "大"));
+
             kanziArray.forEach(x -> {
                 KanzaModel kanzaModel = kanzaService.findByKANZA(x);
-                if (!kanzaModelNeo4jService.existsById(kanzaModel.getKanzaLetter()))
+                if (!kanzaModelNeo4jService.existsByKanzaLetter(kanzaModel.getKanzaLetter()))
                 {
                     kanzaModelNeo4jService.Create(
                             KanzaModelNeo4j.builder()
@@ -45,6 +53,7 @@ public class Neo4jController {
                                     .build()
                     );
                 }
+
             });
         } catch (Exception e)
         {
@@ -94,5 +103,35 @@ public class Neo4jController {
         }
         return ResponseEntity.ok().body("성공");
 
+    }
+
+    @GetMapping("wordTest")
+    public ResponseEntity<?> wordTest()
+    {
+        log.info("시작");
+        log.info(Paths.get("").toAbsolutePath().toString());
+        try {
+            Gson gson = new Gson();
+            Reader reader = new FileReader("./kanzas.json");
+
+            JsonObject obj = gson.fromJson(reader, JsonObject.class);
+            JsonArray arr = obj.getAsJsonArray("words");
+
+            for (JsonElement ar : arr) {
+                try {
+//                    log.info(ar.toString());
+                    kanzaWordService.AddNewIdiom(ar.getAsJsonObject());
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    return ResponseEntity.badRequest().body(e.getMessage());
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok().body("단어 분석 성공");
     }
 }

@@ -82,4 +82,17 @@ public class KanzaUniteDtos {
         private Integer days;
         private List<Problem> problems;
     }
+
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    public static class KanzaIdiom
+    {
+        private String kanza;
+        private String sound;
+        private String mean;
+        private Integer index;
+    }
 }
