@@ -1,4 +1,17 @@
+import { rowWrapper } from '@/styles/wrapper.css';
 import { style } from '@vanilla-extract/css';
 
-export const name = style({
-})
+// StreakCard
+export const StreakText = style([
+  rowWrapper,
+  {
+  
+  }
+])
+
+export const StreakCalendar = style([
+  rowWrapper,
+  {
+  
+  }
+])
