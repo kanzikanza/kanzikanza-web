@@ -1,0 +1,13 @@
+USE `KANZIKANZA`;
+
+DROP TABLE user;
+
+CREATE TABLE user 
+(
+	id INT AUTO_INCREMENT,
+	PRIMARY KEY(id),
+	email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULL,
+    extra_info VARCHAR(255)
+);
