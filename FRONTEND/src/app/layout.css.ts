@@ -17,9 +17,8 @@ globalStyle('textarea', {
 
 export const container = style({
   minHeight: 500,
-  margin: 30,
-  padding: 20,
-  border: '2px solid orange',
+  // padding: 20,
+  // border: '2px solid orange',
   backgroundColor: 'rgba(255, 255, 255, 0.7)',
   borderRadius: 10,
 });

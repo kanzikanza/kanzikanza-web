@@ -21,7 +21,7 @@ export const rightMenu = style({
 export const menuLink = style({
   color: '#333',
   textDecoration: 'none',
-  fontSize: '16px',
+  fontSize: '1.5rem',
   margin: '0 15px',
   transition: 'color 0.3s ease',
 });

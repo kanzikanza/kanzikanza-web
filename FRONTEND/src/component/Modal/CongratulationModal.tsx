@@ -44,7 +44,7 @@ const Content = styled(Typography)`
   padding: 20px 50px 60px 50px;
 `
 
-const CongratulationModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
+const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: Number }> = ({ open, onClose, score}) => {
 
   return (
     <StyledModal
@@ -58,11 +58,20 @@ const CongratulationModal: React.FC<{ open: boolean; onClose: () => void }> = ({
         <CloseButton onClick={onClose}>
           <Close />
         </CloseButton>
-        <Content variant="h6" component="h2">
-          <p>점수를 계산 중입니다... </p>
-          <p>잠시만 기다려 주세요 👩‍🦰</p>
-        </Content>
-        <CircularProgress style={{ color: "orange" }} />
+  
+        {score === -1 ?
+          <Content variant="h6" component="h2">
+              
+              <p>점수를 계산 중입니다... </p>
+              <p>잠시만 기다려 주세요 👩‍🦰</p>
+              <CircularProgress style={{ color: "orange" }} />
+          </Content>
+          :
+          <Content variant="h6" component="h2">    
+              <p className="score">당신은 {score} 점 입니다!</p>
+          </Content>
+        }
+        
         {/* <Button onClick={onClose}>Close</Button> */}
       </ModalContainer>
     </StyledModal>

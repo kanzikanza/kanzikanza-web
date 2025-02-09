@@ -5,8 +5,8 @@ import { useRef, useEffect, useState } from "react";
 import { Button, Grid, Typography, styled, TextField, InputAdornment, LinearProgress } from '@mui/material/';
 import { Edit } from '@mui/icons-material'
 import * as StompJs from "@stomp/stompjs";
-import CongratulationModal from '@/src/component/Modal/CongratulationModal';
-import axios from 'axios';
+import CongratulationModal from '../../component/Modal/CongratulationModal';
+import axios, { AxiosResponse } from 'axios';
 import SmallButton from '../../component/Button/SmallButton';
 
 // 타입 정의
@@ -14,6 +14,12 @@ type kanza = {
   kanza: string;
   mean: string;
   sound: string;
+}
+
+type reviewsProblem = {
+  kanza: kanza;
+  isRight: boolean;
+  answer : number | string
 }
 
 const GridContainer = styled(Grid)`
@@ -39,6 +45,7 @@ const KanjiGrid = styled(Grid)`
 const InputGrid = styled(Grid)`
   height: 500px;
   display: flex;
+  width: 100%;
   margin: 0;
   flex-direction: column;
   justify-content: center;
@@ -46,14 +53,27 @@ const InputGrid = styled(Grid)`
   color: #3e3e3e;
 `
 
-const InputForm = styled('form')`
+const InputForm = styled('div')`
   height: 100px;
   display: flex;
+  width: 100%;
   align-items: center;
 `
 const InputText = styled(TextField)`
-  width: 500px;
+  max-width : 500px;
+  width: 100%;
 `
+// async function axiosGet(url:string) {
+//   axios.get('http://localhost:8080/kanzi/problem',
+//           {
+//             headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+//           }
+//         ).then((answer) => { 
+//           response = answer
+//         }).catch(() => {
+
+//         })
+// }
 
 // 테스트 페이지 컴포넌트
 function ExamPage() {
@@ -69,12 +89,18 @@ function ExamPage() {
   const [progress, setProgress] = useState<number>(0);
 
   // useRef를 사용하여 값이 바뀌어도 리렌더링이 일어나지 않도록 설정
-  // const HowMany = useRef<number>(0);
+  const HowMany = useRef<number>(0);
   const [count, setCount] = useState<number>(0);
+  const [problemReaction, setProblemReaction] = useState<boolean>(false);
   const QuestionType = useRef<number>(0);
+
+  const Cs = useRef<boolean>(true); 
+  const inputRef = useRef(null);
 
   // 다 맞혀서 축하하는 모달을 표시할지 여부를 저장하는 state
   const [showCongratulationModal, setShowCongratulationModal] = useState<boolean>(false);
+  const [score, setScore] = useState<Number>(-1);
+  const ReviewProblem = useRef<reviewsProblem[]>([])
 
   // 10문제 다 맞혔을 때 호출되는 함수
   const handleCorrectAnswers = () => {
@@ -91,7 +117,19 @@ function ExamPage() {
   // 엔터 키 다운 이벤트 핸들러
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      handleSubmit(event);
+      event.preventDefault();
+      if (Cs.current === false)
+      {
+        return
+      }
+      if (event.nativeEvent.isComposing) {
+        handleSubmit(event);
+        Cs.current = false
+      }
+      else
+      {
+        setInputValue("");
+      }
     }
   };
 
@@ -107,30 +145,51 @@ function ExamPage() {
 
     // 입력값이 있는 경우 경고 메시지 숨김
     setIsInputValid(true)
+    inputRef.current.blur(); // 포커스 해제
 
     console.log("Submitted:", inputValue);
 
-    if (!QuestionType.current) {
+    let tmp: reviewsProblem = { kanza: kanzas[count], answer: inputValue, isRight: true }
+    console.log(QuestionType.current)
+    if (QuestionType.current) {
+      console.log(inputValue, kanzas[index].mean)
+
       if (inputValue === kanzas[index].mean) {
-        // setHowMany(howMany+1);
+        HowMany.current = HowMany.current + 10
       }
-      setIndex((prev) => prev + 1);
+      else
+      {
+        tmp.isRight = false
+      }
     } else {
+      console.log(inputValue, kanzas[index].sound)
+
       if (inputValue === kanzas[index].sound) {
-        // setHowMany(howMany + 1);
+        HowMany.current = HowMany.current + 10
+        console.log(HowMany.current)
       }
-      setIndex((prev) => prev + 1);
+      else
+      {
+        tmp.isRight = false  
+      }
     }
     QuestionType.current = getRandomInt(0, 2);
-    setInputValue("");
+    ReviewProblem.current.push(tmp)
+    setProblemReaction(true)
 
-    setCount(count+1)
+    setTimeout(() => { 
+      setProblemReaction(false)
+      setIndex((prev) => prev + 1);
+      setCount(count + 1)
+      setInputValue("");
+    }, 1000)
   };
 
   useEffect(() => {
     // 제출할 때마다 진행 상황을 업데이트
     setProgress((count / totalQuestions) * 100);
     console.log(`진행상황: ${progress}`);
+    Cs.current = true;
   }, [count, totalQuestions, progress]);
 
 
@@ -140,7 +199,9 @@ function ExamPage() {
     if (index >= totalQuestions) {
       setProgress(100);
       setIsEnd(true);
-
+      setTimeout(() => {
+        setScore(HowMany.current)
+      }, 1000)
       // 여기에 추가: 10문제 다 맞췄을 때 모달 띄우기
       if (count === totalQuestions) {
         setShowCongratulationModal(true);
@@ -157,17 +218,41 @@ function ExamPage() {
 
   // 데이터 불러오기 효과적으로 처리하는 useEffect
   useEffect(() => {
-    const fetchData = async () => {
+
+    const fetchData = async (url: string, isToken: boolean) => {
       try {
-        const response = await axios.get('http://localhost:8080/kanzi/problem');
-        console.log(response.data.data);
-        setKanzas(response.data.data);
+        let response : any[]
+        await axios.get(url,
+          {
+            // headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+          }
+        ).then((answer) => { 
+          console.log(`Get Success : ${url}`)
+          console.log(answer)
+          // console.log(answer.data[1].data[1])
+          // response = answer.data[1].data[1]
+        })
+        .catch((error) => { 
+          console.log(error)
+          
+        });
+        if (!response)
+        {
+          throw "response doesn't have val"
+        }
+        // console.log(response);
+        response = response.map((x) => x[1])
+        setKanzas(response);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    fetchData();
+
+
+
+    fetchData('http://localhost:8080/kanzi/problem', true);
+    fetchData('http://localhost:8080/kanzi/getTestProblems?levels=1&days=1', false);
   }, []);
 
   // 열 문제 다 맞히면 정답 현황 알려주는 모달 등장 
@@ -187,16 +272,47 @@ function ExamPage() {
       {/* <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} /> */}
       {isEnd ? (
         <div>
-          <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} />
+          <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} score={score} />
         </div>
       ) : (
         <GridContainer container>
 
           {/* 한자 등장 */}
-          <KanjiGrid item xs={5}>
+            <KanjiGrid item xs={5}
+              style={{
+                position: 'relative', // 자식 요소의 위치를 부모 기준으로 설정
+                // height: '100%', // 부모 높이를 고정
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center', // 가로 중앙 정렬
+
+
+              }}
+            >
             {kanzas.length > 0 ? (
-              <Typography variant='h1' style={{ fontSize: '20rem' }}>{kanzas[index].kanza}</Typography>
-            ) : null}
+                <Typography variant='h1' style={{
+                  fontSize: '20rem',
+                  position: 'absolute', // 고정된 위치
+                  top: '10%', // 부모의 10% 높이에 고정
+                  left: '50%', // 가로 중앙 정렬
+                  transform: 'translateX(-50%)', // 정확히 중앙으로 이동
+
+               }}>{kanzas[index].kanza}</Typography>
+              ) : null}
+              {problemReaction === true ? (<Typography variant='h6'
+                style={{
+                  fontSize: '3rem',
+                  backgroundColor: '#FFEECE',
+                  color: ((QuestionType.current && inputValue === kanzas[index].mean) ||
+                    (!QuestionType.current && inputValue === kanzas[index].sound))
+                    ? '#4caf50'
+                    : '#ff1744', width: '20rem',
+                  textAlign: 'center',
+                  position: 'absolute', // 부모 기준으로 배치
+                  bottom: '10%', // 부모의 아래쪽에 고정
+                  left: '50%', // 가로 중앙 정렬
+                  transform: 'translateX(-50%)', // 정확히 중앙으로 이동
+                }}>{kanzas[index].mean} {kanzas[index].sound}</Typography>) : null}
           </KanjiGrid>
 
 
@@ -209,11 +325,13 @@ function ExamPage() {
               {progress}%
             </Typography>
 
-            <InputForm onSubmit={handleSubmit}>
+            {/* <InputForm onSubmit={handleSubmit}> */}
+            <InputForm>
               <InputText
                 id="message"
                 placeholder="입력창"
                 multiline
+                ref={inputRef}
                 color="warning"
                 value={inputValue}
                 onChange={(e) => {

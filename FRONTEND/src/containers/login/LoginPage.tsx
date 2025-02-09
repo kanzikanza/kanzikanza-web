@@ -1,5 +1,4 @@
 'use client'
-
 import Layout from "@/component/Layout/Layout";
 import Image from "next/image"
 import axios from 'axios'
@@ -33,9 +32,10 @@ export default function LoginPage() {
         // document.getElementById('kakao-login-container').inner = response.data;
         console.log(response.data)
         const api_key = "e0fa9c3226566a2dcda49e672fe892ac"
-        let queryString = `${response.data.link}?response_type=code&client_id=${api_key}&redirect_uri=${response.data.redirect}`
+        // let queryString = `${response.data[1].link}?response_type=code&client_id=${api_key}&redirect_uri=${response.data[1].redirect}`
+        let queryString = `${response.data[1].link}?response_type=code&client_id=${api_key}&redirect_uri=${'http://localhost:3000/login/success'}`
         console.log(queryString)
-        window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
+        const popup = window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
 
       });
     } catch (error) {
