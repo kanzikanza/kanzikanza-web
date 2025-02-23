@@ -1,0 +1,11 @@
+# 의존성 설치 단계
+FROM node:18-alpine AS deps
+WORKDIR /app
+COPY package.json yarn.lock* package-lock.json* ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+# 빌드 단계
+FROM node:18-alpine AS builds
+WORKDIR /app
+COPY --from=deps /app/node-modules ./node-modules
+COPY . .
