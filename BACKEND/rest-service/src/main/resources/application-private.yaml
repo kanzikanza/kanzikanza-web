@@ -2,6 +2,7 @@ kakao:
   api_key: e0fa9c3226566a2dcda49e672fe892ac
   redirect_uri: http://localhost:8080/auth/Oauth2/KakaoToken
 spring:
+  enabled: false
   neo4j:
     authentication:
       username: neo4j
