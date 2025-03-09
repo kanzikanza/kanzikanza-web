@@ -1,3 +1,4 @@
 venv
 ./rest-service/.gradle
 *.jar
+*.yaml
