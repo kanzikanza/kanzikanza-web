@@ -94,7 +94,7 @@ public class KakaoApi {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        params.add("redirect_uri", "http://localhost:8080/auth/Oauth2/KakaoToken");
+        params.add("redirect_uri", "http://localhost:3000/login/success");
         params.add("code", code);
 
         // http 바디(params)와 http 헤더(headers)를 가진 엔티티
@@ -111,8 +111,7 @@ public class KakaoApi {
         return oAuthToken;
     }
 
-    public UserUniteDtos.ValidateResponse getValidUser(String token) throws  RestClientException
-    {
+    public UserUniteDtos.ValidateResponse getValidUser(String token) throws RestClientException {
         String reqUrl = "https://kapi.kakao.com/v1/user/access_token_info";
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -129,8 +128,8 @@ public class KakaoApi {
         return gson.fromJson(responseBody, UserUniteDtos.ValidateResponse.class);
 
     }
-    public OAuthToken updateToken(String code) throws RestClientException, JsonSyntaxException
-    {
+
+    public OAuthToken updateToken(String code) throws RestClientException, JsonSyntaxException {
         String reqUrl = "https://kauth.kakao.com/oauth/token";
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -160,15 +159,13 @@ public class KakaoApi {
         }
     }
 
-
     public KakaoOpenIdToken getOpenIdToken(String code) {
         Gson gson = new Gson();
         KakaoOpenIdToken kakaoOpenIdToken = gson.fromJson(code, KakaoOpenIdToken.class);
         return kakaoOpenIdToken;
     }
 
-    public KakaoUserInfo getKakaoUserInfo(String code) throws RestClientException, JsonSyntaxException
-    {
+    public KakaoUserInfo getKakaoUserInfo(String code) throws RestClientException, JsonSyntaxException {
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -195,7 +192,6 @@ public class KakaoApi {
             // 구체적인 예외 처리
             throw new RestClientException("Failed to update token due to an error: " + e.getMessage(), e);
         }
-
 
     }
 
@@ -228,7 +224,7 @@ public class KakaoApi {
     public static class KakaoUserInfo {
         private Long id;
         private String connected_at;
-        private  KakaoAccountInfo kakao_account;
+        private KakaoAccountInfo kakao_account;
     }
 
     @Getter

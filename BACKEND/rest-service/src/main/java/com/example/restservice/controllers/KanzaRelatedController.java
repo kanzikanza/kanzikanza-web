@@ -24,7 +24,6 @@ import java.util.Random;
 import java.util.stream.Collectors;
 // import org.springframework.web.bind.annotation.Req   uestMethod;
 
-
 @Slf4j
 @RestController
 @RequestMapping("kanzi")
@@ -37,7 +36,6 @@ public class KanzaRelatedController {
     private final RedisService redisService;
     private final UserService userService;
 
-
     @GetMapping("/kanza")
     public ResponseEntity<?> kanzikanza(@RequestParam(required = true) String kanza, String mean, String sound) {
         String str = kanzaService.kanziservice(kanza, mean, sound);
@@ -46,6 +44,7 @@ public class KanzaRelatedController {
         KanzaUniteDtos.KanziDto<String> response = KanzaUniteDtos.KanziDto.<String>builder().data(list).build();
         return ResponseEntity.ok().body(response);
     }
+
     @PostMapping("/kanza")
     public ResponseEntity<?> createKanza(@RequestBody KanzaDto kanza) {
         // TODO: process POST request
@@ -57,7 +56,8 @@ public class KanzaRelatedController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             String error = e.getMessage();
-            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error)
+                    .build();
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -73,7 +73,8 @@ public class KanzaRelatedController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             String error = e.getMessage();
-            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error)
+                    .build();
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -94,76 +95,60 @@ public class KanzaRelatedController {
 
         } catch (Exception e) {
             String error = e.getMessage();
-            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error).build();
+            KanzaUniteDtos.KanziDto<KanzaDto> response = KanzaUniteDtos.KanziDto.<KanzaDto>builder().error(error)
+                    .build();
             return ResponseEntity.badRequest().body(response);
         }
     }
 
     @PatchMapping("/isRight")
-    public ResponseEntity<?> isRight(@RequestBody KanzaUniteDtos.InpDto.isRight inpDto)
-    {
-        try
-        {
+    public ResponseEntity<?> isRight(@RequestBody KanzaUniteDtos.InpDto.isRight inpDto) {
+        try {
             KanzaModel kanza = kanzaService.findByKANZA(inpDto.getKanza());
             userCustomizeService.updateParameter(kanza, inpDto.isWin());
             return ResponseEntity.ok(HttpStatus.OK);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/getKanza")
-    public ResponseEntity<?> getKanza(@RequestParam(required = true) String kanza)
-    {
+    public ResponseEntity<?> getKanza(@RequestParam(required = true) String kanza) {
         KanzaModel kanzaModel = kanzaService.findByKANZA(kanza);
         log.info(kanzaModel.getKanzaIndex().toString() + " 번 한자");
         try {
             KanzaDto kanzaDto = redisService.getCacheKanza(kanzaModel.getKanzaIndex()).orElseThrow();
             log.info("redisService.getCacheKanza: 성공");
             return ResponseEntity.ok().body(kanzaDto);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("redisService.getCacheKanza: 실패");
             return ResponseEntity.ok().body(redisService.cacheKanza(kanzaModel));
         }
     }
 
-
-
-
     @GetMapping("/getTestProblems")
-    public ResponseEntity<?> getTestProblems(@RequestParam(required = true) Integer levels, Integer days)
-    {
+    public ResponseEntity<?> getTestProblems(@RequestParam(required = true) Integer levels, Integer days) {
         Integer length = 20;
 
         UserModel userModel = userService.findCurrentUser();
         // 캐시에서 문제가 있다면 가져오는 과정을 걸침
         try {
             Integer fromCache = redisService.getCachedNumber(userModel.getUserIndex().toString());
-            if (fromCache < 4)
-            {
+            if (fromCache < 4) {
                 length -= fromCache;
-            }
-            else if (fromCache < 6)
-            {
+            } else if (fromCache < 6) {
                 length -= 3;
-            }
-            else
-            {
+            } else {
                 length -= 5;
             }
-        } catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             log.error("에러 발생");
             length = 20;
         }
-        List<KanzaModel> kanzaModels = kanzaService.getTestProblems(levels, length );
+        List<KanzaModel> kanzaModels = kanzaService.getTestProblems(levels, length);
         List<KanzaDto> kanzaDtos = redisService.redisGetNCache(userModel.getUserIndex().toString(), 20 - length);
 
-
-        KanzaUniteDtos.TestProblems testProblems =  KanzaUniteDtos.TestProblems.builder().build();
-
+        KanzaUniteDtos.TestProblems testProblems = KanzaUniteDtos.TestProblems.builder().build();
 
         testProblems.setTestLevel(levels);
         testProblems.setDays(days);
@@ -179,12 +164,11 @@ public class KanzaRelatedController {
         }
 
         // 캐시로 받은 문제들을 어떻게 할지를 고민 일단 리스트에 전부 합칠건데 이 로직을 분리하는게 나을듯
-        kanzaModels.forEach(x ->
-                {
-                    KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(x, 0);
-                    problem.setProblemIndex(problems.size());
-                    problems.add(problem);
-                });
+        kanzaModels.forEach(x -> {
+            KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(x, 0);
+            problem.setProblemIndex(problems.size());
+            problems.add(problem);
+        });
 
         // 렌덤으로 섞는것 추가
         Collections.shuffle(problems);
@@ -193,26 +177,21 @@ public class KanzaRelatedController {
     }
 
     @PostMapping("/logTest")
-    public ResponseEntity<?> logTest(@RequestBody(required = true)KanzaUniteDtos.LogApi logApi)
-    {
+    public ResponseEntity<?> logTest(@RequestBody(required = true) KanzaUniteDtos.LogApi logApi) {
         UserModel userModel = userService.findCurrentUser();
         // 일단 사용자의 테스트로그는 시험 시작 API에 맡긴다 여기서는 있다고 가정함
 
         // Todo: 나중에 세션 아이디 검증해야함
         // 틀렸을때도 업데이트를 해주긴 해야함 그니까 redisService에서 로직을 다처리하는게 맞음
         KanzaUniteDtos.ProblemLog problemLog = logApi.getProblem();
-        Integer dResult = redisService.redisUpdateTestSession(userModel.getUserIndex().toString(), problemLog.getKanzaIndex().toString(),
+        Integer dResult = redisService.redisUpdateTestSession(userModel.getUserIndex().toString(),
+                problemLog.getKanzaIndex().toString(),
                 problemLog.getIsRight());
-        if (dResult.equals(1))
-        {
+        if (dResult.equals(1)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("적용 성공");
-        }
-        else
-        {
+        } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("시험 업데이트 실패");
         }
     }
-
-
 
 }
