@@ -83,9 +83,25 @@ public class KanzaService {
             }
             return kanzaRepository.findByKanzaIndex(nextIndex);
         }
+        // 이런 쓰레기를 만들었다는게 믿기지 않음
     }
 
-    public KanzaUniteDtos.Problem returnProblemDto(KanzaModel kanzaModel, Integer isFromCache) {
+    public List<KanzaModel> findWrongMeanKanzaModel(Integer level, String keyFactor) {
+
+        return kanzaRepository.findWrongKanzaMeanModelsByLevel(9, keyFactor);
+    }
+
+    public List<KanzaModel> findWrongSoundKanzaModel(Integer level, String keyFactor) {
+
+        return kanzaRepository.findWrongKanzaSoundModelsByLevel(9, keyFactor);
+    }
+
+    public List<KanzaModel> findWrongLetterKanzaModel(Integer level, String keyFactor) {
+
+        return kanzaRepository.findWrongKanzaLetterModelsByLevel(9, keyFactor);
+    }
+
+    public KanzaUniteDtos.Problem returnProblemDto(KanzaModel kanzaModel, Integer isFromCache, Integer level) {
         Random random = new Random();
 
         // todo: 이후 전체 코드관리
@@ -106,72 +122,22 @@ public class KanzaService {
 
         if (problemType == 0) {
             problem.setProblemContent(kanzaModel.getKanzaMean() + " " + kanzaModel.getKanzaSound());
-            for (int i = 0; i < maxAnswerOption; i++) {
-                if (i == answerOption) {
-                    options.add(kanzaModel.getKanzaLetter());
-                } else {
-                    boolean isOverlap = false;
-                    while (true) {
-                        KanzaModel wrongAnswerKanza = findRelatedKanza(kanzaModel.getKanzaIndex());
-                        for (String option : options) {
-                            if (option.equals(wrongAnswerKanza.getKanzaLetter())) {
-                                isOverlap = true;
-                                break;
-                            }
-                        }
-                        if (isOverlap) {
-                            continue;
-                        }
-                        options.add(wrongAnswerKanza.getKanzaLetter());
-                        break;
-                    }
-                }
+            List<KanzaModel> wrongAnswerKanzaLetter = findWrongLetterKanzaModel(level, kanzaModel.getKanzaLetter());
+            for (KanzaModel wrongKanzaModel : wrongAnswerKanzaLetter) {
+                options.add(wrongKanzaModel.getKanzaLetter());
             }
+            options.add(answerOption, kanzaModel.getKanzaLetter());
         } else if (problemType == 1) {
             problem.setProblemContent(kanzaModel.getKanzaLetter());
-            for (int i = 0; i < maxAnswerOption; i++) {
-                if (i == answerOption) {
-                    options.add(kanzaModel.getKanzaMean());
-                } else {
-                    boolean isOverlap = false;
-                    while (true) {
-                        KanzaModel wrongAnswerKanza = findRelatedKanza(kanzaModel.getKanzaIndex());
-                        for (String option : options) {
-                            if (option.equals(wrongAnswerKanza.getKanzaMean())) {
-                                isOverlap = true;
-                                break;
-                            }
-                        }
-                        if (isOverlap) {
-                            continue;
-                        }
-                        options.add(wrongAnswerKanza.getKanzaMean());
-                        break;
-                    }
-                }
+            List<KanzaModel> wrongAnswerKanzaMean = findWrongMeanKanzaModel(level, kanzaModel.getKanzaMean());
+            for (KanzaModel wrongKanzaModel : wrongAnswerKanzaMean) {
+                options.add(wrongKanzaModel.getKanzaMean());
             }
         } else if (problemType == 2) {
             problem.setProblemContent(kanzaModel.getKanzaLetter());
-            for (int i = 0; i < maxAnswerOption; i++) {
-                if (i == answerOption) {
-                    options.add(kanzaModel.getKanzaSound());
-                } else {
-                    boolean isOverlap = false;
-                    while (true) {
-                        KanzaModel wrongAnswerKanza = findRelatedKanza(kanzaModel.getKanzaIndex());
-                        for (String option : options) {
-                            if (option.equals(wrongAnswerKanza.getKanzaSound())) {
-                                isOverlap = true;
-                                break;
-                            }
-                        }
-                        if (isOverlap) {
-                            continue;
-                        }
-                        options.add(wrongAnswerKanza.getKanzaSound());
-                        break;
-                    }
-                }
+            List<KanzaModel> wrongAnswerKanzaSound = findWrongSoundKanzaModel(level, kanzaModel.getKanzaSound());
+            for (KanzaModel wrongKanzaModel : wrongAnswerKanzaSound) {
+                options.add(wrongKanzaModel.getKanzaSound());
             }
         }
         problem.setOptions(options);

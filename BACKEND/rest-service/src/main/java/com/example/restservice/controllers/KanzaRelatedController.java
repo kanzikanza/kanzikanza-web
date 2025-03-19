@@ -158,14 +158,14 @@ public class KanzaRelatedController {
 
         for (KanzaDto kanzaDto : kanzaDtos) {
             KanzaModel kanzaModel = kanzaService.findByKANZA(kanzaDto.getKANZA());
-            KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(kanzaModel, 1);
+            KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(kanzaModel, 1, levels);
             problem.setProblemIndex(problems.size());
             problems.add(problem);
         }
 
         // 캐시로 받은 문제들을 어떻게 할지를 고민 일단 리스트에 전부 합칠건데 이 로직을 분리하는게 나을듯
         kanzaModels.forEach(x -> {
-            KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(x, 0);
+            KanzaUniteDtos.Problem problem = kanzaService.returnProblemDto(x, 0, levels);
             problem.setProblemIndex(problems.size());
             problems.add(problem);
         });
