@@ -1,7 +1,7 @@
 # 의존성 설치 단계
 FROM node:18-alpine AS deps
 WORKDIR /app
-COPY package.json yarn.lock* package-lock.json* ./
+COPY ./FRONTEND/package.json ./FRONTEND/yarn.lock* ./FRONTEND/package-lock.json* ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 # 빌드 단계
@@ -27,7 +27,7 @@ ENV HOSTNAME=0.0.0.0
 COPY --from=builds --chown=nextjs:nodejs /app/.next/standalone ./
 # 굳이 얘는 안꺼내고 넣음 standalone이 실행파일이라는거같음 
 COPY --from=builds --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public
+COPY --from=builds /app/public ./public
 
 USER nextjs
 EXPOSE 3000
