@@ -2,7 +2,8 @@
 import Layout from "@/component/Layout/Layout";
 import Image from "next/image"
 import axios from 'axios'
-import kakaoLoginImage from "@/public/assets/kakao_login_large_narrow.png"
+// import kakaoLoginImage from "@/public/assets/kakao_login_large_narrow.png"
+import kakaoLoginImage from "@/assets/kakao_login_large_narrow.png"
 import { styled } from "@mui/material"
 import SmallButton from "../../component/Button/SmallButton";
 
