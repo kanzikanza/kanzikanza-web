@@ -3,7 +3,7 @@ FROM node:18-alpine AS deps
 WORKDIR /app
 COPY ./FRONTEND/package.json ./FRONTEND/yarn.lock* ./FRONTEND/package-lock.json* ./
 RUN ls
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci && npm cache clean --force
 
 # 빌드 단계
 FROM node:18-alpine AS builds
