@@ -9,7 +9,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 FROM node:18-alpine AS builds
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY ./FRONTEND .
 RUN ls
 ENV NEXTJS_TELEMETRY_DISABLED=1
 RUN npm run build
