@@ -53,7 +53,7 @@ export function putImageInDb(blob: any, db : any)
     var transaction = db.transaction(["profile"], "readwrite");
     var put = transaction.objectStore("profile").put(blob, "image");
 
-    transaction.objectStore("profile").get("image").onsuccess = function (event) {
+    transaction.objectStore("profile").get("image").onsuccess = function (event : any) {
                 var imgFile = event.target.result;
                 console.log("profile!" + imgFile);
 

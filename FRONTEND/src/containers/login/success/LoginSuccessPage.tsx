@@ -74,7 +74,11 @@ const ProfileContainer = styled('div')`
   align-items: center;
   padding: 20px;
 `;
-const ProfileItem = styled('div')`
+interface ProfileItemProps {
+  isSelected?: boolean;
+}
+
+const ProfileItem = styled('div')<ProfileItemProps>`
   width: ${(props) => (props.isSelected ? 'calc(8rem - 8px)' : '8rem')}; /* 선택 시 강조 */;
   height: ${(props) => (props.isSelected ? 'calc(8rem - 8px)' : '8rem')}; /* 선택 시 강조 */;
   border-radius: 50%;
@@ -115,7 +119,7 @@ export default function LoginSuccessPage() {
     'User_8.png',
   ];
 
-  const handleSelect = (index) => {
+  const handleSelect = (index : number) => {
     setSelectedIndex(index);
     console.log(`Selected Profile Index: ${index}`);
   };

@@ -6,7 +6,7 @@ function Profile() {
   const [image, setImage] = useState('https://via.placeholder.com/100');
 
     
-const ProfileIndex = styled('Box')`
+const ProfileIndex = styled(Box)`
     flex-direction: row;
     display: flex;
     justify-content: space-between;
@@ -18,7 +18,7 @@ const ProfileIndex = styled('Box')`
     background-color : #FFF7EE
 `
     
-const handleImageChange = (e) => { }
+const handleImageChange = (e : any) => { }
 //   const handleImageChange = (e) => {
 //     const file = e.target.files[0];
 //     if (file) {

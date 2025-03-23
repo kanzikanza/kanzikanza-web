@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, Paper, Modal, Typography, IconButton, CircularProgress } from "@mui/material";
+import { styled, Paper, Modal, Typography, IconButton, CircularProgress, TypographyProps } from "@mui/material";
 import { Close } from "@mui/icons-material"
 
 const StyledModal = styled(Modal)`
@@ -39,12 +39,17 @@ const CloseButton = styled(IconButton)`
   margin-left: auto;
 `
 
-const Content = styled(Typography)`
+// const Content = styled(Typography)`
+//   z-index: 1001;
+//   padding: 20px 50px 60px 50px;
+// `
+
+const Content = styled(Typography)<TypographyProps & { component?: any}>`
   z-index: 1001;
   padding: 20px 50px 60px 50px;
 `
-
-const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: Number }> = ({ open, onClose, score}) => {
+const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: any }> = ({ open, onClose, score}) => {
+// const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: Number }> = ({ open, onClose, score}) => {
 
   return (
     <StyledModal

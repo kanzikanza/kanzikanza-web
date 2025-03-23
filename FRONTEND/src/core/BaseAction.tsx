@@ -35,7 +35,7 @@ class APIAction extends BaseAction {
 
 
 class APIActionBuilder {
-    private apiAction : APIAction;
+    private apiAction : APIAction  = new APIAction();
 
     constructor() {
         this.reset()
@@ -47,7 +47,7 @@ class APIActionBuilder {
 
     public setUrl(URL : string)
     {
-        this.apiAction.URL = URL
+         this.apiAction.URL = URL
     }
 
     public setMTD(MTD : string)

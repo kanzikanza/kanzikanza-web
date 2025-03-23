@@ -1,9 +1,9 @@
 'use client'
-import Layout from "@/component/Layout/Layout";
+// import Layout from "@/component/Layout/Layout";
 import Image from "next/image"
 import axios from 'axios'
 // import kakaoLoginImage from "@/public/assets/kakao_login_large_narrow.png"
-import kakaoLoginImage from "@/assets/kakao_login_large_narrow.png"
+// import kakaoLoginImage from "@/assets/kakao_login_large_narrow.png"
 import { styled } from "@mui/material"
 import SmallButton from "../../component/Button/SmallButton";
 
@@ -46,7 +46,9 @@ export default function LoginPage() {
 
   return (
     <MainContainer>
-      <Image src={kakaoLoginImage} alt="Kakao Login" />
+      {/* <Image src={kakaoLoginImage} alt="Kakao Login" /> */}
+      <Image src="@/assets/kakao_login_large_narrow.png" alt="Kakao Login" />
+
       <GoJoin>
         보유한 아이디가 없으신가요? 카카오톡으로 1초만에 <SmallButton onClick={handleLogin}>가입</SmallButton>하기!
       </GoJoin>

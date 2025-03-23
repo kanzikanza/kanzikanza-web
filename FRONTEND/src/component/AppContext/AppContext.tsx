@@ -1,12 +1,32 @@
 // app/context/AppContext.tsx
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, Dispatch, SetStateAction, ReactNode } from 'react';
 
-const AppContext = createContext(null);
+interface AppState {
+  user: string;
+  isAuthenticated: boolean;
+}
+interface AppContextType {
+  state: AppState;
+  setState: Dispatch<SetStateAction<AppState>>;
+}
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState({
+
+const defaultState: AppState = {
+  user: 'Guest',
+  isAuthenticated: false,
+};
+
+// const AppContext = createContext<AppContextType | null>(null);
+// const AppContext = createContext<AppContextType | null>(null); 
+const AppContext = createContext<any>({
+  state: defaultState,
+  setState: () => {},
+});
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<AppState>({
     user: 'Guest',
     isAuthenticated: false,
   });
@@ -19,5 +39,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAppContext() {
-  return useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+  return context;
+
 }

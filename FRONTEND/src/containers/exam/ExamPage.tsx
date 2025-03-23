@@ -95,7 +95,7 @@ function ExamPage() {
   const QuestionType = useRef<number>(0);
 
   const Cs = useRef<boolean>(true); 
-  const inputRef = useRef(null);
+  const inputRef = useRef<any>(null);
 
   // 다 맞혀서 축하하는 모달을 표시할지 여부를 저장하는 state
   const [showCongratulationModal, setShowCongratulationModal] = useState<boolean>(false);
@@ -115,7 +115,7 @@ function ExamPage() {
   };
 
   // 엔터 키 다운 이벤트 핸들러
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event : any) => {
     if (event.key === "Enter") {
       event.preventDefault();
       if (Cs.current === false)
@@ -134,7 +134,7 @@ function ExamPage() {
   };
 
   // 제출 이벤트 핸들러
-  const handleSubmit = (event) => {
+  const handleSubmit = (event : any) => {
     event.preventDefault();
 
     // 입력값이 비어있는 경우 경고 메시지 표시
@@ -145,7 +145,10 @@ function ExamPage() {
 
     // 입력값이 있는 경우 경고 메시지 숨김
     setIsInputValid(true)
-    inputRef.current.blur(); // 포커스 해제
+    if (inputRef.current !== null) 
+    {
+      inputRef.current.blur(); // 포커스 해제
+    }
 
     console.log("Submitted:", inputValue);
 
@@ -221,7 +224,6 @@ function ExamPage() {
 
     const fetchData = async (url: string, isToken: boolean) => {
       try {
-        let response : any[]
         await axios.get(url,
           {
             // headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
@@ -236,6 +238,7 @@ function ExamPage() {
           console.log(error)
           
         });
+        let response : any[] = []
         if (!response)
         {
           throw "response doesn't have val"

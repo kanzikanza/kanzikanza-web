@@ -1,6 +1,7 @@
 'use client'
 import axios from 'axios'
 import Script from 'next/script'
+import { Suspense } from 'react'
 import { useEffect, useState } from 'react';
 import LoginSuccessPage from './LoginSuccessPage';
 import Modal from './Modal';
@@ -11,7 +12,7 @@ import { styled } from "@mui/material"
 import { rejects } from 'assert';
 
 
-export default function LoginSuccess() {
+export function LoginSuccess() {
     const [loading, setLoading] = useState(true); // 로딩 상태
     const [isSuccess, setIsSuccess] = useState(true); // 성공 여부 (null: 초기 상태)
     const params = useSearchParams();
@@ -48,7 +49,7 @@ export default function LoginSuccess() {
     ).catch(
 
     )
-    }, [])
+    }, [params, router])
   return (
       <div>
           {loading && (
@@ -75,3 +76,11 @@ export default function LoginSuccess() {
     </div>
   );
 };
+
+export default function LoginModal() {
+    return (
+        <Suspense>
+            <LoginSuccess />
+        </Suspense>
+    )
+}

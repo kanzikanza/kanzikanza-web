@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 
 
-const styles = {
+const styles: Record<string, React.CSSProperties>  = {
   overlay: {
     position: 'fixed',
     top: 0,
@@ -44,7 +44,7 @@ const styles = {
   },
 };
 
-export default function Modal({ isOpen }) {
+export default function Modal({ isOpen } : any) {
     useEffect(() => {
     if (typeof document !== 'undefined') {
       const styleSheet = document.styleSheets[0];

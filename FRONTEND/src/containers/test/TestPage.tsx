@@ -51,7 +51,7 @@ const StatusIcon = styled('div')({
 });
 
 const TestPage = () => {
-    const [questionList, setQuestionList] = useState<Array<object>>([]);
+    const [questionList, setQuestionList] = useState<any[]>([]);
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState(['갈', '마', '성', '근']);
     const [correctAnswer, setCorrectAnswer] = useState(-1);
@@ -103,7 +103,6 @@ const TestPage = () => {
 
         const fetchData = async (url: string, isToken: boolean) => {
             try {
-                let response: any[]
                 await axios.get(url,
                     {
                         // headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
@@ -114,11 +113,12 @@ const TestPage = () => {
                     setQuestionList(answer.data[1]['problems'][1])
                     setProblemIndex(0)
                 })
-                    .catch((error) => {
-                        console.log(error)
-          
-                    });
-                if (!response) {
+                .catch((error) => {
+                    console.log(error)
+                    
+                });
+                let response: any[] = []
+                if (!response ) {
                     throw "response doesn't have val"
                 }
                 // console.log(response);
@@ -191,7 +191,7 @@ const TestPage = () => {
                 <Grid container direction="column" sx={{ gap : '1rem'}}>
                     {options.map((option, index) => (
                         <Paper
-                            item sx={{width : '15rem', borderRadius : '1rem'}}
+                            sx={{width : '15rem', borderRadius : '1rem'}}
                             key={option}
                             elevation={2}
                         >
