@@ -25,24 +25,24 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
     // 예: 토큰 검증 API 호출
     // 나중에 여기에 authenticated인지를 확인하는 절차를 넣음.
     
-        // try {
-        //     checkAuthority().then(
-        //         response => {
-        //             console.log('authentictate success')
-        //             setIsAuthenticated(true)
-        //         }
-        //     ).catch(
-        //         error => {
-        //             console.log('authentictate failed')
-        //             setIsAuthenticated(false)
-        //         }
-        //     )
-        // } catch
-        // {
-        //     console.log('authentictate failed')
-        //     setIsAuthenticated(false)
-        // }
-        setIsAuthenticated(true)
+        try {
+            checkAuthority().then(
+                response => {
+                    console.log('authentictate success')
+                    setIsAuthenticated(true)
+                }
+            ).catch(
+                error => {
+                    console.log('authentictate failed')
+                    setIsAuthenticated(false)
+                }
+            )
+        } catch
+        {
+            console.log('authentictate failed')
+            setIsAuthenticated(false)
+        }
+        // setIsAuthenticated(true)
   }, [pathname]);
 
 

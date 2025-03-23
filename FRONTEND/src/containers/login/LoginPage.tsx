@@ -2,8 +2,9 @@
 // import Layout from "@/component/Layout/Layout";
 import Image from "next/image"
 import axios from 'axios'
-// import kakaoLoginImage from "@/public/assets/kakao_login_large_narrow.png"
-// import kakaoLoginImage from "@/assets/kakao_login_large_narrow.png"
+
+import kakaoLoginImage from "@/assets/kakao_login_large_narrow.png"
+import { ImageStyle } from "@/global/globalImage"
 import { styled } from "@mui/material"
 import SmallButton from "../../component/Button/SmallButton";
 
@@ -25,6 +26,10 @@ const GoJoin = styled('p')`
 
 export default function LoginPage() {
 
+  const imageStyle: ImageStyle = {
+    width: '16rem',
+    height : 'auto'
+  }
   const handleLogin = async () => {
     try {
       const response = await axios.get('http://localhost:8080/auth/Oauth2/KakaoLogin')
@@ -47,7 +52,13 @@ export default function LoginPage() {
   return (
     <MainContainer>
       {/* <Image src={kakaoLoginImage} alt="Kakao Login" /> */}
-      <Image src="@/assets/kakao_login_large_narrow.png" alt="Kakao Login" />
+      <Image
+        // src="/@/assets/kakao_login_large_narrow.png"
+        src={kakaoLoginImage}
+        width={100}
+        height={100}
+        style={imageStyle}
+        alt="Kakao Login" />
 
       <GoJoin>
         보유한 아이디가 없으신가요? 카카오톡으로 1초만에 <SmallButton onClick={handleLogin}>가입</SmallButton>하기!
