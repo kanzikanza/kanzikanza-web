@@ -11,35 +11,35 @@ import java.util.List;
 @Repository
 public interface KanzaRepository extends JpaRepository<KanzaModel, Integer> {
 
-    @Query("select k FROM KanzaModel k where k.kanzaSound = ?1")
-    List<KanzaModel> findByKanzaSound(String SOUND);
+        @Query("select k FROM KanzaModel k where k.kanzaSound = ?1")
+        List<KanzaModel> findByKanzaSound(String SOUND);
 
-    @Query("select k from KanzaModel k where k.kanzaLetter = ?1")
-    KanzaModel findByKanzaLetter(String KANZA);
+        @Query("select k from KanzaModel k where k.kanzaLetter = ?1")
+        KanzaModel findByKanzaLetter(String KANZA);
 
-    KanzaModel findByKanzaIndex(Integer kanzaIndex);
+        KanzaModel findByKanzaIndex(Integer kanzaIndex);
 
-    @Query(value = "select * from kanza where kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
-    List<KanzaModel> findKanzaModelsByLevel(@Param("problemNum") Integer problemNum, @Param("level") Integer level);
+        @Query(value = "select * from kanza where kanza.test_index = :level order by rand() limit :problemNum", nativeQuery = true)
+        List<KanzaModel> findKanzaModelsByLevel(@Param("problemNum") Integer problemNum, @Param("level") Integer level);
 
-    @Query(value = "select * from kanza where kanza.mean != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
-    List<KanzaModel> findWrongKanzaMeanModelsByLevel(@Param("level") Integer level,
-            @Param("keyFactor") String keyFactor);
+        @Query(value = "select * from kanza where kanza.mean != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
+        List<KanzaModel> findWrongKanzaMeanModelsByLevel(@Param("level") Integer level,
+                        @Param("keyFactor") String keyFactor);
 
-    @Query(value = "select * from kanza where kanza.sound != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
-    List<KanzaModel> findWrongKanzaSoundModelsByLevel(@Param("level") Integer level,
-            @Param("keyFactor") String keyFactor);
+        @Query(value = "select * from kanza where kanza.sound != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
+        List<KanzaModel> findWrongKanzaSoundModelsByLevel(@Param("level") Integer level,
+                        @Param("keyFactor") String keyFactor);
 
-    @Query(value = "select * from kanza where kanza.kanza != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
-    List<KanzaModel> findWrongKanzaLetterModelsByLevel(@Param("level") Integer level,
-            @Param("keyFactor") String keyFactor);
+        @Query(value = "select * from kanza where kanza.kanza != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
+        List<KanzaModel> findWrongKanzaLetterModelsByLevel(@Param("level") Integer level,
+                        @Param("keyFactor") String keyFactor);
 
-    @Query(value = "select * from kanza order by rand() limit :problemNum", nativeQuery = true)
-    List<KanzaModel> findKanzasByRandom(@Param("problemNum") Integer problemNum);
+        @Query(value = "select * from kanza order by rand() limit :problemNum", nativeQuery = true)
+        List<KanzaModel> findKanzasByRandom(@Param("problemNum") Integer problemNum);
 
-    @Query("SELECT MIN(k.kanzaIndex) FROM KanzaModel k")
-    Integer findMinKanzaIndex();
+        @Query("SELECT MIN(k.kanzaIndex) FROM KanzaModel k")
+        Integer findMinKanzaIndex();
 
-    @Query("SELECT MAX(k.kanzaIndex) FROM KanzaModel k")
-    Integer findMaxKanzaIndex();
+        @Query("SELECT MAX(k.kanzaIndex) FROM KanzaModel k")
+        Integer findMaxKanzaIndex();
 }
