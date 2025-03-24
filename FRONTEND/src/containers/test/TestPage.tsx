@@ -11,13 +11,14 @@ import {
   Container, 
   LinearProgress, 
   Button, 
-    Paper,
+  Paper,
   Divider,
   Typography,
   Grid 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios, { AxiosResponse } from 'axios';
+import withInitialization from '@/global/globalComponent';
 
 const TextWrapper = styled('div')({
   position: 'relative',
@@ -59,6 +60,8 @@ const TestPage = () => {
     const [problemIndex, setProblemIndex] = useState<number>(-1);
     const [problemType, setProblemType] = useState<number>(-1);
     const [progress, setProgress] = useState(5);
+
+
 
     const handleAnswerSelect = (answer: any) => {
         setSelectedAnswer(answer)
@@ -104,9 +107,9 @@ const TestPage = () => {
         const fetchData = async (url: string, isToken: boolean) => {
             try {
                 await axios.get(url,
-                    {
-                        // headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
-                    }
+                {
+                        headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+                }
                 ).then((answer) => {
                     console.log(`Get Success : ${url}`)
                     console.log(answer.data[1]['problems'][1])
@@ -129,9 +132,52 @@ const TestPage = () => {
             }
         };
 
-        fetchData('http://localhost:8080/kanzi/getTestProblems?levels=1&days=1', false);
+        fetchData('http://localhost:8080/kanzi/getTestProblems?levels=2&days=1', false);
     }, []);
     
+
+
+    // function
+    function startFunction() {
+
+        const fetchData = async (url: string, isToken: boolean) => {
+            try {
+                await axios.get(url,
+                {
+                        headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+                }
+                ).then((answer) => {
+                    console.log(`Get Success : ${url}`)
+                    console.log(answer.data[1]['problems'][1])
+                    setQuestionList(answer.data[1]['problems'][1])
+                    setProblemIndex(0)
+                })
+                .catch((error) => {
+                    console.log(error)
+                    
+                });
+                let response: any[] = []
+                if (!response ) {
+                    throw "response doesn't have val"
+                }
+                // console.log(response);
+                response = response.map((x) => x[1])
+                // setKanzas(response);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData('http://localhost:8080/kanzi/getTestProblems?levels=2&days=1', false);
+    }
+
+
+
+
+
+
+
+
     useEffect(() => {
         if (problemIndex == -1) return
         setQuestion(questionList[problemIndex][1]['problemContent'])
@@ -283,7 +329,6 @@ const AnswerButton = styled(Button)(({ theme }) => ({
 
 
 
-
-export default TestPage
+export default withInitialization(TestPage ) // <= 여기다 뭐 넣기
 
 

@@ -36,29 +36,47 @@
 
 import { useEffect, useState, ComponentType } from "react";
 import LoadingScreen from "./globalLoading";
+import { checkAuthorityChain } from "./globalFunction";
+import { useRouter } from 'next/navigation';
 
+
+type optionalFunction = | {new () : void} | null
 // 타입 안전성 강화 버전
 const withInitialization = <P extends object>(
-  WrappedComponent: ComponentType<P>
+  WrappedComponent: ComponentType<P>,
+  func: optionalFunction = null
 ) => {
   const EnhancedComponent = (props: P) => {
+    let initState = localStorage.getItem('accessToken') === null
     const [isLoading, setIsLoading] = useState<boolean>(true); // Boolean → boolean
-
+    const [isAuth, setIsAuth] = useState<boolean>(initState)
+    const router = useRouter()
+    
     useEffect(() => {
       const controller = new AbortController();
-
-      const initialize = async () => {
-        try {
-          sessionStorage.getItem('key');
-          await fetch('/api/init', { signal: controller.signal });
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      initialize();
+      checkAuthorityChain()
+        .then((result: boolean) => {
+          console.log('api come', result)
+          setIsLoading(false)
+          setIsAuth(result)
+        })
+      
+      if (func !== null)
+      {
+        const arg = new func();        
+      }
+      
       return () => controller.abort();
     }, []);
+
+    useEffect(() => {
+      if (router === null) return 
+      console.log(isLoading, ' ', isAuth)
+      if (isLoading === false && isAuth === false)
+      {
+        router.push("/")
+      }
+    }, [isAuth, router])
 
     return isLoading ? <LoadingScreen /> : <WrappedComponent {...props} />;
   };

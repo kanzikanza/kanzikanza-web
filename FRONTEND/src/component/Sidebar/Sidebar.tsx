@@ -3,6 +3,9 @@ import React from 'react';
 import { Drawer, List, ListItem, ListItemText, Box, styled, Typography, Divider } from '@mui/material';
 import Profile from "./Profile/Profile"
 import { useRouter } from 'next/navigation';
+import { ReactNode, useEffect, useState } from "react";
+import axios from 'axios';
+
 
 const PSidebar = styled(Drawer)(({ theme }) => ({
   width: 240,
@@ -20,6 +23,42 @@ const PSidebar = styled(Drawer)(({ theme }) => ({
 export default function Sidebar() {
   const router = useRouter()
   const urlPath = ['/exam', '/', '/test']
+
+  const [userNickName, setUserNickName] = useState<String>("");
+  const [userProfileIndex, setUserProfileIndex] = useState<Number>(-1);
+  useEffect(() => {
+      const fetchData = async (url: string, isToken: boolean) => {
+              try {
+                  await axios.get(url,
+                  {
+                    headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+                  }
+                  ).then((answer) => {
+                    console.log(`Get Success : ${url}`, answer)
+                    console.log(answer.data[1]['nickname'])
+                    setUserNickName(answer.data[1]['nickname'])
+                    setUserProfileIndex(answer.data[1]['profileIndex'])
+                  })
+                  .catch((error) => {
+                      console.log(error)
+                      
+                  });
+                  // let response: any[] = []
+                  // if (!response ) {
+                  //     throw "response doesn't have val"
+                  // }
+                  // console.log(response);
+                  // response = response.map((x) => x[1])
+                  // setKanzas(response);
+              } catch (error) {
+                  console.error('Error fetching data:', error);
+              }
+          };
+
+          fetchData('http://localhost:8080/auth/getSimpProfile', false);
+
+    }, [])
+
     return (
     <PSidebar
       variant="permanent"
@@ -31,10 +70,10 @@ export default function Sidebar() {
         </Typography>
         <Divider variant="middle" flexItem />
         {['시험 보기', '복습하기', '테스트 보기'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} primaryTypographyProps={{
-                    fontSize: '1.5rem', // 폰트 크기
-            }}
+            <ListItem key={text}>
+              <ListItemText primary={text} primaryTypographyProps={{
+                      fontSize: '1.5rem', // 폰트 크기
+              }}
               onClick={() => { 
                 router.push(urlPath[index])
               }}
@@ -44,7 +83,10 @@ export default function Sidebar() {
         ))}
       </List>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 2 }}>
-        <Profile />
+        <Profile
+            userNickName={userNickName}
+            userProfileIndex={userProfileIndex}
+        />
       </Box>
     </PSidebar>
   );

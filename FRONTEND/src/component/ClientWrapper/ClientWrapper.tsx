@@ -9,6 +9,8 @@ import { usePathname } from 'next/navigation';
 import { checkAuthority } from '@/global/globalFunction';
 import { styled } from '@mui/material/';
 
+
+
 const ChildContainer = styled('div')`
 
   margin: 2rem;
@@ -17,7 +19,8 @@ const ChildContainer = styled('div')`
 `;
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false) 
+    let initState : boolean = localStorage.getItem('accessToken') === null
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initState) 
 
     useEffect(() => {
     // URL 변경 시 API 호출
@@ -26,6 +29,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
     // 나중에 여기에 authenticated인지를 확인하는 절차를 넣음.
     
         try {
+            // 여기선 checkAuthority가 promise를 반환하기 때문에 then과 catch와 상관없이 먼저 렌더링이 진행된다, 이건 막을 수 없다.
             checkAuthority().then(
                 response => {
                     console.log('authentictate success')

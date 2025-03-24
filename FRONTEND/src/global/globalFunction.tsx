@@ -46,6 +46,11 @@ export function createObject(db : any, name : string)
     xhr.send();
 }
 
+export function getImageFromIndexedDB(db: any, key : string = "image") {
+    var transaction = db.transaction(["profile"], "readwrite");
+    return transaction.objectStore("profile").get("image")
+}
+
 export function putImageInDb(blob: any, db : any)
 {
 
@@ -132,6 +137,102 @@ export async function loginSession(){
     {
         throw "loginSession Failed"
     }
+}
+function checkAccessToken() {
+    return localStorage.getItem('accessToken') !== null
+}
+function checkRefreshToken() {
+    return localStorage.getItem('refreshToken') !== null
+}
+
+async function checkRefreshValid() {
+    const url_replace2 = "http://localhost:8080/auth/Oauth2/updateToken"
+    await axios.post(
+            url_replace2,
+            {
+                data: {
+                    type: "UpdateRequest",
+                    refreshToken: localStorage.getItem('refreshToken')
+                }
+            },
+            {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                }
+            }
+    ).then(
+            (response) => {
+                console.log(response.data[1])
+                localStorage.setItem('accessToken', response.data[1].accessToken)
+                localStorage.setItem('refreshToken', response.data[1].refreshToken)
+                return true
+            }
+    ).catch(
+        (e) => {
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            console.log(e)
+            return false
+            throw "refreshToken outdated"
+        }
+    )
+    return false
+}
+async function checkAccessValid() {
+    // 자바스크립트 async는 좀 제대로 볼필요가 있다
+    const url_replace1 = "http://localhost:8080/auth/isLoggedIn"
+    let level1 : boolean = false; 
+    await axios.get(
+        url_replace1,
+        {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        }
+    ).then(
+        (e) => {
+            return true
+        }
+    ).catch(
+        (e) => {
+            console.log(e)
+            return false
+        }
+    )
+    return true
+    // 이렇게 할경우엔 async를 사용하는 함수의경우엔 Promise만을 반환하기때문에 의미가 없고 
+}
+
+
+
+export async function checkAuthorityChain() {
+    let accLogin = checkAccessToken()
+    if (accLogin)
+    {
+        await checkAccessValid()
+            .then((result : boolean) => { 
+                console.log('access token valid')
+                accLogin = result
+
+        })
+    }
+    if (accLogin === false)
+    {
+        accLogin = checkRefreshToken()
+    }
+    else
+    {
+        return true    
+    }
+    if (accLogin)
+    {
+        await checkRefreshValid()
+        .then((result: boolean) => { 
+            return result
+        })
+    }
+    return false    
 }
 
 export async function checkAuthority() {

@@ -14,23 +14,23 @@ RUN ls
 ENV NEXTJS_TELEMETRY_DISABLED=1
 RUN npm run build
 
-# #실행 단계
-# FROM node:18-alpine AS runner
-# WORKDIR /app
+#실행 단계
+FROM node:18-alpine AS runner
+WORKDIR /app
 
-# RUN addgroup -g 1001 -S nodejs
-# RUN adduser -S nextjs -u 1001
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
 
-# ENV NODE_ENV=production
-# ENV PORT=3000
-# ENV HOSTNAME=0.0.0.0
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-# # 굳이 얘는 꺼내고
-# COPY --from=builds --chown=nextjs:nodejs /app/.next/standalone ./
-# # 굳이 얘는 안꺼내고 넣음 standalone이 실행파일이라는거같음 
-# COPY --from=builds --chown=nextjs:nodejs /app/.next/static ./.next/static
-# COPY --from=builds /app/public ./public
+# 굳이 얘는 꺼내고
+COPY --from=builds --chown=nextjs:nodejs /app/.next/standalone ./
+# 굳이 얘는 안꺼내고 넣음 standalone이 실행파일이라는거같음 
+COPY --from=builds --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builds /app/public ./public
 
-# USER nextjs
-# EXPOSE 3000
-# CMD ["node", "server.js"]
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]
