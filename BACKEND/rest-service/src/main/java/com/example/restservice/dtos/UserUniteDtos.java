@@ -7,18 +7,13 @@ import java.util.List;
 
 public class UserUniteDtos {
 
-
-
-
-    public static class UserTestDtos
-    {
+    public static class UserTestDtos {
         @Builder
         @Setter
         @Getter
         @NoArgsConstructor
         @AllArgsConstructor
-        public static class UserTestDto
-        {
+        public static class UserTestDto {
             public List<TestLevelDto> testLevels;
         }
 
@@ -27,19 +22,30 @@ public class UserUniteDtos {
         @Getter
         @NoArgsConstructor
         @AllArgsConstructor
-        public static class TestLevelDto{
+        public static class TestLevelDto {
             private Integer testLevel;
             private Integer daysDone;
             private Integer daysLimit;
         }
-        public static TestLevelDto toTestLevelDto(UserTestModel userTestModel)
-        {
+
+        public static TestLevelDto toTestLevelDto(UserTestModel userTestModel) {
             return TestLevelDto.builder()
                     .testLevel(userTestModel.getTestModel().getTestLevel())
                     .daysLimit(userTestModel.getTestModel().getTestMaxDays())
                     .daysDone(userTestModel.getUserTestProgress())
                     .build();
         }
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DefaultProfile {
+        private String nickname;
+        private Integer profileIndex;
+        private Integer userStreakDays;
     }
 
     @Getter
@@ -64,10 +70,10 @@ public class UserUniteDtos {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ValidateResponse {
-            private Integer expiresInMillis;
-            private Long id;
-            private Integer expires_in;
-            private Integer app_id;
-            private Integer appId;
+        private Integer expiresInMillis;
+        private Long id;
+        private Integer expires_in;
+        private Integer app_id;
+        private Integer appId;
     }
 }

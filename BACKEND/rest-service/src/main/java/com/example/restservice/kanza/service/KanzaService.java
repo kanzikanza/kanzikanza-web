@@ -88,17 +88,17 @@ public class KanzaService {
 
     public List<KanzaModel> findWrongMeanKanzaModel(Integer level, String keyFactor) {
 
-        return kanzaRepository.findWrongKanzaMeanModelsByLevel(9, keyFactor);
+        return kanzaRepository.findWrongKanzaMeanModelsByLevel(level, keyFactor);
     }
 
     public List<KanzaModel> findWrongSoundKanzaModel(Integer level, String keyFactor) {
 
-        return kanzaRepository.findWrongKanzaSoundModelsByLevel(9, keyFactor);
+        return kanzaRepository.findWrongKanzaSoundModelsByLevel(level, keyFactor);
     }
 
     public List<KanzaModel> findWrongLetterKanzaModel(Integer level, String keyFactor) {
 
-        return kanzaRepository.findWrongKanzaLetterModelsByLevel(9, keyFactor);
+        return kanzaRepository.findWrongKanzaLetterModelsByLevel(level, keyFactor);
     }
 
     public KanzaUniteDtos.Problem returnProblemDto(KanzaModel kanzaModel, Integer isFromCache, Integer level) {
@@ -133,12 +133,14 @@ public class KanzaService {
             for (KanzaModel wrongKanzaModel : wrongAnswerKanzaMean) {
                 options.add(wrongKanzaModel.getKanzaMean());
             }
+            options.add(answerOption, kanzaModel.getKanzaMean());
         } else if (problemType == 2) {
             problem.setProblemContent(kanzaModel.getKanzaLetter());
             List<KanzaModel> wrongAnswerKanzaSound = findWrongSoundKanzaModel(level, kanzaModel.getKanzaSound());
             for (KanzaModel wrongKanzaModel : wrongAnswerKanzaSound) {
                 options.add(wrongKanzaModel.getKanzaSound());
             }
+            options.add(answerOption, kanzaModel.getKanzaSound());
         }
         problem.setOptions(options);
         return problem;

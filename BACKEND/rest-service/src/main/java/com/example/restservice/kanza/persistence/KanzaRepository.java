@@ -22,15 +22,15 @@ public interface KanzaRepository extends JpaRepository<KanzaModel, Integer> {
         @Query(value = "select * from kanza where kanza.test_index = :level order by rand() limit :problemNum", nativeQuery = true)
         List<KanzaModel> findKanzaModelsByLevel(@Param("problemNum") Integer problemNum, @Param("level") Integer level);
 
-        @Query(value = "select * from kanza where kanza.mean != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
+        @Query(value = "select * from kanza where kanza.kanza_mean != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
         List<KanzaModel> findWrongKanzaMeanModelsByLevel(@Param("level") Integer level,
                         @Param("keyFactor") String keyFactor);
 
-        @Query(value = "select * from kanza where kanza.sound != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
+        @Query(value = "select * from kanza where kanza.kanza_sound != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
         List<KanzaModel> findWrongKanzaSoundModelsByLevel(@Param("level") Integer level,
                         @Param("keyFactor") String keyFactor);
 
-        @Query(value = "select * from kanza where kanza.kanza != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
+        @Query(value = "select * from kanza where kanza.kanza_letter != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
         List<KanzaModel> findWrongKanzaLetterModelsByLevel(@Param("level") Integer level,
                         @Param("keyFactor") String keyFactor);
 

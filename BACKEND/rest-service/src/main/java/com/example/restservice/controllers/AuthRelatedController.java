@@ -1,6 +1,8 @@
 package com.example.restservice.controllers;
 
 import com.example.restservice.dtos.UserUniteDtos;
+import com.example.restservice.dtos.UserUniteDtos.DefaultProfile;
+// import com.example.restservice.dtos.UserUniteDtos.DefaultProfile;
 import com.example.restservice.security.dto.ProfileRequest;
 import com.example.restservice.security.service.AuthService;
 import com.example.restservice.userKanza.repository.UserKanzaRepository;
@@ -25,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -55,6 +58,7 @@ public class AuthRelatedController {
                         UserModel userModel = userService.findCurrentUser();
                         userModel.setUserNickname(profileRequest.getNickname());
                         userModel.setUserProfileChoice(profileRequest.getProfileIndex());
+                        userService.create(userModel);
                         return ResponseEntity.ok("프로필 변경이 완료되었습니다");
                 } catch (NoSuchElementException e) {
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자를 찾을 수 없습니다");
@@ -62,6 +66,51 @@ public class AuthRelatedController {
                         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
                 }
         }
+
+        @GetMapping("/auth/getDefaultProfile")
+        public ResponseEntity<?> getDefaultProfile() {
+                try {
+                        UserModel userModel = userService.findCurrentUser();
+                        UserUniteDtos.DefaultProfile defaultProfile = UserUniteDtos.DefaultProfile.builder()
+                                        .nickname(userModel.getUserNickname())
+                                        .profileIndex(userModel.getUserProfileChoice())
+                                        .userStreakDays(userModel.getUserStreakDays())
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.OK).body(defaultProfile);
+
+                } catch (Exception e) {
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+                }
+        }
+
+        @GetMapping("/auth/getStreakDay")
+        public ResponseEntity<?> getStreakDay() {
+                try {
+                        UserModel userModel = userService.findCurrentUser();
+                        UserUniteDtos.DefaultProfile defaultProfile = UserUniteDtos.DefaultProfile.builder()
+                                        .userStreakDays(userModel.getUserStreakDays())
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.OK).body(defaultProfile);
+
+                } catch (Exception e) {
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+                }
+        }
+
+        @GetMapping("/auth/getSimpProfile")
+        public ResponseEntity<?> getSimpProfile() {
+                try {
+                        UserModel userModel = userService.findCurrentUser();
+                        UserUniteDtos.DefaultProfile defaultProfile = UserUniteDtos.DefaultProfile.builder()
+                                        .nickname(userModel.getUserNickname())
+                                        .profileIndex(userModel.getUserProfileChoice())
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.OK).body(defaultProfile);
+                } catch (Exception e) {
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+                }
+        }
+
         // @PostMapping("/auth/login")
         // public LoginResponse login(@RequestBody @Validated LoginRequest request) {
         // // TODO: process POST request
