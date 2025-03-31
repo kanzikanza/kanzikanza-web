@@ -1,6 +1,7 @@
 import React from "react";
 import { styled, Paper, Modal, Typography, IconButton, CircularProgress, TypographyProps } from "@mui/material";
 import { Close } from "@mui/icons-material"
+import { kanza, reviewsProblem } from "@/containers/test/TestPage";
 
 const StyledModal = styled(Modal)`
   /* outline: none; */
@@ -48,7 +49,21 @@ const Content = styled(Typography)<TypographyProps & { component?: any}>`
   z-index: 1001;
   padding: 20px 50px 60px 50px;
 `
-const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: any }> = ({ open, onClose, score}) => {
+
+
+const ScrollableList = styled('div')`
+  max-height: 200px; /* 스크롤 가능한 영역의 높이 */
+  overflow-y: auto; /* 스크롤 활성화 */
+`;
+
+const ListItem = styled('div')`
+  padding: 5px;
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: any; reviews : kanza[] }> = ({ open, onClose, score, reviews}) => {
 // const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: Number }> = ({ open, onClose, score}) => {
 
   return (
@@ -73,7 +88,20 @@ const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score:
           </Content>
           :
           <Content variant="h6" component="h2">    
-              <p className="score">당신은 {score} 점 입니다!</p>
+            <p className="score">당신은 <strong>{score}</strong>점 입니다!</p>
+            
+             {reviews.length > 0 && (
+              <>
+                <strong style={{marginBottom : '5px'}}>틀린 문제</strong>
+                <ScrollableList>
+                  {reviews.map((review, index) => (
+                    <ListItem key={index}>
+                      {review.kanza}  {review.mean} {review.sound}
+                    </ListItem>
+                  ))}
+                </ScrollableList>
+              </>
+            )}
           </Content>
         }
         

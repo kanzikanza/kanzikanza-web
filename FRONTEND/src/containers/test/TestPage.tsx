@@ -1,10 +1,8 @@
 'use client'
-import React, { useState, useEffect } from 'react';
-// import { Close, Done } from '@mui/icons-material';
+import React, { useState, useEffect, useRef } from 'react';
 import  close   from '@/assets/test/Close.png'
 import  done   from '@/assets/test/Done.png'
-// import  from ../../global/globalFunction
-// import 
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from "next/image"
 import { 
   Box, 
@@ -19,6 +17,7 @@ import {
 import { styled } from '@mui/material/styles';
 import axios, { AxiosResponse } from 'axios';
 import withInitialization from '@/global/globalComponent';
+import CongratulationModal from '@/component/Modal/CongratulationModal';
 
 const TextWrapper = styled('div')({
   position: 'relative',
@@ -27,16 +26,6 @@ const TextWrapper = styled('div')({
     marginLeft: '2rem' // 아이콘 너비만큼 이동
   }
 });
-// const StatusIcon = styled('div')({
-//   position: 'absolute',
-//   opacity: 0,
-//   transform: 'translateX(20px)',
-//   transition: 'all 0.3s ease',
-//   '&.visible': {
-//     opacity: 1,
-//     transform: 'translateX(0)'
-//   }
-// });
 
 const StatusIcon = styled('div')({
   position: 'absolute',
@@ -51,29 +40,69 @@ const StatusIcon = styled('div')({
   }
 });
 
+export type kanza = {
+  kanza: string;
+  mean: string;
+  sound: string;
+}
+export type reviewsProblem = {
+  kanza: kanza;
+  isRight: boolean;
+  answer : number | string
+}
+
 const TestPage = () => {
     const [questionList, setQuestionList] = useState<any[]>([]);
     const [question, setQuestion] = useState('');
-    const [options, setOptions] = useState(['갈', '마', '성', '근']);
+    const [options, setOptions] = useState([' ', ' ', ' ', ' ']);
+    const [showCongratulationModal, setShowCongratulationModal] = useState<boolean>(false);
+
     const [correctAnswer, setCorrectAnswer] = useState(-1);
     const [selectedAnswer, setSelectedAnswer] = useState(-1);
     const [problemIndex, setProblemIndex] = useState<number>(-1);
     const [problemType, setProblemType] = useState<number>(-1);
-    const [progress, setProgress] = useState(5);
+    const [isEnd, setIsEnd] = useState<boolean>(false)
+    const [score, setScore] = useState<Number>(-1);
+    const HowMany = useRef<number>(0);
+    const ReviewProblem = useRef<kanza[]>([])
+    
+    const router = useRouter()
+    
+    const handleCloseCongratulationModal = () => {
+        setShowCongratulationModal(false);
+        // router.push('/test')
+        router.push('/')
+    };
 
 
+    const searchParams = useSearchParams()
+ 
+    const levels = searchParams.get('levels')
+    const days = searchParams.get('days')
+    if (levels === null || days === null)
+    {
+        const router = useRouter()
+        router.push('/')
+    }
 
     const handleAnswerSelect = (answer: any) => {
         setSelectedAnswer(answer)
         console.log(answer, correctAnswer)
         const buttons = document.querySelectorAll('.MuiButton-root');
-  
         buttons.forEach((button, index) => {
             if (index === answer) {
                 if (answer === correctAnswer) {
                     button.classList.add('correct');
+                    HowMany.current += 5
                 } else {
                     button.classList.add('wrong');
+                    ReviewProblem.current.push(
+                        {
+                            kanza: questionList[problemIndex][1]['kanzaLetter'],
+                            mean: questionList[problemIndex][1]['kanzaMean'],
+                            sound: questionList[problemIndex][1]['kanzaSound']
+                        }
+                    )
                     buttons.forEach((b, indexT) => {
                         if (indexT === correctAnswer) {
                             b.classList.add('correct');
@@ -103,7 +132,6 @@ const TestPage = () => {
     };
     
     useEffect(() => {
-
         const fetchData = async (url: string, isToken: boolean) => {
             try {
                 await axios.get(url,
@@ -132,7 +160,7 @@ const TestPage = () => {
             }
         };
 
-        fetchData('http://localhost:8080/kanzi/getTestProblems?levels=2&days=1', false);
+        fetchData(`http://localhost:8080/kanzi/getTestProblems?levels=${levels - 1}&days=${days}`, false);
     }, []);
     
 
@@ -147,8 +175,6 @@ const TestPage = () => {
                         headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
                 }
                 ).then((answer) => {
-                    console.log(`Get Success : ${url}`)
-                    console.log(answer.data[1]['problems'][1])
                     setQuestionList(answer.data[1]['problems'][1])
                     setProblemIndex(0)
                 })
@@ -180,6 +206,16 @@ const TestPage = () => {
 
     useEffect(() => {
         if (problemIndex == -1) return
+
+        if (problemIndex >= 20)
+        {
+            setIsEnd(true)
+            setTimeout(() => {
+                setScore(HowMany.current)
+                setShowCongratulationModal(true);
+            }, 1000)
+            return
+        }
         setQuestion(questionList[problemIndex][1]['problemContent'])
         setCorrectAnswer(questionList[problemIndex][1]['answer'])
         setOptions(questionList[problemIndex][1]['options'][1])
@@ -187,129 +223,136 @@ const TestPage = () => {
 
     }, [problemIndex])
     
-  return (
-    <Container className='topContainter' sx={{width: '50rem', height :'100%', minHeight :'30rem', paddingY : '1rem', margin: 'auto'}}>
-      <Box sx={{ width: '100%', }}>
-        <LinearProgress 
-          variant="determinate" 
-          value={problemIndex / questionList.length * 100 } 
-          sx={{
-            height: '1.5rem',
-            borderRadius: '0.5rem',
-            backgroundColor: '#FFE4E1',
-            marginBottom :'2rem',
-            '& .MuiLinearProgress-bar': {
-              backgroundColor: '#FFB6C1'
-            }
-          }}
-        />
-              {/* <Divider variant="middle" component="li" sx={{ listStyle: 'None' }} /> */}
-              {/* <Divider variant="middle"></Divider> */}
-              {/* <Divider component="li" variant="middle" sx={{ listStyle: 'none' }} /> */}
-        <Divider />
-
-        <Typography variant="h6" sx={{ my: 3, textAlign: 'left', fontSize : '2rem' }}>
-                  다음 한자의 { problemType == 0 ? '문자를' : problemType == 1 ? "뜻을" : "음을"  } 선택하시오.
-        </Typography>
-              <Grid
-                  container
-                  direction='row'
-                  spacing={3}
-              >
-                <Grid item xs={8}>
-                    <Paper 
-                    elevation={2}
-                    sx={{ 
-                        width: '30rem', 
-                        height: '30rem', 
-                        margin: 'auto',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 3,
-                        borderRadius: '1rem',
-                        borderColor: '#D2D2D2'
-                    }}>
-                          <Typography sx={{ fontSize: problemType ? "15rem" : "5rem" }}>{question}</Typography>
-                    </Paper>
-                </Grid>
-            <Grid item xs={4}>
-                <Grid container direction="column" sx={{ gap : '1rem'}}>
-                    {options.map((option, index) => (
-                        <Paper
-                            sx={{width : '15rem', borderRadius : '1rem'}}
-                            key={option}
-                            elevation={2}
-                        >
-                        <AnswerButton
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => handleAnswerSelect(index)}
-                                sx={{
-                                    // color :'whte'
-                                    
-                            height: '6.75rem',
-                            transition: 'all 0.3s',
-                            fontSize: '2rem',
-                            // 기본 호버 효과
-                            '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
-                            backgroundColor: '#FFE5C6', // 회색 계열 호버
-                            borderColor: '#d2d2d2'
-                            },
-                            '&.correct': {
-                                backgroundColor: '#90EE90',
-                                borderColor: '#90EE90',
-                            },
-                            '&.wrong': {
-                                backgroundColor: '#FF6B6B',
-                                borderColor: '#FF6B6B',
-                            },
-                            '&.reveal': {
-                                pointerEvents : 'none',
+    return (
+        <Container className='topContainter' sx={{ width: '50rem', height: '100%', minHeight: '30rem', paddingY: '1rem', margin: 'auto' }}>
+            
+            {isEnd ? 
+                <div>
+                    <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} score={score} reviews={ReviewProblem.current} />
+                </div> :
+                <Box sx={{ width: '100%', }}>
+                    <LinearProgress
+                        variant="determinate"
+                        value={problemIndex / questionList.length * 100}
+                        sx={{
+                            height: '1.5rem',
+                            borderRadius: '0.5rem',
+                            backgroundColor: '#FFE4E1',
+                            marginBottom: '2rem',
+                            '& .MuiLinearProgress-bar': {
+                                backgroundColor: '#FFB6C1'
                             }
-                            }}
-                            >
-                                {/* 상태에 따른 아이콘 애니메이션 */}
-                                <StatusIcon className={
-                                    (correctAnswer === index) && selectedAnswer != -1 ? 'visible' : 
-                                    (selectedAnswer === index) && selectedAnswer != correctAnswer ? 'visible' : ''
-                                }>
-                                {correctAnswer === index && selectedAnswer != -1  && (
-                                    <Image 
-                                    src={done} 
-                                    alt="정답"
-                                    priority
-                                    style={{width : '2rem', height:'2rem'}}
-                                    />
-                                )}
-                                {selectedAnswer === index && selectedAnswer != correctAnswer && (
-                                    <Image
-                                    src={close}
-                                    alt="오답"
-                                    style={{width : '2rem', height:'2rem'}}
-                                    priority
-                                    />
-                                )}
-                                    </StatusIcon>
-                                <TextWrapper 
-                                    className={
-                                    (correctAnswer === index && selectedAnswer !== -1) || 
-                                    (selectedAnswer === index && selectedAnswer !== correctAnswer) 
-                                        ? 'has-icon' 
-                                        : ''
-                                    }
-                                >
+                        }}
+                    />
+                    {/* <Divider variant="middle" component="li" sx={{ listStyle: 'None' }} /> */}
+                    {/* <Divider variant="middle"></Divider> */}
+                    {/* <Divider component="li" variant="middle" sx={{ listStyle: 'none' }} /> */}
+                    <Divider />
 
-                                {option}
-                                </TextWrapper>
-                        </AnswerButton>
-                        </Paper>
-                    ))}
-                </Grid>
-            </Grid>
-        </Grid>
-      </Box>
+                    <Typography variant="h6" sx={{ my: 3, textAlign: 'left', fontSize: '2rem' }}>
+                        다음 한자의 {problemType == 0 ? '문자를' : problemType == 1 ? "뜻을" : "음을"} 선택하시오.
+                    </Typography>
+                    <Grid
+                        container
+                        direction='row'
+                        spacing={3}
+                    >
+                        <Grid item xs={8}>
+                            <Paper
+                                elevation={2}
+                                sx={{
+                                    width: '30rem',
+                                    height: '30rem',
+                                    margin: 'auto',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    mb: 3,
+                                    borderRadius: '1rem',
+                                    borderColor: '#D2D2D2'
+                                }}>
+                                <Typography sx={{ fontSize: problemType ? "15rem" : "5rem" }}>{question}</Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Grid container direction="column" sx={{ gap: '1rem' }}>
+                                {options.map((option, index) => (
+                                    <Paper
+                                        sx={{ width: '15rem', borderRadius: '1rem' }}
+                                        key={option}
+                                        elevation={2}
+                                    >
+                                        <AnswerButton
+                                            fullWidth
+                                            variant="outlined"
+                                            onClick={() => handleAnswerSelect(index)}
+                                            sx={{
+                                                // color :'whte'
+                                    
+                                                height: '6.75rem',
+                                                transition: 'all 0.3s',
+                                                fontSize: '2rem',
+                                                // 기본 호버 효과
+                                                '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
+                                                    backgroundColor: '#FFE5C6', // 회색 계열 호버
+                                                    borderColor: '#d2d2d2'
+                                                },
+                                                '&.correct': {
+                                                    backgroundColor: '#90EE90',
+                                                    borderColor: '#90EE90',
+                                                },
+                                                '&.wrong': {
+                                                    backgroundColor: '#FF6B6B',
+                                                    borderColor: '#FF6B6B',
+                                                },
+                                                '&.reveal': {
+                                                    pointerEvents: 'none',
+                                                }
+                                            }}
+                                        >
+                                            {/* 상태에 따른 아이콘 애니메이션 */}
+                                            <StatusIcon className={
+                                                (correctAnswer === index) && selectedAnswer != -1 ? 'visible' :
+                                                    (selectedAnswer === index) && selectedAnswer != correctAnswer ? 'visible' : ''
+                                            }>
+                                                {correctAnswer === index && selectedAnswer != -1 && (
+                                                    <Image
+                                                        src={done}
+                                                        alt="정답"
+                                                        priority
+                                                        style={{ width: '2rem', height: '2rem' }}
+                                                    />
+                                                )}
+                                                {selectedAnswer === index && selectedAnswer != correctAnswer && (
+                                                    <Image
+                                                        src={close}
+                                                        alt="오답"
+                                                        style={{ width: '2rem', height: '2rem' }}
+                                                        priority
+                                                    />
+                                                )}
+                                            </StatusIcon>
+                                            <TextWrapper
+                                                className={
+                                                    (correctAnswer === index && selectedAnswer !== -1) ||
+                                                        (selectedAnswer === index && selectedAnswer !== correctAnswer)
+                                                        ? 'has-icon'
+                                                        : ''
+                                                }
+                                            >
+
+                                                {option}
+                                            </TextWrapper>
+                                        </AnswerButton>
+                                    </Paper>
+                                ))}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Box>
+            }
     </Container>
+    
   );
 };
 

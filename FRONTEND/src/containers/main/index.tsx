@@ -4,6 +4,8 @@ import axios from "axios";
 import { ReactNode, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { Box, Typography, Button, Grid, Divider } from "@mui/material";
+// import { useRouter } from 'next/navigation';
+
 import Link from "next/link";
 
 // 상단 상태 표시 스타일
@@ -55,6 +57,7 @@ const CircleButton = styled(Button)({
 function UniqueName() {
   const [userStreakDays, setUserStreakDays] = useState<Number>(0)
   const levels = [9, 8, 7, 6, 5, 4, 3, 2, 1]
+  
   useEffect(() => {
     const fetchData = async (url: string, isToken: boolean) => {
             try {
@@ -112,8 +115,10 @@ function UniqueName() {
               {/* <Grid container spacing={1} justifyContent="center"> */}
                 {Array.from({ length: 8 }).map((_, index) => (
                   <Grid item xs={2.4} key={index} >
-                    <Link href="/test" passHref>
-                      <CircleButton variant="contained">
+                    <Link href={`/test?levels=${level}&days=${index}`}>
+                    <CircleButton variant="contained" onClick={(event: any | Event) => {
+                      console.log(event, typeof(event))
+                    }}>
                         day{index + 1}
                       </CircleButton>
                     </Link>
