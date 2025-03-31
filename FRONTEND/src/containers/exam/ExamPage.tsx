@@ -275,7 +275,7 @@ function ExamPage() {
       {/* <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} /> */}
       {isEnd ? (
         <div>
-          <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} score={score} />
+          {/* <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} score={score} /> */}
         </div>
       ) : (
         <GridContainer container>

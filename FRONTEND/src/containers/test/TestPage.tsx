@@ -77,11 +77,10 @@ const TestPage = () => {
 
     const searchParams = useSearchParams()
  
-    const levels = searchParams.get('levels')
-    const days = searchParams.get('days')
+    const levels : number = Number(searchParams.get('levels'))
+    const days : number = Number( searchParams.get('days'))
     if (levels === null || days === null)
     {
-        const router = useRouter()
         router.push('/')
     }
 
