@@ -68,7 +68,7 @@ public class KanzaService {
 
     public List<KanzaModel> getTestProblems(Integer level, Integer length) {
         // 다행히 급수와 레벨은 거의 같기 떄문에 그것만 맞춰서 해주면됨
-        return kanzaRepository.findKanzaModelsByLevel(length, level + 1);
+        return kanzaRepository.findKanzaModelsByLevel(length, level);
     }
 
     public KanzaModel findRelatedKanza(Integer kanzaIndex) {

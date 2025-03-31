@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.util.List;
 
+import com.example.restservice.kanza.dto.KanzaDto;
+import com.example.restservice.kanza.model.KanzaModel;
+
 public class KanzaUniteDtos {
     @Getter
     @Builder
@@ -11,7 +14,7 @@ public class KanzaUniteDtos {
         @Getter
         @Setter
         @AllArgsConstructor
-        public static class isRight{
+        public static class isRight {
             private String kanza;
             private boolean isWin;
         }
@@ -26,14 +29,13 @@ public class KanzaUniteDtos {
         private List<T> data;
     }
 
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     @Setter
     @Getter
     @Data
-    public static class Problem{
+    public static class Problem {
         private Integer problemType;
         private Integer isFromCache;
         private List<String> options;
@@ -41,6 +43,9 @@ public class KanzaUniteDtos {
         private Integer answer;
         private Integer problemIndex;
         private Integer kanzaIndex;
+        private String kanzaMean;
+        private String kanzaSound;
+        private String kanzaLetter;
         private String problemContent;
     }
 
@@ -48,8 +53,7 @@ public class KanzaUniteDtos {
     @NoArgsConstructor
     @Builder
     @Data
-    public static class ProblemLog
-    {
+    public static class ProblemLog {
         private Integer problemType;
         private Integer isFromCache;
         private Integer level;
@@ -58,15 +62,13 @@ public class KanzaUniteDtos {
         private Integer problemIndex;
     }
 
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     @Data
-    public static class LogApi
-    {
-        private  Integer length;
-        private  Integer testLevel;
+    public static class LogApi {
+        private Integer length;
+        private Integer testLevel;
         private ProblemLog problem;
     }
 
@@ -75,21 +77,18 @@ public class KanzaUniteDtos {
     @NoArgsConstructor
     @Builder
     @Data
-    public static class TestProblems
-    {
+    public static class TestProblems {
         private Integer length;
         private Integer testLevel;
         private Integer days;
         private List<Problem> problems;
     }
 
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     @Data
-    public static class KanzaIdiom
-    {
+    public static class KanzaIdiom {
         private String kanza;
         private String sound;
         private String mean;
