@@ -188,7 +188,7 @@ const TestPage = () => {
     }, [problemIndex])
     
   return (
-    <Container sx={{width: '50rem', height :'100%', minHeight :'30rem', paddingY : '1rem'}}>
+    <Container className='topContainter' sx={{width: '50rem', height :'100%', minHeight :'30rem', paddingY : '1rem', margin: 'auto'}}>
       <Box sx={{ width: '100%', }}>
         <LinearProgress 
           variant="determinate" 
@@ -329,6 +329,6 @@ const AnswerButton = styled(Button)(({ theme }) => ({
 
 
 
-export default withInitialization(TestPage ) // <= 여기다 뭐 넣기
+export default withInitialization(TestPage) // <= 여기다 뭐 넣기
 
 

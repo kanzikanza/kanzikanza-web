@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { checkAuthority } from '@/global/globalFunction';
 import { styled } from '@mui/material/';
-
+import LocalStorage from '@/global/globalStorage';
 
 
 const ChildContainer = styled('div')`
@@ -19,15 +19,18 @@ const ChildContainer = styled('div')`
 `;
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    let initState : boolean = localStorage.getItem('accessToken') === null
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initState) 
+    
+
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false) 
 
     useEffect(() => {
     // URL 변경 시 API 호출
-    console.log(`Navigated to: ${pathname}`);
+    // console.log(`Navigated to: ${pathname}`);
     // 예: 토큰 검증 API 호출
     // 나중에 여기에 authenticated인지를 확인하는 절차를 넣음.
-    
+        let initState: boolean = LocalStorage.getItem('accessToken') === null
+        setIsAuthenticated(initState)
+        
         try {
             // 여기선 checkAuthority가 promise를 반환하기 때문에 then과 catch와 상관없이 먼저 렌더링이 진행된다, 이건 막을 수 없다.
             checkAuthority().then(
@@ -61,7 +64,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
             </div>  
           }
         
-        <div style={{ flexGrow: 1,  alignItems: 'center', flexDirection :'column', padding:'auto'}}>
+        <div style={{ flexGrow: 1,  alignItems: 'center', flexDirection :'column', padding:'auto', justifyContent: 'center', display:'flex'}}>
             <ChildContainer>    
                 {children}
             </ChildContainer>

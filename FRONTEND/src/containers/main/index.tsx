@@ -21,7 +21,7 @@ const StatusBox = styled(Box)({
 
 // 급수 리스트 스타일
 const ScrollableContainer = styled(Box)({
-  height: "80vh",
+  height: "85vh",
   overflowY: "auto",
   paddingRight: "8px",
   paddingLeft : "8px",
@@ -29,20 +29,22 @@ const ScrollableContainer = styled(Box)({
 
 // 급수 섹션 스타일
 const LevelSection = styled(Box)({
-  marginBottom: "32px",
-  minWidth: '1000px',
-  maxWidth: '60rem',
-  maxHeight : '25rem',
+  marginBottom: "10px",
+  minWidth: '60rem',
+  // maxWidth: '60rem',
+  maxWidth: '100%',
+  maxHeight : '27rem',
   overflowX:'hidden'
 });
 
 // 버튼 스타일
 const CircleButton = styled(Button)({
-  borderRadius: "50%",
-  height: "10rem",
-  minWidth: "10rem",
-  textTransform: "none",
-  backgroundColor: "#F9DCDC", // 기본 배경색
+    borderRadius: "50%",
+    height: "10rem",
+    minWidth: "10rem",
+    margin: "2px",
+    textTransform: "none",
+    backgroundColor: "#F9DCDC", // 기본 배경색
   "&:hover": {
     backgroundColor: "#ffccbc", // 호버 시 배경색
   },
@@ -52,7 +54,7 @@ const CircleButton = styled(Button)({
 
 function UniqueName() {
   const [userStreakDays, setUserStreakDays] = useState<Number>(0)
-  const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  const levels = [9, 8, 7, 6, 5, 4, 3, 2, 1]
   useEffect(() => {
     const fetchData = async (url: string, isToken: boolean) => {
             try {
@@ -106,7 +108,8 @@ function UniqueName() {
               <Divider variant="middle" flexItem style={{marginBottom : '20px'}} />
             
               {/* 버튼 그리드 */}
-              <Grid container spacing={2} sx={{maxHeight : "24rem"}}>
+              <Grid container spacing={2}>
+              {/* <Grid container spacing={1} justifyContent="center"> */}
                 {Array.from({ length: 8 }).map((_, index) => (
                   <Grid item xs={2.4} key={index} >
                     <Link href="/test" passHref>

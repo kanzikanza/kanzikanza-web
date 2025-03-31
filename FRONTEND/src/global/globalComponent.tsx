@@ -38,6 +38,7 @@ import { useEffect, useState, ComponentType } from "react";
 import LoadingScreen from "./globalLoading";
 import { checkAuthorityChain } from "./globalFunction";
 import { useRouter } from 'next/navigation';
+import LocalStorage  from '@/global/globalStorage'
 
 
 type optionalFunction = | {new () : void} | null
@@ -47,7 +48,7 @@ const withInitialization = <P extends object>(
   func: optionalFunction = null
 ) => {
   const EnhancedComponent = (props: P) => {
-    let initState = localStorage.getItem('accessToken') === null
+    let initState = LocalStorage.getItem('accessToken') === null
     const [isLoading, setIsLoading] = useState<boolean>(true); // Boolean → boolean
     const [isAuth, setIsAuth] = useState<boolean>(initState)
     const router = useRouter()
@@ -74,7 +75,7 @@ const withInitialization = <P extends object>(
       console.log(isLoading, ' ', isAuth)
       if (isLoading === false && isAuth === false)
       {
-        router.push("/")
+        router.push("/landing")
       }
     }, [isAuth, router])
 
@@ -86,5 +87,16 @@ const withInitialization = <P extends object>(
 
   return EnhancedComponent;
 };
+export type nextImage = {
+    src: string,
+    height: number,
+    width: number,
+    blurDataURL: string,
+    blurWidth : number,
+    blurHeight: number
+}
+
 
 export default withInitialization; // 명시적인 default export
+
+
