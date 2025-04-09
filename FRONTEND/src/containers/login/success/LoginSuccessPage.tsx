@@ -118,7 +118,7 @@ export default function LoginSuccessPage() {
     'User_7.png',
     'User_8.png',
   ];
-  const SERVER_IP = process.env.SERVER_IP
+  const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
 
 
   const handleSelect = (index : number) => {
@@ -137,7 +137,7 @@ export default function LoginSuccessPage() {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       };
       const response = await axios.patch(
-        SERVER_IP + '/auth/setDefaultProfile',
+        NEXT_PUBLIC_SERVER_IP + '/auth/setDefaultProfile',
         {
               type: "ProfileRequest",
               nickname : inputValue,

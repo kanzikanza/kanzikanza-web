@@ -71,7 +71,7 @@ function ExamPage() {
   const [inputValue, setInputValue] = useState("")
   const [isEnd, setIsEnd] = useState<boolean>(false)
   const [isInputValid, setIsInputValid] = useState<boolean>(true)
-  const SERVER_IP = process.env.SERVER_IP
+  const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
 
   // progress 관련
   const [totalQuestions, setTotalQuestions] = useState<number>(10);
@@ -243,8 +243,8 @@ function ExamPage() {
 
 
 
-    fetchData(SERVER_IP + '/kanzi/problem', true);
-    fetchData(SERVER_IP + '/kanzi/getTestProblems?levels=1&days=1', false);
+    fetchData(NEXT_PUBLIC_SERVER_IP + '/kanzi/problem', true);
+    fetchData(NEXT_PUBLIC_SERVER_IP + '/kanzi/getTestProblems?levels=1&days=1', false);
   }, []);
 
   // 열 문제 다 맞히면 정답 현황 알려주는 모달 등장 

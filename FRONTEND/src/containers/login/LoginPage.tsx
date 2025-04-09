@@ -30,11 +30,11 @@ export default function LoginPage() {
     width: '16rem',
     height : 'auto'
   }
-  const SERVER_IP = process.env.SERVER_IP
+  const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
   const KAKAO_API = process.env.KAKAO_RESTAPI
   const handleLogin = async () => {
     try {
-      const response = await axios.get(SERVER_IP + '/auth/Oauth2/KakaoLogin')
+      const response = await axios.get(NEXT_PUBLIC_SERVER_IP + '/auth/Oauth2/KakaoLogin')
       .then(response => {
         console.log(response.data)
         let queryString = `${response.data[1].link}?response_type=code&client_id=${KAKAO_API}&redirect_uri=${'http://localhost:3000/login/success'}`

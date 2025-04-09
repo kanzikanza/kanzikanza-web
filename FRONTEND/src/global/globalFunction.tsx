@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const SERVER_IP = process.env.SERVER_IP
+const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
 export async function getProcess(url : string) {
     return Promise;
 }
@@ -82,7 +82,7 @@ export function putImageInDb(blob: any, db : any)
 
 // 나중에, 패턴, 함수별로 자동화하는게 나아보임
 export async function loginSession(){
-    const url_replace1 = SERVER_IP + "/auth/isLoggedIn"
+    const url_replace1 = NEXT_PUBLIC_SERVER_IP + "/auth/isLoggedIn"
     let isFin : boolean = false
     try 
     {
@@ -105,7 +105,7 @@ export async function loginSession(){
             }
         ) 
         if (isFin) return;
-        const url_replace2 = SERVER_IP + "/auth/Oauth2/updateToken"
+        const url_replace2 = NEXT_PUBLIC_SERVER_IP + "/auth/Oauth2/updateToken"
         const reponse2 = await axios.post(
             url_replace2,
             {
@@ -148,7 +148,7 @@ function checkRefreshToken() {
 }
 
 async function checkRefreshValid() {
-    const url_replace2 = SERVER_IP + "/auth/Oauth2/updateToken"
+    const url_replace2 = NEXT_PUBLIC_SERVER_IP + "/auth/Oauth2/updateToken"
     await axios.post(
             url_replace2,
             {
@@ -182,7 +182,7 @@ async function checkRefreshValid() {
 }
 async function checkAccessValid() {
     // 자바스크립트 async는 좀 제대로 볼필요가 있다
-    const url_replace1 = SERVER_IP + "/auth/isLoggedIn"
+    const url_replace1 = NEXT_PUBLIC_SERVER_IP + "/auth/isLoggedIn"
     let level1 : boolean = false; 
     await axios.get(
         url_replace1,
@@ -239,7 +239,7 @@ export async function checkAuthorityChain() {
 
 export async function checkAuthority() {
     
-    const url_replace1 = SERVER_IP + "/auth/isLoggedIn"
+    const url_replace1 = NEXT_PUBLIC_SERVER_IP + "/auth/isLoggedIn"
 
     try
     {
