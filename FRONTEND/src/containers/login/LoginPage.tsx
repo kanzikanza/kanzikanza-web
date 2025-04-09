@@ -30,16 +30,14 @@ export default function LoginPage() {
     width: '16rem',
     height : 'auto'
   }
+  const SERVER_IP = process.env.SERVER_IP
+  const KAKAO_API = process.env.KAKAO_RESTAPI
   const handleLogin = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/auth/Oauth2/KakaoLogin')
+      const response = await axios.get(SERVER_IP + '/auth/Oauth2/KakaoLogin')
       .then(response => {
-        // 받은 을 DOM에 추가하여 렌더링
-        // document.getElementById('kakao-login-container').inner = response.data;
         console.log(response.data)
-        const api_key = "e0fa9c3226566a2dcda49e672fe892ac"
-        // let queryString = `${response.data[1].link}?response_type=code&client_id=${api_key}&redirect_uri=${response.data[1].redirect}`
-        let queryString = `${response.data[1].link}?response_type=code&client_id=${api_key}&redirect_uri=${'http://localhost:3000/login/success'}`
+        let queryString = `${response.data[1].link}?response_type=code&client_id=${KAKAO_API}&redirect_uri=${'http://localhost:3000/login/success'}`
         console.log(queryString)
         const popup = window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
 

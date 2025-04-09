@@ -57,7 +57,7 @@ const CircleButton = styled(Button)({
 function UniqueName() {
   const [userStreakDays, setUserStreakDays] = useState<Number>(0)
   const levels = [9, 8, 7, 6, 5, 4, 3, 2, 1]
-  
+  const SERVER_IP = process.env.SERVER_IP
   useEffect(() => {
     const fetchData = async (url: string, isToken: boolean) => {
             try {
@@ -87,7 +87,7 @@ function UniqueName() {
             }
         };
 
-        fetchData('http://localhost:8080/auth/getStreakDay', false);
+        fetchData(SERVER_IP + '/auth/getStreakDay', false);
 
   }, [])
   return (

@@ -17,7 +17,9 @@ export function LoginSuccess() {
     const [isSuccess, setIsSuccess] = useState(true); // 성공 여부 (null: 초기 상태)
     const params = useSearchParams();
     const router = useRouter()
-    let completeUrl: string = `http://localhost:8080/auth/Oauth2/KakaoToken?code=${params.get('code')}`
+    const SERVER_IP = process.env.SERVER_IP
+    
+    let completeUrl: string = `${SERVER_IP}/auth/Oauth2/KakaoToken?code=${params.get('code')}`
     
     useEffect(() => {
     (async (resolve, rejects) =>

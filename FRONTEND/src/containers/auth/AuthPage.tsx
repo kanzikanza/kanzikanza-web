@@ -7,14 +7,14 @@ import axios from "axios";
 export default function AuthPage() {
   const router = useRouter();
   const params = useParams()
-
+  const SERVER_IP = process.env.SERVER_IP
   useEffect(() => {
     const code = params.code;
 
     if (code) {
       console.log(`code: ${code}`)
       // 서버로 코드를 전송하는 GET 요청
-      axios.get('http://localhost:8080/auth/Oauth2/KakaoToken', { params: { code: code } })
+      axios.get(SERVER_IP + '/auth/Oauth2/KakaoToken', { params: { code: code } })
         .then(response => {
           console.log('Successfully sent code to server:', response.data);
         })

@@ -65,7 +65,7 @@ const TestPage = () => {
     const [score, setScore] = useState<Number>(-1);
     const HowMany = useRef<number>(0);
     const ReviewProblem = useRef<kanza[]>([])
-    
+    const SERVER_IP = process.env.SERVER_IP
     const router = useRouter()
     
     const handleCloseCongratulationModal = () => {
@@ -159,7 +159,7 @@ const TestPage = () => {
             }
         };
 
-        fetchData(`http://localhost:8080/kanzi/getTestProblems?levels=${levels - 1}&days=${days}`, false);
+        fetchData(SERVER_IP + `/kanzi/getTestProblems?levels=${levels - 1}&days=${days}`, false);
     }, []);
     
 
@@ -193,7 +193,7 @@ const TestPage = () => {
             }
         };
 
-        fetchData('http://localhost:8080/kanzi/getTestProblems?levels=2&days=1', false);
+        fetchData(SERVER_IP + '/kanzi/getTestProblems?levels=2&days=1', false);
     }
 
 

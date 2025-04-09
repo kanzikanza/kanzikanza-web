@@ -96,7 +96,6 @@ export type nextImage = {
     blurHeight: number
 }
 
-
 export default withInitialization; // 명시적인 default export
 
 

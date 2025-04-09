@@ -23,7 +23,7 @@ const PSidebar = styled(Drawer)(({ theme }) => ({
 export default function Sidebar() {
   const router = useRouter()
   const urlPath = ['/exam', '/', '/test']
-
+  const SERVER_IP = process.env.SERVER_IP
   const [userNickName, setUserNickName] = useState<String>("");
   const [userProfileIndex, setUserProfileIndex] = useState<Number>(-1);
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function Sidebar() {
               }
           };
 
-          fetchData('http://localhost:8080/auth/getSimpProfile', false);
+          fetchData(SERVER_IP + '/auth/getSimpProfile', false);
 
     }, [])
 

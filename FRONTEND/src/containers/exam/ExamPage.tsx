@@ -63,18 +63,6 @@ const InputText = styled(TextField)`
   max-width : 500px;
   width: 100%;
 `
-// async function axiosGet(url:string) {
-//   axios.get('http://localhost:8080/kanzi/problem',
-//           {
-//             headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
-//           }
-//         ).then((answer) => { 
-//           response = answer
-//         }).catch(() => {
-
-//         })
-// }
-
 // 테스트 페이지 컴포넌트
 function ExamPage() {
   // 상태 변수 선언
@@ -83,6 +71,7 @@ function ExamPage() {
   const [inputValue, setInputValue] = useState("")
   const [isEnd, setIsEnd] = useState<boolean>(false)
   const [isInputValid, setIsInputValid] = useState<boolean>(true)
+  const SERVER_IP = process.env.SERVER_IP
 
   // progress 관련
   const [totalQuestions, setTotalQuestions] = useState<number>(10);
@@ -254,8 +243,8 @@ function ExamPage() {
 
 
 
-    fetchData('http://localhost:8080/kanzi/problem', true);
-    fetchData('http://localhost:8080/kanzi/getTestProblems?levels=1&days=1', false);
+    fetchData(SERVER_IP + '/kanzi/problem', true);
+    fetchData(SERVER_IP + '/kanzi/getTestProblems?levels=1&days=1', false);
   }, []);
 
   // 열 문제 다 맞히면 정답 현황 알려주는 모달 등장 
