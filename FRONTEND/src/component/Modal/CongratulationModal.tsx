@@ -1,12 +1,15 @@
 import React from "react";
 import { styled, Paper, Modal, Typography, IconButton, CircularProgress, TypographyProps } from "@mui/material";
 import { Close } from "@mui/icons-material"
-import { kanza, reviewsProblem } from "@/containers/test/TestPage";
-
 const StyledModal = styled(Modal)`
   /* outline: none; */
 `;
 
+export type kanza = {
+  kanza: string;
+  mean: string;
+  sound: string;
+}
 const ModalContainer = styled('div')`
   position: absolute;
   top: 50%;
