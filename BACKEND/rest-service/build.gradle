@@ -28,14 +28,17 @@ dependencies {
     api libs.mysql.mysql.connector.java
     api 'org.springframework.boot:spring-boot-starter-data-neo4j:3.2.1'
 
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin
+    implementation("org.springframework.boot:spring-boot-maven-plugin:3.4.4")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     runtimeOnly libs.io.jsonwebtoken.jjwt.jackson
     runtimeOnly libs.io.jsonwebtoken.jjwt.impl
     testImplementation libs.org.springframework.boot.spring.boot.starter.test
     compileOnly libs.org.projectlombok.lombok
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
 
 
@@ -47,8 +50,15 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 description = 'rest-service'
 
-
-
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.example.restservice.KanzakanzaApplication',
+        'Class-Path': configurations.runtimeClasspath.files.join(' ')
+    }
+}
+// jar {
+//     enabled = false
+// }
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
