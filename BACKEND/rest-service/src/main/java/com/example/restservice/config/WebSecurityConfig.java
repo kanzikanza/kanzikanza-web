@@ -35,7 +35,7 @@ public class WebSecurityConfig {
     private final UserDetailService customUserDetailService;
 
     @Value("${spring.cors.url}")
-    String origin;
+    private String origin;
 
     @Bean
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
