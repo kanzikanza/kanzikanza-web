@@ -35,6 +35,8 @@ public class KakaoApi {
     @Value("${kakao.api_key}")
     private String clientId;
 
+    @Value("${spring.cors.url}")
+    private String redirectUrl;
     // public String getAccessToken(String code) {
     // String accessToken = "";
     // String refreshToken = "";
@@ -94,7 +96,7 @@ public class KakaoApi {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        params.add("redirect_uri", "http://localhost:3000/login/success");
+        params.add("redirect_uri", redirectUrl + "/login/success");
         params.add("code", code);
 
         // http 바디(params)와 http 헤더(headers)를 가진 엔티티
