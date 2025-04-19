@@ -32,7 +32,7 @@ export default function LoginPage() {
   }
   const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
   const NEXT_PUBLIC_MY_IP = process.env.NEXT_PUBLIC_MY_IP
-  const KAKAO_API = process.env.KAKAO_RESTAPI
+  const KAKAO_API = process.env.NEXT_PUBLIC_KAKAO_RESTAPI
   const handleLogin = async () => {
     try {
       const response = await axios.get(NEXT_PUBLIC_SERVER_IP + '/auth/Oauth2/KakaoLogin')
