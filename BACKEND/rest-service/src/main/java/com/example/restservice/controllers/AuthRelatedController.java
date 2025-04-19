@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,8 @@ public class AuthRelatedController {
         private final UserService userService;
         private final KakaoApi kakaoApi;
         private final AuthService authService;
-
+        @Value("${spring.myurl}") 
+        private String origin;
         @PatchMapping("/auth/setDefaultProfile")
         public ResponseEntity<?> setDefaultProfile(@RequestBody ProfileRequest profileRequest) {
                 try {
@@ -170,7 +172,7 @@ public class AuthRelatedController {
                 // return response;
                 Map<String, String> links = new HashMap<>();
                 links.put("link", "https://kauth.kakao.com/oauth/authorize");
-                links.put("redirect", "http://localhost:8080/auth/Oauth2/KakaoToken");
+                links.put("redirect", origin + "/auth/Oauth2/KakaoToken");
                 // links.put("redirect", "http://localhost:3000/auth");
 
                 return ResponseEntity.status(HttpStatus.OK).body(links);
