@@ -31,13 +31,14 @@ export default function LoginPage() {
     height : 'auto'
   }
   const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
+  const NEXT_PUBLIC_MY_IP = process.env.NEXT_PUBLIC_MY_IP
   const KAKAO_API = process.env.KAKAO_RESTAPI
   const handleLogin = async () => {
     try {
       const response = await axios.get(NEXT_PUBLIC_SERVER_IP + '/auth/Oauth2/KakaoLogin')
       .then(response => {
         console.log(response.data)
-        let queryString = `${response.data[1].link}?response_type=code&client_id=${KAKAO_API}&redirect_uri=${'http://localhost:3000/login/success'}`
+        let queryString = `${response.data[1].link}?response_type=code&client_id=${KAKAO_API}&redirect_uri=${`${NEXT_PUBLIC_MY_IP}/login/success`}`
         console.log(queryString)
         const popup = window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
 
