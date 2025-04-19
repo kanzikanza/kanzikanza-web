@@ -215,6 +215,8 @@ const TestPage = () => {
             }, 1000)
             return
         }
+
+        console.log(questionList[problemIndex])
         setQuestion(questionList[problemIndex][1]['problemContent'])
         setCorrectAnswer(questionList[problemIndex][1]['answer'])
         setOptions(questionList[problemIndex][1]['options'][1])
