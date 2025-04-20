@@ -54,7 +54,7 @@ export type reviewsProblem = {
 const TestPage = () => {
     const [questionList, setQuestionList] = useState<any[]>([]);
     const [question, setQuestion] = useState('');
-    const [options, setOptions] = useState([' ', ' ', ' ', ' ']);
+    const [options, setOptions] = useState([]);
     const [showCongratulationModal, setShowCongratulationModal] = useState<boolean>(false);
     const searchParams = useSearchParams()
     const [correctAnswer, setCorrectAnswer] = useState(-1);
