@@ -208,14 +208,14 @@ const TestPage = () => {
             return
         }
         
-        console.warn(`current length ${options.length}, and ${questionList[problemIndex][1]['options'][1]}`)
+        // console.warn(`current length ${options.length}, and ${questionList[problemIndex][1]['options'][1]}`)
         console.log(questionList[problemIndex])
         setQuestion(questionList[problemIndex][1]['problemContent'])
         setCorrectAnswer(questionList[problemIndex][1]['answer'])
         setOptions([questionList[problemIndex][1]['options'][1][0], questionList[problemIndex][1]['options'][1][1] , questionList[problemIndex][1]['options'][1][2], questionList[problemIndex][1]['options'][1][3]])
         setProblemType(questionList[problemIndex][1]['problemType'])
 
-    }, [problemIndex])
+    }, [problemIndex, questionList])
     
     return (
         <Container className='topContainter' sx={{ width: '50rem', height: '100%', minHeight: '30rem', paddingY: '1rem', margin: 'auto' }}>
@@ -267,7 +267,7 @@ const TestPage = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <Grid container direction="column" sx={{ gap: '1rem' }}>
-                                {questionList[problemIndex][1]['options'][1]
+                                {options
                                     .filter(option => option !== undefined && option !== null && option !== '')
                                     .map((option, index) => (
                                                 <Paper
