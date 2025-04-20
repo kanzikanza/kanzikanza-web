@@ -56,7 +56,7 @@ const TestPage = () => {
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState([' ', ' ', ' ', ' ']);
     const [showCongratulationModal, setShowCongratulationModal] = useState<boolean>(false);
-
+    const searchParams = useSearchParams()
     const [correctAnswer, setCorrectAnswer] = useState(-1);
     const [selectedAnswer, setSelectedAnswer] = useState(-1);
     const [problemIndex, setProblemIndex] = useState<number>(-1);
@@ -67,6 +67,8 @@ const TestPage = () => {
     const ReviewProblem = useRef<kanza[]>([])
     const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
     const router = useRouter()
+    const levels : number = Number(searchParams.get('levels'))
+    const days : number = Number( searchParams.get('days'))
     
     const handleCloseCongratulationModal = () => {
         setShowCongratulationModal(false);
@@ -75,10 +77,7 @@ const TestPage = () => {
     };
 
 
-    const searchParams = useSearchParams()
  
-    const levels : number = Number(searchParams.get('levels'))
-    const days : number = Number( searchParams.get('days'))
     if (levels === null || days === null)
     {
         router.push('/')
@@ -110,13 +109,6 @@ const TestPage = () => {
                 }
             }
             button.classList.add('reveal');
-            // else 
-            // {
-            //     if (index === correctAnswer)
-            //     {
-            //         button.classList.add('correct');
-            //     }
-            // }
             setTimeout(() => { 
                 const buttons = document.querySelectorAll('.MuiButton-root');
                 buttons.forEach((button, index) => {
@@ -275,7 +267,7 @@ const TestPage = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <Grid container direction="column" sx={{ gap: '1rem' }}>
-                                {options
+                                {questionList[problemIndex][1]['options'][1]
                                     .filter(option => option !== undefined && option !== null && option !== '')
                                     .map((option, index) => (
                                                 <Paper
