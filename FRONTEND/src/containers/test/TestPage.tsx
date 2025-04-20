@@ -268,84 +268,17 @@ const TestPage = () => {
                         <Grid item xs={4}>
                             <Grid container direction="column" sx={{ gap: '1rem' }}>
                                 {options
-                                    // .filter(option => option !== undefined && option !== null && option !== '')
-                                    // .map((option, index) => (
-                                    //             <Paper
-                                    //                 sx={{ width: '15rem', borderRadius: '1rem' }}
-                                    //                 key={option}
-                                    //                 elevation={2}
-                                    //             >
-                                    //                 <AnswerButton
-                                    //                     fullWidth
-                                    //                     variant="outlined"
-                                    //                     onClick={() => handleAnswerSelect(index)}
-                                    //                     sx={{
-                                    //                         height: '6.75rem',
-                                    //                         transition: 'all 0.3s',
-                                    //                         fontSize: '2rem',
-                                    //                         '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
-                                    //                             backgroundColor: '#FFE5C6', // 회색 계열 호버
-                                    //                             borderColor: '#d2d2d2'
-                                    //                         },
-                                    //                         '&.correct': {
-                                    //                             backgroundColor: '#90EE90',
-                                    //                             borderColor: '#90EE90',
-                                    //                         },
-                                    //                         '&.wrong': {
-                                    //                             backgroundColor: '#FF6B6B',
-                                    //                             borderColor: '#FF6B6B',
-                                    //                         },
-                                    //                         '&.reveal': {
-                                    //                             pointerEvents: 'none',
-                                    //                         }
-                                    //                     }}
-                                    //                 >
-                                    //                     {/* 상태에 따른 아이콘 애니메이션 */}
-                                    //                     <StatusIcon className={
-                                    //                         (correctAnswer === index) && selectedAnswer != -1 ? 'visible' :
-                                    //                             (selectedAnswer === index) && selectedAnswer != correctAnswer ? 'visible' : ''
-                                    //                     }>
-                                    //                         {correctAnswer === index && selectedAnswer != -1 && (
-                                    //                             <Image
-                                    //                                 src={done}
-                                    //                                 alt="정답"
-                                    //                                 priority
-                                    //                                 style={{ width: '2rem', height: '2rem' }}
-                                    //                             />
-                                    //                         )}
-                                    //                         {selectedAnswer === index && selectedAnswer != correctAnswer && (
-                                    //                             <Image
-                                    //                                 src={close}
-                                    //                                 alt="오답"
-                                    //                                 style={{ width: '2rem', height: '2rem' }}
-                                    //                                 priority
-                                    //                             />
-                                    //                         )}
-                                    //                     </StatusIcon>
-                                    //         <TextWrapper
-                                    //             className={
-                                    //                 (correctAnswer === index && selectedAnswer !== -1) ||
-                                    //                     (selectedAnswer === index && selectedAnswer !== correctAnswer)
-                                    //                     ? 'has-icon'
-                                    //                     : ''
-                                    //             }
-                                    //         >
-                                    //             {option}
-                                    //         </TextWrapper>
-                                    //     </AnswerButton>
-                                    // </Paper>
-                                    // ))
-                                }
-                                
-                                <Paper
+                                    .filter(option => option !== undefined && option !== null && option !== '')
+                                    .map((option, index) => (
+                                                <Paper
                                                     sx={{ width: '15rem', borderRadius: '1rem' }}
-                                                    key={options[0]}
+                                                    key={option}
                                                     elevation={2}
                                                 >
                                                     <AnswerButton
                                                         fullWidth
                                                         variant="outlined"
-                                                        onClick={() => handleAnswerSelect(0)}
+                                                        onClick={() => handleAnswerSelect(index)}
                                                         sx={{
                                                             height: '6.75rem',
                                                             transition: 'all 0.3s',
@@ -369,10 +302,10 @@ const TestPage = () => {
                                                     >
                                                         {/* 상태에 따른 아이콘 애니메이션 */}
                                                         <StatusIcon className={
-                                                            (correctAnswer === 0) && selectedAnswer != -1 ? 'visible' :
-                                                                (selectedAnswer === 0) && selectedAnswer != correctAnswer ? 'visible' : ''
+                                                            (correctAnswer === index) && selectedAnswer != -1 ? 'visible' :
+                                                                (selectedAnswer === index) && selectedAnswer != correctAnswer ? 'visible' : ''
                                                         }>
-                                                            {correctAnswer === 0 && selectedAnswer != -1 && (
+                                                            {correctAnswer === index && selectedAnswer != -1 && (
                                                                 <Image
                                                                     src={done}
                                                                     alt="정답"
@@ -380,7 +313,7 @@ const TestPage = () => {
                                                                     style={{ width: '2rem', height: '2rem' }}
                                                                 />
                                                             )}
-                                                            {selectedAnswer === 0 && selectedAnswer != correctAnswer && (
+                                                            {selectedAnswer === index && selectedAnswer != correctAnswer && (
                                                                 <Image
                                                                     src={close}
                                                                     alt="오답"
@@ -391,208 +324,18 @@ const TestPage = () => {
                                                         </StatusIcon>
                                             <TextWrapper
                                                 className={
-                                                    (correctAnswer === 0 && selectedAnswer !== -1) ||
-                                                        (selectedAnswer === 0 && selectedAnswer !== correctAnswer)
+                                                    (correctAnswer === index && selectedAnswer !== -1) ||
+                                                        (selectedAnswer === index && selectedAnswer !== correctAnswer)
                                                         ? 'has-icon'
                                                         : ''
                                                 }
                                             >
-                                                {options[0]}
-                                            </TextWrapper>
-                                        </AnswerButton>
-                                </Paper>
-                                <Paper
-                                                    sx={{ width: '15rem', borderRadius: '1rem' }}
-                                                    key={options[1]}
-                                                    elevation={2}
-                                                >
-                                                    <AnswerButton
-                                                        fullWidth
-                                                        variant="outlined"
-                                                        onClick={() => handleAnswerSelect(1)}
-                                                        sx={{
-                                                            height: '6.75rem',
-                                                            transition: 'all 0.3s',
-                                                            fontSize: '2rem',
-                                                            '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
-                                                                backgroundColor: '#FFE5C6', // 회색 계열 호버
-                                                                borderColor: '#d2d2d2'
-                                                            },
-                                                            '&.correct': {
-                                                                backgroundColor: '#90EE90',
-                                                                borderColor: '#90EE90',
-                                                            },
-                                                            '&.wrong': {
-                                                                backgroundColor: '#FF6B6B',
-                                                                borderColor: '#FF6B6B',
-                                                            },
-                                                            '&.reveal': {
-                                                                pointerEvents: 'none',
-                                                            }
-                                                        }}
-                                                    >
-                                                        {/* 상태에 따른 아이콘 애니메이션 */}
-                                                        <StatusIcon className={
-                                                            (correctAnswer === 1) && selectedAnswer != -1 ? 'visible' :
-                                                                (selectedAnswer === 1) && selectedAnswer != correctAnswer ? 'visible' : ''
-                                                        }>
-                                                            {correctAnswer === 1 && selectedAnswer != -1 && (
-                                                                <Image
-                                                                    src={done}
-                                                                    alt="정답"
-                                                                    priority
-                                                                    style={{ width: '2rem', height: '2rem' }}
-                                                                />
-                                                            )}
-                                                            {selectedAnswer === 1 && selectedAnswer != correctAnswer && (
-                                                                <Image
-                                                                    src={close}
-                                                                    alt="오답"
-                                                                    style={{ width: '2rem', height: '2rem' }}
-                                                                    priority
-                                                                />
-                                                            )}
-                                                        </StatusIcon>
-                                            <TextWrapper
-                                                className={
-                                                    (correctAnswer === 1 && selectedAnswer !== -1) ||
-                                                        (selectedAnswer === 1 && selectedAnswer !== correctAnswer)
-                                                        ? 'has-icon'
-                                                        : ''
-                                                }
-                                            >
-                                                {options[1]}
-                                            </TextWrapper>
-                                        </AnswerButton>
-                                </Paper>
-                                <Paper
-                                                    sx={{ width: '15rem', borderRadius: '1rem' }}
-                                                    key={options[2]}
-                                                    elevation={2}
-                                                >
-                                                    <AnswerButton
-                                                        fullWidth
-                                                        variant="outlined"
-                                                        onClick={() => handleAnswerSelect(2)}
-                                                        sx={{
-                                                            height: '6.75rem',
-                                                            transition: 'all 0.3s',
-                                                            fontSize: '2rem',
-                                                            '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
-                                                                backgroundColor: '#FFE5C6', // 회색 계열 호버
-                                                                borderColor: '#d2d2d2'
-                                                            },
-                                                            '&.correct': {
-                                                                backgroundColor: '#90EE90',
-                                                                borderColor: '#90EE90',
-                                                            },
-                                                            '&.wrong': {
-                                                                backgroundColor: '#FF6B6B',
-                                                                borderColor: '#FF6B6B',
-                                                            },
-                                                            '&.reveal': {
-                                                                pointerEvents: 'none',
-                                                            }
-                                                        }}
-                                                    >
-                                                        {/* 상태에 따른 아이콘 애니메이션 */}
-                                                        <StatusIcon className={
-                                                            (correctAnswer === 2) && selectedAnswer != -1 ? 'visible' :
-                                                                (selectedAnswer === 2) && selectedAnswer != correctAnswer ? 'visible' : ''
-                                                        }>
-                                                            {correctAnswer === 2 && selectedAnswer != -1 && (
-                                                                <Image
-                                                                    src={done}
-                                                                    alt="정답"
-                                                                    priority
-                                                                    style={{ width: '2rem', height: '2rem' }}
-                                                                />
-                                                            )}
-                                                            {selectedAnswer === 2 && selectedAnswer != correctAnswer && (
-                                                                <Image
-                                                                    src={close}
-                                                                    alt="오답"
-                                                                    style={{ width: '2rem', height: '2rem' }}
-                                                                    priority
-                                                                />
-                                                            )}
-                                                        </StatusIcon>
-                                            <TextWrapper
-                                                className={
-                                                    (correctAnswer === 2 && selectedAnswer !== -1) ||
-                                                        (selectedAnswer === 2 && selectedAnswer !== correctAnswer)
-                                                        ? 'has-icon'
-                                                        : ''
-                                                }
-                                            >
-                                                {options[2]}
-                                            </TextWrapper>
-                                        </AnswerButton>
-                                </Paper>
-                                <Paper
-                                                    sx={{ width: '15rem', borderRadius: '1rem' }}
-                                                    key={options[3]}
-                                                    elevation={2}
-                                                >
-                                                    <AnswerButton
-                                                        fullWidth
-                                                        variant="outlined"
-                                                        onClick={() => handleAnswerSelect(3)}
-                                                        sx={{
-                                                            height: '6.75rem',
-                                                            transition: 'all 0.3s',
-                                                            fontSize: '2rem',
-                                                            '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
-                                                                backgroundColor: '#FFE5C6', // 회색 계열 호버
-                                                                borderColor: '#d2d2d2'
-                                                            },
-                                                            '&.correct': {
-                                                                backgroundColor: '#90EE90',
-                                                                borderColor: '#90EE90',
-                                                            },
-                                                            '&.wrong': {
-                                                                backgroundColor: '#FF6B6B',
-                                                                borderColor: '#FF6B6B',
-                                                            },
-                                                            '&.reveal': {
-                                                                pointerEvents: 'none',
-                                                            }
-                                                        }}
-                                                    >
-                                                        {/* 상태에 따른 아이콘 애니메이션 */}
-                                                        <StatusIcon className={
-                                                            (correctAnswer === 3) && selectedAnswer != -1 ? 'visible' :
-                                                                (selectedAnswer === 3) && selectedAnswer != correctAnswer ? 'visible' : ''
-                                                        }>
-                                                            {correctAnswer === 3 && selectedAnswer != -1 && (
-                                                                <Image
-                                                                    src={done}
-                                                                    alt="정답"
-                                                                    priority
-                                                                    style={{ width: '2rem', height: '2rem' }}
-                                                                />
-                                                            )}
-                                                            {selectedAnswer === 3 && selectedAnswer != correctAnswer && (
-                                                                <Image
-                                                                    src={close}
-                                                                    alt="오답"
-                                                                    style={{ width: '2rem', height: '2rem' }}
-                                                                    priority
-                                                                />
-                                                            )}
-                                                        </StatusIcon>
-                                            <TextWrapper
-                                                className={
-                                                    (correctAnswer === 3 && selectedAnswer !== -1) ||
-                                                        (selectedAnswer === 3 && selectedAnswer !== correctAnswer)
-                                                        ? 'has-icon'
-                                                        : ''
-                                                }
-                                            >
-                                                {options[3]}
+                                                {option}
                                             </TextWrapper>
                                         </AnswerButton>
                                     </Paper>
+                                    ))
+                                }
                             </Grid>
                         </Grid>
                     </Grid>
