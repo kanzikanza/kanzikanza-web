@@ -215,11 +215,12 @@ const TestPage = () => {
             }, 1000)
             return
         }
-
+        
+        console.warn(`current length ${options.length}, and ${questionList[problemIndex][1]['options'][1]}`)
         console.log(questionList[problemIndex])
         setQuestion(questionList[problemIndex][1]['problemContent'])
         setCorrectAnswer(questionList[problemIndex][1]['answer'])
-        setOptions(questionList[problemIndex][1]['options'][1])
+        setOptions([questionList[problemIndex][1]['options'][1][0], questionList[problemIndex][1]['options'][1][1] , questionList[problemIndex][1]['options'][1][2], questionList[problemIndex][1]['options'][1][3]])
         setProblemType(questionList[problemIndex][1]['problemType'])
 
     }, [problemIndex])
