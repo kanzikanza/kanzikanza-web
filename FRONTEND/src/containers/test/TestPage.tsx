@@ -246,9 +246,6 @@ const TestPage = () => {
                             }
                         }}
                     />
-                    {/* <Divider variant="middle" component="li" sx={{ listStyle: 'None' }} /> */}
-                    {/* <Divider variant="middle"></Divider> */}
-                    {/* <Divider component="li" variant="middle" sx={{ listStyle: 'none' }} /> */}
                     <Divider />
 
                     <Typography variant="h6" sx={{ my: 3, textAlign: 'left', fontSize: '2rem' }}>
@@ -278,62 +275,61 @@ const TestPage = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <Grid container direction="column" sx={{ gap: '1rem' }}>
-                                {options.map((option, index) => (
-                                    <Paper
-                                        sx={{ width: '15rem', borderRadius: '1rem' }}
-                                        key={option}
-                                        elevation={2}
-                                    >
-                                        <AnswerButton
-                                            fullWidth
-                                            variant="outlined"
-                                            onClick={() => handleAnswerSelect(index)}
-                                            sx={{
-                                                // color :'whte'
-                                    
-                                                height: '6.75rem',
-                                                transition: 'all 0.3s',
-                                                fontSize: '2rem',
-                                                // 기본 호버 효과
-                                                '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
-                                                    backgroundColor: '#FFE5C6', // 회색 계열 호버
-                                                    borderColor: '#d2d2d2'
-                                                },
-                                                '&.correct': {
-                                                    backgroundColor: '#90EE90',
-                                                    borderColor: '#90EE90',
-                                                },
-                                                '&.wrong': {
-                                                    backgroundColor: '#FF6B6B',
-                                                    borderColor: '#FF6B6B',
-                                                },
-                                                '&.reveal': {
-                                                    pointerEvents: 'none',
-                                                }
-                                            }}
-                                        >
-                                            {/* 상태에 따른 아이콘 애니메이션 */}
-                                            <StatusIcon className={
-                                                (correctAnswer === index) && selectedAnswer != -1 ? 'visible' :
-                                                    (selectedAnswer === index) && selectedAnswer != correctAnswer ? 'visible' : ''
-                                            }>
-                                                {correctAnswer === index && selectedAnswer != -1 && (
-                                                    <Image
-                                                        src={done}
-                                                        alt="정답"
-                                                        priority
-                                                        style={{ width: '2rem', height: '2rem' }}
-                                                    />
-                                                )}
-                                                {selectedAnswer === index && selectedAnswer != correctAnswer && (
-                                                    <Image
-                                                        src={close}
-                                                        alt="오답"
-                                                        style={{ width: '2rem', height: '2rem' }}
-                                                        priority
-                                                    />
-                                                )}
-                                            </StatusIcon>
+                                {options
+                                    .filter(option => option !== undefined && option !== null && option !== '')
+                                    .map((option, index) => (
+                                                <Paper
+                                                    sx={{ width: '15rem', borderRadius: '1rem' }}
+                                                    key={option}
+                                                    elevation={2}
+                                                >
+                                                    <AnswerButton
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        onClick={() => handleAnswerSelect(index)}
+                                                        sx={{
+                                                            height: '6.75rem',
+                                                            transition: 'all 0.3s',
+                                                            fontSize: '2rem',
+                                                            '&.MuiButton-root:not(.correct):not(.wrong):not(.reveal):hover': {
+                                                                backgroundColor: '#FFE5C6', // 회색 계열 호버
+                                                                borderColor: '#d2d2d2'
+                                                            },
+                                                            '&.correct': {
+                                                                backgroundColor: '#90EE90',
+                                                                borderColor: '#90EE90',
+                                                            },
+                                                            '&.wrong': {
+                                                                backgroundColor: '#FF6B6B',
+                                                                borderColor: '#FF6B6B',
+                                                            },
+                                                            '&.reveal': {
+                                                                pointerEvents: 'none',
+                                                            }
+                                                        }}
+                                                    >
+                                                        {/* 상태에 따른 아이콘 애니메이션 */}
+                                                        <StatusIcon className={
+                                                            (correctAnswer === index) && selectedAnswer != -1 ? 'visible' :
+                                                                (selectedAnswer === index) && selectedAnswer != correctAnswer ? 'visible' : ''
+                                                        }>
+                                                            {correctAnswer === index && selectedAnswer != -1 && (
+                                                                <Image
+                                                                    src={done}
+                                                                    alt="정답"
+                                                                    priority
+                                                                    style={{ width: '2rem', height: '2rem' }}
+                                                                />
+                                                            )}
+                                                            {selectedAnswer === index && selectedAnswer != correctAnswer && (
+                                                                <Image
+                                                                    src={close}
+                                                                    alt="오답"
+                                                                    style={{ width: '2rem', height: '2rem' }}
+                                                                    priority
+                                                                />
+                                                            )}
+                                                        </StatusIcon>
                                             <TextWrapper
                                                 className={
                                                     (correctAnswer === index && selectedAnswer !== -1) ||
@@ -342,7 +338,6 @@ const TestPage = () => {
                                                         : ''
                                                 }
                                             >
-
                                                 {option}
                                             </TextWrapper>
                                         </AnswerButton>
@@ -364,9 +359,7 @@ const AnswerButton = styled(Button)(({ theme }) => ({
     borderRadius: '1rem',
     borderColor: '#D2D2D2',
     fontSize: '1.2rem',
-
     '&&:hover': {  // 특이성(specificity)을 높이기 위해 && 사용
-    // backgroundColor: '#FFE5C6',  // 연한 회색 배경
     borderColor: '#D2D2D2',  // 기존 보더 색상 유지
     boxShadow: theme.shadows[2],  // 그림자 효과 유지
   }
