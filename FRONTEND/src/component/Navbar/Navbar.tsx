@@ -20,7 +20,6 @@ export default function Navbar() {
       <p className={style.menuLink}>칸지칸자</p>
       <div className={style.leftMenu}>
         <a href="/" className={style.menuLink}>홈</a>
-        <a href="/exam" className={style.menuLink}>시험 보기</a>
       </div>
       <div className={style.rightMenu}>
         <a href="/login" className={style.menuLink}>로그인</a>
