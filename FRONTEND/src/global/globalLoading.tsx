@@ -13,10 +13,11 @@ const LoadingScreen = () => {
     <Backdrop
       open={true}
       sx={{
-        zIndex: 9999,
+        zIndex: 10,
         backdropFilter: 'blur(5px)',
         backgroundColor: 'rgba(0, 0, 0, 0.3)'
       }}
+      id='NoWay'
     >
       <Fade in={showSpinner}>
         <Box sx={{ position: 'relative' }}>

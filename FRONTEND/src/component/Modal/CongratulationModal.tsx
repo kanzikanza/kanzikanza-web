@@ -92,7 +92,6 @@ const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score:
           :
           <Content variant="h6" component="h2">    
             <p className="score">당신은 <strong>{score}</strong>점 입니다!</p>
-            
              {reviews.length > 0 && (
               <>
                 <strong style={{marginBottom : '5px'}}>틀린 문제</strong>

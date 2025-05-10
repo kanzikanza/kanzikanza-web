@@ -1,9 +1,11 @@
 package com.example.restservice.redis.service;
 
-
+import com.example.restservice.dtos.KanzaUniteDtos;
 import com.example.restservice.kanza.dto.KanzaDto;
 import com.example.restservice.kanza.model.KanzaModel;
-import com.example.restservice.kanza.service.KanzaService;
+// import com.example.restservice.kanza.service.KanzaService;
+import com.example.restservice.redis.model.RedisTestSession;
+import com.example.restservice.redis.model.RedisTestSessionMetadata;
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +15,13 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.data.util.Pair;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import com.google.gson.*;
 
 @RequiredArgsConstructor
 @Service
@@ -26,12 +29,11 @@ import java.util.Optional;
 public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserService userService;
-    private final KanzaService kanzaService;
-    public void putToCache(String key, String data)
-    {
+    // private final KanzaService kanzaService;
+
+    public void putToCache(String key, String data) {
         HashOperations<String, String, Object> values = redisTemplate.opsForHash();
-        if (values.get("Node", "head") == null)
-        {
+        if (values.get("Node", "head") == null) {
             values.put("Node", key, data);
         }
         values.put("Node", key, data);
@@ -42,25 +44,18 @@ public class RedisService {
         values.set(key, data, duration);
     }
 
-
-
-
-
-    public String getValues(String key)
-    {
-        UserModel userModel =  userService.findCurrentUser();
-        String userCode =  userModel.getUserEmail() + "key" + "." + key;
+    public String getValues(String key) {
+        UserModel userModel = userService.findCurrentUser();
+        String userCode = userModel.getUserEmail() + "key" + "." + key;
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
 
-        if (values.get(userCode) == null)
-        {
+        if (values.get(userCode) == null) {
             return "key not found";
         }
         return values.get(userCode).toString();
     }
 
-    public KanzaDto cacheKanza(KanzaModel kanzaModel)
-    {
+    public KanzaDto cacheKanza(KanzaModel kanzaModel) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         KanzaDto kanzaDto = KanzaDto.builder()
                 .KANZA(kanzaModel.getKanzaLetter())
@@ -83,20 +78,14 @@ public class RedisService {
     }
 
     // LinkedList를 만드는 코드
-    public void checkLinkedList(String userIndex)
-    {
+    public void checkLinkedList(String userIndex) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
-//        redisTemplate.delete(userIndex + "::LinkedList");
+        // redisTemplate.delete(userIndex + "::LinkedList");
         Duration duration = Duration.ofSeconds(1000);
-        if (values.get(userIndex + "::LinkedList") == null)
-        {
+        if (values.get(userIndex + "::LinkedList") == null) {
             values.set(userIndex + "::LinkedList", "1", duration);
             values.set(userIndex + "::LinkedList::Cache::Head", "-1", duration);
             values.set(userIndex + "::LinkedList::Cache::Tail", "-3", duration);
-//            values.set(userIndex + "::LinkedList::Cache::Head" + "::next", "Null");
-//            values.set(userIndex + "::LinkedList::Cache::Tail" + "::next", "Null");
-//            values.set(userIndex + "::LinkedList::Cache::Tail" + "::before", "Null");
-//            values.set(userIndex + "::LinkedList::Cache::Head" + "::before", "Null");
             values.set(userIndex + "::LinkedList::Cache" + "::meta::MaxLength", "5", duration);
             values.set(userIndex + "::LinkedList::Cache" + "::meta::Length", "0", duration);
 
@@ -106,26 +95,22 @@ public class RedisService {
         }
     }
 
-    public Integer getCachedNumber(String userIndex) throws NullPointerException
-    {
+    public Integer getCachedNumber(String userIndex) throws NullPointerException {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        try
-        {
+        try {
             return Integer.valueOf(values.get(userIndex + "::LinkedList::Cache" + "::meta::Length").toString());
-        } catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             throw e;
         }
     }
 
-
-    public void make2Node(String userIndex)
-    {
+    public void make2Node(String userIndex) {
 
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
 
         // 원래는 노드의 인덱스를 LinkedList와 연동해야하지만 일단 하지않음
-        // Integer index = (Integer) values.get(userIndex.toString() + "::LinkedList::Cache::Meta::Length");
+        // Integer index = (Integer) values.get(userIndex.toString() +
+        // "::LinkedList::Cache::Meta::Length");
 
         // 한자의 노드를 가져와야함.
         // 캐시의 인덱스는 의미가 없음
@@ -146,28 +131,22 @@ public class RedisService {
         values.set(Node2 + "::Before", index.toString(), duration);
     }
 
-
-
-
-    public List<KanzaDto> redisGetNCache(String userIndex, int n)
-    {
+    public List<KanzaDto> redisGetNCache(String userIndex, int n) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         String linkedList = userIndex + "::LinkedList";
         checkLinkedList(userIndex);
         Integer size = Integer.valueOf(values.get(linkedList + "::Cache" + "::meta::Length").toString());
 
         List<KanzaDto> kanzaDtos = new ArrayList<>();
-        for (; n > 0; n--)
-        {
+        for (; n > 0; n--) {
             kanzaDtos.add(popKanzaCache(linkedList));
         }
         values.set(linkedList + "::Cache" + "::meta::Length", size);
         return kanzaDtos;
     }
 
-    public KanzaDto popKanzaCache(String linkedList)
-    {
-        KanzaDto node =  redisTemplate.execute((RedisCallback<KanzaDto>) connection -> {
+    public KanzaDto popKanzaCache(String linkedList) {
+        KanzaDto node = redisTemplate.execute((RedisCallback<KanzaDto>) connection -> {
             ValueOperations<String, Object> values = redisTemplate.opsForValue();
 
             Object popNode = values.get(linkedList + "::Cache" + "::Tail::Before");
@@ -179,8 +158,7 @@ public class RedisService {
         return node;
     }
 
-    public void redisCacheDelete(String nodeKey)
-    {
+    public void redisCacheDelete(String nodeKey) {
         Duration duration = Duration.ofSeconds(100);
 
         redisTemplate.execute((RedisCallback<? extends Object>) connection -> {
@@ -196,9 +174,7 @@ public class RedisService {
         });
     }
 
-
-    public void redisCachePutHead(String headKey, String nodeKey, KanzaDto kanzaDto)
-    {
+    public void redisCachePutHead(String headKey, String nodeKey, KanzaDto kanzaDto) {
         Duration duration = Duration.ofSeconds(100);
         redisTemplate.execute((RedisCallback<? extends Object>) connection -> {
             ValueOperations<String, Object> values = redisTemplate.opsForValue();
@@ -214,81 +190,78 @@ public class RedisService {
     }
 
     // PutHead를 감싸고 최대 로직을 감싸는 내용
-    public void redisCachePut(String userIndex, String kanzaIndex)
-    {
-        Duration duration = Duration.ofSeconds(100);
-        redisTemplate.execute((RedisCallback<? extends Object>) connection -> {
-            ValueOperations<String, Object> values = redisTemplate.opsForValue();
-            // 연결리스트 없으면 만드는 코드
+    // public void redisCachePut(String userIndex, String kanzaIndex) {
+    // Duration duration = Duration.ofSeconds(100);
+    // redisTemplate.execute((RedisCallback<? extends Object>) connection -> {
+    // ValueOperations<String, Object> values = redisTemplate.opsForValue();
+    // // 연결리스트 없으면 만드는 코드
 
+    // checkLinkedList(userIndex);
 
-            checkLinkedList(userIndex);
+    // String linkedList = userIndex + "::LinkedList";
+    // String possibleNodeKey = linkedList + "::Node::" + kanzaIndex;
 
-            String linkedList = userIndex + "::LinkedList";
-            String possibleNodeKey = linkedList + "::Node::" + kanzaIndex;
+    // // 놔란줄 하나부터 확인
+    // Integer size = Integer.valueOf(values.get(linkedList + "::Cache" +
+    // "::meta::Length").toString());
+    // log.info("기존의 사이즈는 " + size.toString());
+    // if (values.get(possibleNodeKey) != null) {
+    // log.info("캐시안에 있는 노드를 다시 푸시할 떄는 옮긴다.");
+    // redisCacheDelete(possibleNodeKey);
+    // size--;
+    // } else {
+    // if (size + 1 == Integer.valueOf(values.get(linkedList + "::Cache" +
+    // "::meta::MaxLength").toString())) {
+    // log.info("최대 길이에 도달해 tail의 노드를 지운다");
+    // String popNode = values.get(linkedList + "::Cache" +
+    // "::Tail::Before").toString();
+    // redisCacheDelete(popNode);
+    // size--;
+    // }
+    // }
+    // KanzaModel kanzaModel =
+    // kanzaService.findByKanzaIndex(Integer.valueOf(kanzaIndex));
 
-            // 놔란줄 하나부터 확인
-            Integer size = Integer.valueOf(values.get(linkedList + "::Cache" + "::meta::Length").toString());
-            log.info("기존의 사이즈는 " + size.toString());
-            if (values.get(possibleNodeKey) != null) {
-                log.info("캐시안에 있는 노드를 다시 푸시할 떄는 옮긴다.");
-                redisCacheDelete(possibleNodeKey);
-                size--;
-            } else {
-                if (size + 1 == Integer.valueOf(values.get(linkedList + "::Cache" + "::meta::MaxLength").toString())) {
-                    log.info("최대 길이에 도달해 tail의 노드를 지운다");
-                    String popNode = values.get(linkedList + "::Cache" + "::Tail::Before").toString();
-                    redisCacheDelete(popNode);
-                    size--;
-                }
-            }
-            KanzaModel kanzaModel = kanzaService.findByKanzaIndex(Integer.valueOf(kanzaIndex));
+    // KanzaDto kanzaDto = KanzaDto.builder()
+    // .KANZA(kanzaModel.getKanzaLetter())
+    // .SOUND(kanzaModel.getKanzaSound())
+    // .MEAN(kanzaModel.getKanzaMean())
+    // .build();
 
-            KanzaDto kanzaDto = KanzaDto.builder()
-                    .KANZA(kanzaModel.getKanzaLetter())
-                    .SOUND(kanzaModel.getKanzaSound())
-                    .MEAN(kanzaModel.getKanzaMean())
-                    .build();
+    // redisCachePutHead(linkedList + "::Cache" + "::Head", possibleNodeKey,
+    // kanzaDto);
+    // size++;
+    // log.info("이후의 사이즈는 " + size.toString());
+    // values.set(linkedList + "::Cache" + "::meta::Length", size, duration);
+    // return null;
+    // });
+    // }
 
-            redisCachePutHead(linkedList + "::Cache" + "::Head", possibleNodeKey, kanzaDto);
-            size++;
-            log.info("이후의 사이즈는 "  + size.toString());
-            values.set(linkedList + "::Cache" + "::meta::Length", size, duration);
-            return null;
-        });
-    }
-
-
-    public void redisCheckTestSession(String userIndex)
-    {
+    public void redisCheckTestSession(String userIndex) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
-//        redisTemplate.delete(userIndex + "::LinkedList");
-//        Duration duration = Duration.ofSeconds(1000);
-        if (values.get(userIndex + "::TestSession") == null)
-        {
+        // redisTemplate.delete(userIndex + "::LinkedList");
+        // Duration duration = Duration.ofSeconds(1000);
+        if (values.get(userIndex + "::TestSession") == null) {
             values.set(userIndex + "::TestSession", "1");
             values.set(userIndex + "::TestSession" + "::Id", "1");
             values.set(userIndex + "::TestSession" + "::meta", "1");
-            values.set(userIndex + "::TestSession" + "::meta" + "::Progress" , "0");
-            values.set(userIndex + "::TestSession" + "::meta" + "::Length" , "20");
-            values.set(userIndex + "::TestSession" + "::meta" + "::Score" , "0");
+            values.set(userIndex + "::TestSession" + "::meta" + "::Progress", "0");
+            values.set(userIndex + "::TestSession" + "::meta" + "::Length", "20");
+            values.set(userIndex + "::TestSession" + "::meta" + "::Score", "0");
         }
     }
 
-    public Integer redisUpdateTestSession(String userIndex, String kanzaIndex, Integer isRight)
-    {
+    public Integer redisUpdateTestSession(String userIndex, String kanzaIndex, Integer isRight) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
 
         Integer result = 0;
         redisCheckTestSession(userIndex);
         String testSession = userIndex + "::TestSession";
-        if (values.get(testSession + "::meta" + "::Progress").equals("20"))
-        {
+        if (values.get(testSession + "::meta" + "::Progress").equals("20")) {
             return result;
         }
-        if (isRight.equals(0))
-        {
-            redisCachePut(userIndex, kanzaIndex);
+        if (isRight.equals(0)) {
+            // redisCachePut(userIndex, kanzaIndex);
         }
         try {
             Integer previousProgress = (Integer) values.get(testSession + "::meta" + "::Progress");
@@ -298,13 +271,93 @@ public class RedisService {
             Integer previousScore = (Integer) values.get(testSession + "::meta" + "::Score");
             previousProgress += isRight;
             values.set(testSession + "::meta" + "::Score", previousProgress.toString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return result;
         }
         result = 1;
         return result;
     }
 
+    public void createNewTestSession(
+            Long userKakaoSerial,
+            Integer day,
+            Integer level,
+            KanzaUniteDtos.TestProblems testProblems) {
+
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        String uuid = String.format("%019d", userKakaoSerial)
+                + String.format("%09d", day)
+                + String.format("%09d", level);
+
+        // ObjectMapper mapper = new ObjectMapper();
+        Duration duration = Duration.ofSeconds(600);
+        RedisTestSessionMetadata redisTestSessionMetadata = RedisTestSessionMetadata.createBasicMetadata();
+        redisTestSessionMetadata.setSessionMetadataId(uuid);
+        redisTestSessionMetadata.setUserId(Long.toString(userKakaoSerial));
+        redisTestSessionMetadata.setWrongNumbers(new ArrayList<>());
+        RedisTestSession redisTestSession = RedisTestSession.builder()
+                .sessionId(uuid)
+                .redisTestSessionMetadata(redisTestSessionMetadata)
+                .testProblemsJson(new Gson().toJson(testProblems))
+                .build();
+
+        String sessionValiue = new Gson().toJson(redisTestSession);
+        values.set(uuid, sessionValiue, duration);
+    }
+
+    public boolean getBoolTestExists(Long userKakaoSerial,
+            Integer day,
+            Integer level) {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        String uuid = String.format("%019d", userKakaoSerial)
+                + String.format("%09d", day)
+                + String.format("%09d", level);
+        Object session = values.get(uuid);
+        if (session == null) {
+            return false;
+        }
+        return true;
+    }
+
+    private Optional<RedisTestSession> _getAccordingTest(
+            Long userKakaoSerial,
+            Integer day,
+            Integer level) {
+        try {
+            ValueOperations<String, Object> values = redisTemplate.opsForValue();
+            String uuid = String.format("%019d", userKakaoSerial)
+                    + String.format("%09d", day)
+                    + String.format("%09d", level);
+
+            Object session = values.get(uuid);
+            if (session == null) {
+                return Optional.empty();
+            } else {
+                RedisTestSession testSession = new Gson().fromJson(session.toString(), RedisTestSession.class);
+                return Optional.of(testSession);
+            }
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Pair<KanzaUniteDtos.TestProblems, KanzaUniteDtos.TestMetaData>> getAccordingTest(
+            Long userKakaoSerial,
+            Integer day,
+            Integer level) {
+        try {
+            RedisTestSession testSession = _getAccordingTest(userKakaoSerial, day, level).orElseThrow();
+            KanzaUniteDtos.TestProblems testProblems = new Gson().fromJson(testSession.getTestProblemsJson(),
+                    KanzaUniteDtos.TestProblems.class);
+            RedisTestSessionMetadata metadata = testSession.getRedisTestSessionMetadata();
+            KanzaUniteDtos.TestMetaData metaDataDto = KanzaUniteDtos.TestMetaData.builder()
+                    .progress(metadata.getProgress())
+                    .totalProblem(metadata.getTotalProblem())
+                    .build();
+            return Optional.of(Pair.of(testProblems, metaDataDto));
+        } catch (Exception e) {
+
+            return Optional.empty();
+        }
+    }
 }

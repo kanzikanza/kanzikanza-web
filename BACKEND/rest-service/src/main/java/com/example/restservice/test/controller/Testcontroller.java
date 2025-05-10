@@ -18,32 +18,25 @@ public class Testcontroller {
     private final RedisService redisService;
 
     @GetMapping("/make2Nodes")
-    public ResponseEntity<?> make2Node(@RequestParam(required = true) String userIndex)
-    {
-        try
-        {
+    public ResponseEntity<?> make2Node(@RequestParam(required = true) String userIndex) {
+        try {
             redisService.checkLinkedList(userIndex);
             redisService.make2Node(userIndex);
             return ResponseEntity.ok(HttpStatus.CREATED);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(HttpStatus.FORBIDDEN);
         }
     }
 
     @GetMapping("/redisGetUserCache")
-    public ResponseEntity<?> redisGetUserCache(@RequestParam(required = true) String userIndex, String kanzaIndex ) {
+    public ResponseEntity<?> redisGetUserCache(@RequestParam(required = true) String userIndex, String kanzaIndex) {
 
-        try
-        {
+        try {
             log.info("시작지점에 진입");
-            redisService.redisCachePut(userIndex, kanzaIndex);
-            redisService.redisCachePut(userIndex, String.valueOf(7057));
+            // redisService.redisCachePut(userIndex, kanzaIndex);
+            // redisService.redisCachePut(userIndex, String.valueOf(7057));
             return ResponseEntity.ok(HttpStatus.CREATED);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

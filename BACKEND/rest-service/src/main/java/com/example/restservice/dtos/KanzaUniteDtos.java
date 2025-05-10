@@ -2,10 +2,9 @@ package com.example.restservice.dtos;
 
 import lombok.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.example.restservice.kanza.dto.KanzaDto;
-import com.example.restservice.kanza.model.KanzaModel;
 
 public class KanzaUniteDtos {
     @Getter
@@ -27,6 +26,15 @@ public class KanzaUniteDtos {
     public static class KanziDto<T> {
         private String error;
         private List<T> data;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    public static class ResposneGetSessionExisted {
+        private String userId;
+        private boolean isSessionExisted;
     }
 
     @AllArgsConstructor
@@ -82,6 +90,25 @@ public class KanzaUniteDtos {
         private Integer testLevel;
         private Integer days;
         private List<Problem> problems;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    public static class TestMetaData {
+        private Integer progress;
+        private Integer totalProblem;
+        private ArrayList<Integer> wrongNumbers;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    public static class TestResultData {
+        private TestMetaData testMetaData;
+        private Integer userStreak;
     }
 
     @AllArgsConstructor

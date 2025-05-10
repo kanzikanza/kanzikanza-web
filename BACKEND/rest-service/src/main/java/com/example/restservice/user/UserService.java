@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+
     public UserModel create(final UserModel userModel) {
         if (userModel == null || userModel.getUserEmail() == null) {
             throw new RuntimeJsonMappingException("Invalid argument");
@@ -29,12 +30,18 @@ public class UserService {
             log.warn("email already existss {}", email);
             throw new RuntimeJsonMappingException("Username Already exists");
         }
-//        userModel.setRole("ROLE_GUEST");
+        // userModel.setRole("ROLE_GUEST");
         return userRepository.save(userModel);
     }
 
-    public UserModel findUserModelByUserKakaoSerial(Long id)
-    {
+    public UserModel update(final UserModel userModel) {
+        if (userModel == null || userModel.getUserEmail() == null) {
+            throw new RuntimeJsonMappingException("Invalid argument");
+        }
+        return userRepository.save(userModel);
+    }
+
+    public UserModel findUserModelByUserKakaoSerial(Long id) {
         return userRepository.findUserModelByUserKakaoSerial(id);
     }
 
@@ -56,8 +63,8 @@ public class UserService {
         }
         return user;
     }
-    public boolean existsByEmail(String email)
-    {
+
+    public boolean existsByEmail(String email) {
         return userRepository.existsByUserEmail(email);
     }
 

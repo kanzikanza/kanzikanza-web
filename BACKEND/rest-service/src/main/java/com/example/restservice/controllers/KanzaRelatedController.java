@@ -2,27 +2,33 @@ package com.example.restservice.controllers;
 
 import com.example.restservice.dtos.KanzaUniteDtos;
 import com.example.restservice.kanza.service.KanzaService;
+import com.example.restservice.redis.model.RedisTestSession;
 import com.example.restservice.redis.service.RedisService;
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
 import com.example.restservice.userKanza.service.UserKanzaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
+
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+// import org.springframework.web.bind.annotation.Req   uestMethod;
 import org.springframework.web.bind.annotation.*;
 
 // import com.example.restservice.kanzi.persistence.kanzaRepository;
 import com.example.restservice.kanza.dto.KanzaDto;
 import com.example.restservice.kanza.model.KanzaModel;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
-// import org.springframework.web.bind.annotation.Req   uestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @RestController
@@ -126,12 +132,92 @@ public class KanzaRelatedController {
         }
     }
 
+    @GetMapping("/getTestProblem")
+    public ResponseEntity<?> getMethodName(@RequestParam(required = true) Integer levels, Integer days) {
+        UserModel userModel = userService.findCurrentUser();
+        KanzaUniteDtos.TestProblems testProblems = kanzaService.kanzaTestProblemService
+                .createNewTest(userModel.getUserIndex(), levels, days);
+        return ResponseEntity.ok().body(testProblems);
+    }
+
+    @GetMapping("/getSessionExisted")
+    public ResponseEntity<?> getSessionExisted(@RequestParam(required = true) Integer levels, Integer days) {
+        UserModel userModel = userService.findCurrentUser();
+        KanzaUniteDtos.ResposneGetSessionExisted response = KanzaUniteDtos.ResposneGetSessionExisted.builder()
+                .userId(userModel.getUserEmail())
+                .isSessionExisted(redisService.getBoolTestExists(userModel.getUserKakaoSerial(), days, levels))
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/getExistingSession")
+    public ResponseEntity<?> getExistingSession(@RequestParam(required = true) Integer levels, Integer days) {
+        UserModel userModel = userService.findCurrentUser();
+
+        Pair<KanzaUniteDtos.TestProblems, KanzaUniteDtos.TestMetaData> response;
+        try {
+            response = redisService.getAccordingTest(userModel.getUserKakaoSerial(), days, levels)
+                    .orElseThrow();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(new InternalError(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/getFinalResults")
+    public ResponseEntity<?> getFinalResults(@RequestParam(required = true) Integer levels, Integer days) {
+        UserModel userModel = userService.findCurrentUser();
+        try {
+
+            LocalDate lastTest = Optional.ofNullable(userModel.getUserLastTestTaken()).orElseThrow();
+            // LocalDate lastTest = userModel.getUserLastTestTaken();
+
+            if (lastTest.equals(LocalDate.now().minusDays(1))) {
+                userModel.setUserStreakDays(userModel.getUserStreakDays() + 1);
+            } else if (!lastTest.equals(LocalDate.now())) {
+                userModel.setUserStreakDays(1);
+            }
+
+            userModel.setUserLastTestTaken(LocalDate.now());
+
+            userService.update(userModel);
+            Pair<KanzaUniteDtos.TestProblems, KanzaUniteDtos.TestMetaData> testData;
+            testData = redisService.getAccordingTest(userModel.getUserKakaoSerial(), days, levels)
+                    .orElseThrow();
+
+            KanzaUniteDtos.TestResultData response = KanzaUniteDtos.TestResultData.builder()
+                    .testMetaData(testData.getSecond())
+                    .userStreak(userModel.getUserStreakDays())
+                    .build();
+            return ResponseEntity.ok().body(response);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body(new InternalError(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getNewTestProblems")
+    public ResponseEntity<?> getNewTestProblems(@RequestParam(required = true) Integer levels, Integer days) {
+        UserModel userModel = userService.findCurrentUser();
+        KanzaUniteDtos.TestProblems testProblems = kanzaService.createNewTest(userModel.getUserIndex(), levels, days);
+        KanzaUniteDtos.TestMetaData testMetaData = KanzaUniteDtos.TestMetaData.builder()
+                .totalProblem(20)
+                .progress(0)
+                .wrongNumbers(new ArrayList<>())
+                .build();
+        redisService.createNewTestSession(userModel.getUserKakaoSerial(), days, levels, testProblems);
+        Pair<KanzaUniteDtos.TestProblems, KanzaUniteDtos.TestMetaData> response = Pair.of(testProblems, testMetaData);
+        return ResponseEntity.ok()
+                .body(response);
+    }
+
     @GetMapping("/getTestProblems")
     public ResponseEntity<?> getTestProblems(@RequestParam(required = true) Integer levels, Integer days) {
-        Integer length = 20;
 
         UserModel userModel = userService.findCurrentUser();
-        // 캐시에서 문제가 있다면 가져오는 과정을 걸침
+        // ToDo : 세션 있는지 확인먼저 하기
+
+        Integer length = 20;
+
         try {
             Integer fromCache = redisService.getCachedNumber(userModel.getUserIndex().toString());
             if (fromCache < 4) {
@@ -180,6 +266,8 @@ public class KanzaRelatedController {
         // 렌덤으로 섞는것 추가
         Collections.shuffle(problems);
         testProblems.setProblems(problems);
+
+        redisService.createNewTestSession(userModel.getUserKakaoSerial(), days, levels, testProblems);
         return ResponseEntity.ok().body(testProblems);
     }
 

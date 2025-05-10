@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -30,7 +31,6 @@ public class UserModel {
     @JsonIgnore
     private LocalDateTime userCreatedAt;
 
-
     @Column(nullable = false)
     private Long userKakaoSerial;
     @Column(nullable = true)
@@ -46,9 +46,11 @@ public class UserModel {
     @Column(nullable = true)
     private Integer userProfileChoice;
 
+    @Column(nullable = true)
+    private LocalDate userLastTestTaken;
+
     @PrePersist
-    protected void onCreate()
-    {
+    protected void onCreate() {
         if (userCreatedAt == null) {
             userCreatedAt = LocalDateTime.now();
         }
@@ -57,7 +59,7 @@ public class UserModel {
             userStreakDays = 0;
         }
 
-        if (userStreakfreeze == null){
+        if (userStreakfreeze == null) {
             userStreakfreeze = 0;
         }
 

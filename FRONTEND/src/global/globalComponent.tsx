@@ -39,22 +39,26 @@ import LoadingScreen from "./globalLoading";
 import { checkAuthorityChain } from "./globalFunction";
 import { useRouter } from 'next/navigation';
 import LocalStorage  from '@/global/globalStorage'
+import { ReactNode } from "react";
+import { BaseModal } from "@/component/Modal/BaseModal";
+type optionalFunction = React.ReactNode | null
 
 
-type optionalFunction = | {new () : void} | null
 // 타입 안전성 강화 버전
 const withInitialization = <P extends object>(
   WrappedComponent: ComponentType<P>,
-  func: optionalFunction = null
 ) => {
   const EnhancedComponent = (props: P) => {
     let initState = LocalStorage.getItem('accessToken') === null
     const [isLoading, setIsLoading] = useState<boolean>(true); // Boolean → boolean
     const [isAuth, setIsAuth] = useState<boolean>(initState)
+    const [isAnswered, setIsAnswered] = useState<boolean | null>(true);
+    const [answerState, setAnswerState] = useState<boolean>(false);
     const router = useRouter()
     
     useEffect(() => {
       const controller = new AbortController();
+      console.log("start speed")
       checkAuthorityChain()
         .then((result: boolean) => {
           console.log('api come', result)
@@ -62,10 +66,6 @@ const withInitialization = <P extends object>(
           setIsAuth(result)
         })
       
-      if (func !== null)
-      {
-        const arg = new func();        
-      }
       
       return () => controller.abort();
     }, []);
@@ -79,7 +79,9 @@ const withInitialization = <P extends object>(
       }
     }, [isAuth, router])
 
-    return isLoading ? <LoadingScreen /> : <WrappedComponent {...props} />;
+    return isLoading || (!isAnswered)?
+      <LoadingScreen/>
+      : <WrappedComponent {...props} />;
   };
 
   // displayName 설정 (디버깅 용이성)

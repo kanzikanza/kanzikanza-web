@@ -2,6 +2,7 @@
 // import Layout from "@/component/Layout/Layout";
 import Image from "next/image"
 import axios from 'axios'
+import Link from 'next/link'
 
 import kakaoLoginImage from "@/assets/kakao_login_large_narrow.png"
 import { ImageStyle } from "@/global/globalImage"
@@ -13,22 +14,73 @@ const MainContainer = styled('div')`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+
+const LoginBox = styled('div')`
+  display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+`
+
+const LogoLink = styled(Link)`
+  text-decoration: none;
+  margin-bottom: 1rem;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #333;
+  text-align: center;
+  letter-spacing: -0.02em;
+  
+  span {
+    color: #FFE812;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  }
+`
+
+const KakaoLoginButton = styled('div')`
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  width: 100%;
+  max-width: 300px;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+`
+
+const Divider = styled('div')`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+  
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: #e0e0e0;
+  }
 `
 
 const GoJoin = styled('p')`
   display: flex;
   align-items: center;
-  flex-direction: row;
-  color: darkgray;
-  margin-top: 30px;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-align: center;
 `
 
 export default function LoginPage() {
-
   const imageStyle: ImageStyle = {
-    width: '16rem',
-    height : 'auto'
+    width: '100%',
+    height: 'auto'
   }
   const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
   const NEXT_PUBLIC_MY_IP = process.env.NEXT_PUBLIC_MY_IP
@@ -41,7 +93,6 @@ export default function LoginPage() {
         let queryString = `${response.data[1].link}?response_type=code&client_id=${KAKAO_API}&redirect_uri=${`${NEXT_PUBLIC_MY_IP}/login/success`}`
         console.log(queryString)
         const popup = window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
-
       });
     } catch (error) {
       console.error('Error initiating Kakao OAuth:', error);
@@ -50,18 +101,28 @@ export default function LoginPage() {
 
   return (
     <MainContainer>
-      {/* <Image src={kakaoLoginImage} alt="Kakao Login" /> */}
-      <Image
-        // src="/@/assets/kakao_login_large_narrow.png"
-        src={kakaoLoginImage}
-        width={100}
-        height={100}
-        style={imageStyle}
-        alt="Kakao Login" />
+      <LoginBox>
+        <LogoLink href="/">
+          칸<span>지</span>칸<span>자</span>
+        </LogoLink>
+        
+        <KakaoLoginButton onClick={handleLogin}>
+          <Image
+            src={kakaoLoginImage}
+            width={300}
+            height={45}
+            alt="Kakao Login Button"
+            style={imageStyle}
+          />
+        </KakaoLoginButton>
 
-      <GoJoin>
-        보유한 아이디가 없으신가요? 카카오톡으로 1초만에 <SmallButton onClick={handleLogin}>가입</SmallButton>하기!
-      </GoJoin>
+        <Divider>또는</Divider>
+
+        <GoJoin>
+          보유한 아이디가 없으신가요? 
+          <SmallButton onClick={handleLogin}>카카오로 1초만에 가입하기</SmallButton>
+        </GoJoin>
+      </LoginBox>
     </MainContainer>
   )
 }

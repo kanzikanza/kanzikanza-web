@@ -18,6 +18,7 @@ import { styled } from '@mui/material/styles';
 import axios, { AxiosResponse } from 'axios';
 import withInitialization from '@/global/globalComponent';
 import CongratulationModal from '@/component/Modal/CongratulationModal';
+import { apiDecoder } from '@/global/GlobalApiDecoder';
 
 const TextWrapper = styled('div')({
   position: 'relative',
@@ -51,12 +52,11 @@ export type reviewsProblem = {
   answer : number | string
 }
 
-const TestPage = () => {
+const TestPage = ({ url } : { url : string}) => {
     const [questionList, setQuestionList] = useState<any[]>([]);
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState([]);
     const [showCongratulationModal, setShowCongratulationModal] = useState<boolean>(false);
-    const searchParams = useSearchParams()
     const [correctAnswer, setCorrectAnswer] = useState(-1);
     const [selectedAnswer, setSelectedAnswer] = useState(-1);
     const [problemIndex, setProblemIndex] = useState<number>(-1);
@@ -65,19 +65,17 @@ const TestPage = () => {
     const [score, setScore] = useState<Number>(-1);
     const HowMany = useRef<number>(0);
     const ReviewProblem = useRef<kanza[]>([])
-    const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
     const router = useRouter()
+    const searchParams = useSearchParams()
     const levels : number = Number(searchParams.get('levels'))
     const days : number = Number( searchParams.get('days'))
-    
+    const decoder = new apiDecoder();
+
     const handleCloseCongratulationModal = () => {
         setShowCongratulationModal(false);
         // router.push('/test')
         router.push('/')
     };
-
-
- 
     if (levels === null || days === null)
     {
         router.push('/')
@@ -123,6 +121,7 @@ const TestPage = () => {
     };
     
     useEffect(() => {
+        console.log(url, "determine url")
         const fetchData = async (url: string, isToken: boolean) => {
             try {
                 await axios.get(url,
@@ -130,14 +129,14 @@ const TestPage = () => {
                         headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
                 }
                 ).then((answer) => {
-                    console.log(`Get Success : ${url}`)
-                    console.log(answer.data[1]['problems'][1])
-                    setQuestionList(answer.data[1]['problems'][1])
-                    setProblemIndex(0)
+                    console.log(answer.data)
+                    const [testData, metaData] = decoder.decodeTestProblems(answer.data)
+                    // console.log(answer.data[1]['problems'][1])
+                    setQuestionList(testData.problems[1])
+                    setProblemIndex(metaData.progress)
                 })
                 .catch((error) => {
                     console.log(error)
-                    
                 });
                 let response: any[] = []
                 if (!response ) {
@@ -150,49 +149,11 @@ const TestPage = () => {
                 console.error('Error fetching data:', error);
             }
         };
-
-        fetchData(NEXT_PUBLIC_SERVER_IP + `/kanzi/getTestProblems?levels=${levels - 1}&days=${days}`, false);
+        fetchData(url, false);
     }, []);
     
 
-
-    // function
-    function startFunction() {
-
-        const fetchData = async (url: string, isToken: boolean) => {
-            try {
-                await axios.get(url,
-                {
-                        headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
-                }
-                ).then((answer) => {
-                    setQuestionList(answer.data[1]['problems'][1])
-                    setProblemIndex(0)
-                })
-                .catch((error) => {
-                    console.log(error)
-                    
-                });
-                let response: any[] = []
-                if (!response ) {
-                    throw "response doesn't have val"
-                }
-                // console.log(response);
-                response = response.map((x) => x[1])
-                // setKanzas(response);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData(NEXT_PUBLIC_SERVER_IP + '/kanzi/getTestProblems?levels=2&days=1', false);
-    }
-
-
-
-
-
-
+    // 함수의 시작은 여기서부터임 
 
 
     useEffect(() => {
@@ -200,6 +161,9 @@ const TestPage = () => {
 
         if (problemIndex >= 20)
         {
+            router.push(
+                `/test/result?levels=${levels - 1}&days=${days}`,
+            )
             setIsEnd(true)
             setTimeout(() => {
                 setScore(HowMany.current)
@@ -207,7 +171,7 @@ const TestPage = () => {
             }, 1000)
             return
         }
-        
+        console.log(questionList)
         // console.warn(`current length ${options.length}, and ${questionList[problemIndex][1]['options'][1]}`)
         console.log(questionList[problemIndex])
         setQuestion(questionList[problemIndex][1]['problemContent'])
@@ -343,7 +307,7 @@ const TestPage = () => {
             }
     </Container>
     
-  );
+    );
 };
 
 const AnswerButton = styled(Button)(({ theme }) => ({
@@ -355,11 +319,10 @@ const AnswerButton = styled(Button)(({ theme }) => ({
     '&&:hover': {  // 특이성(specificity)을 높이기 위해 && 사용
     borderColor: '#D2D2D2',  // 기존 보더 색상 유지
     boxShadow: theme.shadows[2],  // 그림자 효과 유지
-  }
+    }
 }));
 
 
 
-export default withInitialization(TestPage) // <= 여기다 뭐 넣기
-
-
+// export default withInitialization(TestPage) // <= 여기다 뭐 넣기
+export default TestPage // <= 여기다 뭐 넣기

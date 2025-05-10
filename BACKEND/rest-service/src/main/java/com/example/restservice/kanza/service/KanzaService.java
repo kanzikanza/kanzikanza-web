@@ -4,21 +4,140 @@ import com.example.restservice.dtos.KanzaUniteDtos;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.example.restservice.kanza.persistence.KanzaRepository;
+import com.example.restservice.redis.service.RedisService;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 // import org.hibernate.mapping.List;
 
+import com.example.restservice.kanza.dto.KanzaDto;
 import com.example.restservice.kanza.model.KanzaModel;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class KanzaService {
+    private final RedisService redisService;
     private final KanzaRepository kanzaRepository;
+    public KanzaTestProblemService kanzaTestProblemService;
+
+    public KanzaUniteDtos.TestProblems createNewTest(Integer userIndex, Integer levels, Integer days) {
+
+        Integer length = 20;
+
+        try {
+            Integer fromCache = redisService.getCachedNumber(userIndex.toString());
+            if (fromCache < 4) {
+                length -= fromCache;
+            } else if (fromCache < 6) {
+                length -= 3;
+            } else {
+                length -= 5;
+            }
+        } catch (NullPointerException e) {
+            log.error("에러 발생");
+            length = 20;
+        }
+        List<KanzaModel> kanzaModels = getTestProblems(levels, length);
+        List<KanzaDto> kanzaDtos = redisService.redisGetNCache(userIndex.toString(), 20 - length);
+        log.info(String.valueOf(kanzaModels.size()));
+        KanzaUniteDtos.TestProblems testProblems = KanzaUniteDtos.TestProblems.builder().build();
+
+        testProblems.setTestLevel(levels);
+        testProblems.setDays(days);
+        testProblems.setLength(length);
+
+        List<KanzaUniteDtos.Problem> problems = new ArrayList<>();
+
+        for (KanzaDto kanzaDto : kanzaDtos) {
+            KanzaModel kanzaModel = findByKANZA(kanzaDto.getKANZA());
+            KanzaUniteDtos.Problem problem = returnProblemDto(kanzaModel, 1, levels);
+            problem.setKanzaLetter(kanzaDto.getKANZA());
+            problem.setKanzaMean(kanzaDto.getMEAN());
+            problem.setKanzaSound(kanzaDto.getSOUND());
+            problem.setProblemIndex(problems.size());
+            problems.add(problem);
+        }
+
+        // 캐시로 받은 문제들을 어떻게 할지를 고민 일단 리스트에 전부 합칠건데 이 로직을 분리하는게 나을듯
+        kanzaModels.forEach(x -> {
+            KanzaUniteDtos.Problem problem = returnProblemDto(x, 0, levels);
+            problem.setProblemIndex(problems.size());
+            problem.setKanzaLetter(x.getKanzaLetter());
+            problem.setKanzaMean(x.getKanzaMean());
+            problem.setKanzaSound(x.getKanzaSound());
+            problem.setProblemIndex(problems.size());
+            problems.add(problem);
+        });
+
+        // 렌덤으로 섞는것 추가
+        Collections.shuffle(problems);
+        testProblems.setProblems(problems);
+
+        return testProblems;
+    }
+
+    public class KanzaTestProblemService {
+
+        public KanzaUniteDtos.TestProblems createNewTest(Integer userIndex, Integer levels, Integer days) {
+
+            Integer length = 20;
+
+            try {
+                Integer fromCache = redisService.getCachedNumber(userIndex.toString());
+                if (fromCache < 4) {
+                    length -= fromCache;
+                } else if (fromCache < 6) {
+                    length -= 3;
+                } else {
+                    length -= 5;
+                }
+            } catch (NullPointerException e) {
+                log.error("에러 발생");
+                length = 20;
+            }
+            List<KanzaModel> kanzaModels = getTestProblems(levels, length);
+            List<KanzaDto> kanzaDtos = redisService.redisGetNCache(userIndex.toString(), 20 - length);
+            log.info(String.valueOf(kanzaModels.size()));
+            KanzaUniteDtos.TestProblems testProblems = KanzaUniteDtos.TestProblems.builder().build();
+
+            testProblems.setTestLevel(levels);
+            testProblems.setDays(days);
+            testProblems.setLength(length);
+
+            List<KanzaUniteDtos.Problem> problems = new ArrayList<>();
+
+            for (KanzaDto kanzaDto : kanzaDtos) {
+                KanzaModel kanzaModel = findByKANZA(kanzaDto.getKANZA());
+                KanzaUniteDtos.Problem problem = returnProblemDto(kanzaModel, 1, levels);
+                problem.setKanzaLetter(kanzaDto.getKANZA());
+                problem.setKanzaMean(kanzaDto.getMEAN());
+                problem.setKanzaSound(kanzaDto.getSOUND());
+                problem.setProblemIndex(problems.size());
+                problems.add(problem);
+            }
+
+            // 캐시로 받은 문제들을 어떻게 할지를 고민 일단 리스트에 전부 합칠건데 이 로직을 분리하는게 나을듯
+            kanzaModels.forEach(x -> {
+                KanzaUniteDtos.Problem problem = returnProblemDto(x, 0, levels);
+                problem.setProblemIndex(problems.size());
+                problem.setKanzaLetter(x.getKanzaLetter());
+                problem.setKanzaMean(x.getKanzaMean());
+                problem.setKanzaSound(x.getKanzaSound());
+                problem.setProblemIndex(problems.size());
+                problems.add(problem);
+            });
+
+            // 렌덤으로 섞는것 추가
+            Collections.shuffle(problems);
+            testProblems.setProblems(problems);
+            return testProblems;
+        }
+    }
 
     public String kanziservice(String kanzi, String mean, String sound) {
         KanzaModel kanzikanza = KanzaModel.builder().kanzaLetter(kanzi)
