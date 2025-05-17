@@ -9,12 +9,57 @@ const customImgLoader = ({ src }) => {
       return `${src}`
 }
 
+const ProfileIndex = styled(Box)`
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2rem;
+  width: 10rem;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background-color: #FEF7EF;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #FFE4D4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const ProfileImage = styled('img')`
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+`;
+
+const ProfileName = styled(Typography)`
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: #F17F42;
+  }
+`;
+
 function Profile(
   props : {userNickName: String,
   userProfileIndex: Number}
 ) {
   const [name, setName] = useState<String>('');
-  const [image, setImage] = useState<any>('https://via.placeholder.com/100');
+  const [image, setImage] = useState<any>('');
 
     
   useEffect(() => { 
@@ -30,7 +75,6 @@ function Profile(
         db.createObjectStore("profile", {autoIncrement: true})
       }
       request.onsuccess = e => {
-        console.log(request)
         db = request.result
         const arg: IDBRequest = getImageFromIndexedDB(db)
         arg.onsuccess = (event: any) => {
@@ -38,8 +82,7 @@ function Profile(
           setImage(imgFile)
         }
         
-        arg.onerror
-        {
+        arg.onerror = () => {
           createObject(db, require(`@/assets/profile-images/User_${props.userProfileIndex}.png`).default.src)
         }
         const nextArg : IDBRequest= getImageFromIndexedDB(db)
@@ -49,7 +92,7 @@ function Profile(
           setImage(objURL)
         }
         nextArg.onerror = (event: any) => {
-          setImage('https://via.placeholder.com/100')
+          setImage('')
         }
       }
 
@@ -60,19 +103,8 @@ function Profile(
       
     }
   }, [props.userNickName])
-const ProfileIndex = styled(Box)`
-    flex-direction: row;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height : 2rem;
-    width : 10rem;
-    border-radius : 1rem;
-    padding : 1.5rem;
-    background-color : #FEF7EF
-`
-    
-const handleImageChange = (e : any) => { }
+
+  const handleImageChange = (e : any) => { }
 //   const handleImageChange = (e) => {
 //     const file = e.target.files[0];
 //     if (file) {
@@ -87,23 +119,16 @@ const handleImageChange = (e : any) => { }
     
   return (
     <ProfileIndex>
-      {/* <Image
-        loader={customImgLoader}
-        src={image}
-        alt="Profile"
-        width={20}
-        height={20}
-        style={{height :'2rem', width : '2rem', cursor: 'pointer'}}
-        // sx={{ width: '2rem', height: '2rem', cursor: 'pointer' }}
-        // onClick={() => document.getElementById('fileInput').click()}
-      /> */}
-      <img
-        src={image}
-        alt="Profile"
-        style={{height :'3rem', width : '3rem', cursor: 'pointer', borderRadius: '50%', marginRight: '10px'}}
-        // sx={{ width: '2rem', height: '2rem', cursor: 'pointer' }}
-        // onClick={() => document.getElementById('fileInput').click()}
-      />
+      {
+        image
+         ?
+        <ProfileImage
+          src={image}
+          alt="Profile"
+          // onClick={() => document.getElementById('fileInput')?.click()}
+        /> :
+        <></>
+      }
       <input
         id="fileInput"
         type="file"
@@ -111,7 +136,9 @@ const handleImageChange = (e : any) => { }
         accept="image/*"
         onChange={handleImageChange}
       />
-      <Typography variant="h6"  style={{alignItems : 'center'}}>{name}</Typography>
+      <ProfileName variant="h6">
+        {name}
+      </ProfileName>
       {/* <TextField
         variant="outlined"
         size="small"

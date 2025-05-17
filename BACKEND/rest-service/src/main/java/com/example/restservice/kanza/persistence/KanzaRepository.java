@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -20,7 +21,8 @@ public interface KanzaRepository extends JpaRepository<KanzaModel, Integer> {
         KanzaModel findByKanzaIndex(Integer kanzaIndex);
 
         @Query(value = "select * from kanza where kanza.test_index = :level order by rand() limit :problemNum", nativeQuery = true)
-        List<KanzaModel> findKanzaModelsByLevel(@Param("problemNum") Integer problemNum, @Param("level") Integer level);
+        ArrayList<KanzaModel> findKanzaModelsByLevel(@Param("problemNum") Integer problemNum,
+                        @Param("level") Integer level);
 
         @Query(value = "select * from kanza where kanza.kanza_mean != :keyFactor and kanza.test_index = :level order by rand() limit 3", nativeQuery = true)
         List<KanzaModel> findWrongKanzaMeanModelsByLevel(@Param("level") Integer level,

@@ -131,13 +131,13 @@ public class RedisService {
         values.set(Node2 + "::Before", index.toString(), duration);
     }
 
-    public List<KanzaDto> redisGetNCache(String userIndex, int n) {
+    public ArrayList<KanzaDto> redisGetNCache(String userIndex, int n) {
         ValueOperations<String, Object> values = redisTemplate.opsForValue();
         String linkedList = userIndex + "::LinkedList";
         checkLinkedList(userIndex);
         Integer size = Integer.valueOf(values.get(linkedList + "::Cache" + "::meta::Length").toString());
 
-        List<KanzaDto> kanzaDtos = new ArrayList<>();
+        ArrayList<KanzaDto> kanzaDtos = new ArrayList<>();
         for (; n > 0; n--) {
             kanzaDtos.add(popKanzaCache(linkedList));
         }
@@ -305,6 +305,43 @@ public class RedisService {
         values.set(uuid, sessionValiue, duration);
     }
 
+    public void removeRedisSession(
+            Long userKakaoSerial,
+            Integer day,
+            Integer level) {
+
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        String uuid = String.format("%019d", userKakaoSerial)
+                + String.format("%09d", day)
+                + String.format("%09d", level);
+        values.getAndDelete(uuid);
+    }
+
+    public void updateTestSession(
+            Long userKakaoSerial,
+            Integer day,
+            Integer level,
+            Integer problemIndex) {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+
+        String uuid = String.format("%019d", userKakaoSerial)
+                + String.format("%09d", day)
+                + String.format("%09d", level);
+
+        RedisTestSession redisTestSession = _getAccordingTest(userKakaoSerial, day, level).orElseThrow();
+        RedisTestSessionMetadata redisTestSessionMetadata = redisTestSession.getRedisTestSessionMetadata();
+        redisTestSessionMetadata.setProgress(redisTestSessionMetadata.getProgress() + 1);
+        if (problemIndex != -1) {
+            redisTestSessionMetadata.getWrongNumbers().add(problemIndex);
+        }
+        redisTestSession.setRedisTestSessionMetadata(redisTestSessionMetadata);
+        log.info(redisTestSessionMetadata.getWrongNumbers().toString());
+        Duration duration = Duration.ofSeconds(600);
+        String sessionValiue = new Gson().toJson(redisTestSession);
+        values.set(uuid, sessionValiue, duration);
+
+    }
+
     public boolean getBoolTestExists(Long userKakaoSerial,
             Integer day,
             Integer level) {
@@ -353,6 +390,7 @@ public class RedisService {
             KanzaUniteDtos.TestMetaData metaDataDto = KanzaUniteDtos.TestMetaData.builder()
                     .progress(metadata.getProgress())
                     .totalProblem(metadata.getTotalProblem())
+                    .wrongNumbers(metadata.getWrongNumbers())
                     .build();
             return Optional.of(Pair.of(testProblems, metaDataDto));
         } catch (Exception e) {

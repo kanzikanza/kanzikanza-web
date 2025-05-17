@@ -51,7 +51,7 @@ public class KanzaService {
         testProblems.setDays(days);
         testProblems.setLength(length);
 
-        List<KanzaUniteDtos.Problem> problems = new ArrayList<>();
+        ArrayList<KanzaUniteDtos.Problem> problems = new ArrayList<>();
 
         for (KanzaDto kanzaDto : kanzaDtos) {
             KanzaModel kanzaModel = findByKANZA(kanzaDto.getKANZA());
@@ -100,8 +100,8 @@ public class KanzaService {
                 log.error("에러 발생");
                 length = 20;
             }
-            List<KanzaModel> kanzaModels = getTestProblems(levels, length);
-            List<KanzaDto> kanzaDtos = redisService.redisGetNCache(userIndex.toString(), 20 - length);
+            ArrayList<KanzaModel> kanzaModels = getTestProblems(levels, length);
+            ArrayList<KanzaDto> kanzaDtos = redisService.redisGetNCache(userIndex.toString(), 20 - length);
             log.info(String.valueOf(kanzaModels.size()));
             KanzaUniteDtos.TestProblems testProblems = KanzaUniteDtos.TestProblems.builder().build();
 
@@ -109,7 +109,7 @@ public class KanzaService {
             testProblems.setDays(days);
             testProblems.setLength(length);
 
-            List<KanzaUniteDtos.Problem> problems = new ArrayList<>();
+            ArrayList<KanzaUniteDtos.Problem> problems = new ArrayList<>();
 
             for (KanzaDto kanzaDto : kanzaDtos) {
                 KanzaModel kanzaModel = findByKANZA(kanzaDto.getKANZA());
@@ -170,10 +170,6 @@ public class KanzaService {
         return kanzaRepository.findAll();
     }
 
-    public List<KanzaModel> getTOP20() {
-        return kanzaRepository.findKanzasByRandom(20);
-    }
-
     private void validate(final KanzaModel kanza) {
         if (kanza == null) {
             log.warn("추가될 수가 없음");
@@ -181,13 +177,17 @@ public class KanzaService {
         }
     }
 
+    public KanzaModel findKanzaByKanzaIndex(Integer index) {
+        return kanzaRepository.findByKanzaIndex(index);
+    }
+
     public KanzaModel findByKANZA(String KANZA) {
         return kanzaRepository.findByKanzaLetter(KANZA);
     }
 
-    public List<KanzaModel> getTestProblems(Integer level, Integer length) {
+    public ArrayList<KanzaModel> getTestProblems(Integer level, Integer length) {
         // 다행히 급수와 레벨은 거의 같기 떄문에 그것만 맞춰서 해주면됨
-        return kanzaRepository.findKanzaModelsByLevel(length, level);
+        return kanzaRepository.findKanzaModelsByLevel(length, level - 1);
     }
 
     public KanzaModel findRelatedKanza(Integer kanzaIndex) {

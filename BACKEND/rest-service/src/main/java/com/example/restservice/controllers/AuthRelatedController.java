@@ -1,6 +1,7 @@
 package com.example.restservice.controllers;
 
 import com.example.restservice.dtos.UserUniteDtos;
+import com.example.restservice.dtos.UserTestDtos;
 // import com.example.restservice.dtos.UserUniteDtos.DefaultProfile;
 import com.example.restservice.security.dto.ProfileRequest;
 import com.example.restservice.security.service.AuthService;
@@ -11,10 +12,11 @@ import com.example.restservice.config.kakao.KakaoApi;
 import com.example.restservice.config.kakao.KakaoApi.KakaoOpenIdToken;
 import com.example.restservice.config.kakao.KakaoApi.OAuthToken;
 import com.example.restservice.global.dto.ResponseDTO;
-import com.example.restservice.security.JwtIssuer;
 
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
+import com.example.restservice.userTest.model.UserTestModel;
+import com.example.restservice.userTest.service.UserTestService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +25,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @RestController
@@ -40,6 +40,7 @@ public class AuthRelatedController {
         private final UserService userService;
         private final KakaoApi kakaoApi;
         private final AuthService authService;
+        private final UserTestService userTestService;
         @Value("${spring.myurl}")
         private String origin;
 
@@ -49,7 +50,7 @@ public class AuthRelatedController {
                         UserModel userModel = userService.findCurrentUser();
                         userModel.setUserNickname(profileRequest.getNickname());
                         userModel.setUserProfileChoice(profileRequest.getProfileIndex());
-                        userService.create(userModel);
+                        userService.update(userModel);
                         return ResponseEntity.ok("프로필 변경이 완료되었습니다");
                 } catch (NoSuchElementException e) {
                         log.info(e.getMessage());
@@ -68,8 +69,20 @@ public class AuthRelatedController {
                                         .profileIndex(userModel.getUserProfileChoice())
                                         .userStreakDays(userModel.getUserStreakDays())
                                         .build();
-                        return ResponseEntity.status(HttpStatus.OK).body(defaultProfile);
+                        List<UserTestModel> userTestModels = userTestService.findUserTestModelsByUserModel(userModel);
+                        ArrayList<UserTestDtos.TestConfigDto> userArrayList = new ArrayList<>();
 
+                        userTestModels.forEach(
+                                        userTestModel -> userArrayList.add(
+                                                        UserTestDtos.TestConfigDto.builder()
+                                                                        .userTestProgress(userTestModel
+                                                                                        .getUserTestProgress())
+                                                                        .usetTestDays(userTestModel.getUserTestDay())
+                                                                        .testLevel(userTestModel.getTestModel()
+                                                                                        .getTestLevel())
+                                                                        .build()));
+
+                        return ResponseEntity.status(HttpStatus.OK).body(Pair.of(defaultProfile, userArrayList));
                 } catch (Exception e) {
                         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
                 }
@@ -82,7 +95,21 @@ public class AuthRelatedController {
                         UserUniteDtos.DefaultProfile defaultProfile = UserUniteDtos.DefaultProfile.builder()
                                         .userStreakDays(userModel.getUserStreakDays())
                                         .build();
-                        return ResponseEntity.status(HttpStatus.OK).body(defaultProfile);
+
+                        List<UserTestModel> userTestModels = userTestService.findUserTestModelsByUserModel(userModel);
+                        ArrayList<UserTestDtos.TestConfigDto> userArrayList = new ArrayList<>();
+
+                        userTestModels.forEach(
+                                        userTestModel -> userArrayList.add(
+                                                        UserTestDtos.TestConfigDto.builder()
+                                                                        .userTestProgress(userTestModel
+                                                                                        .getUserTestProgress())
+                                                                        .usetTestDays(userTestModel.getUserTestDay())
+                                                                        .testLevel(userTestModel.getTestModel()
+                                                                                        .getTestLevel())
+                                                                        .build()));
+
+                        return ResponseEntity.status(HttpStatus.OK).body(Pair.of(defaultProfile, userArrayList));
 
                 } catch (Exception e) {
                         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -96,6 +123,7 @@ public class AuthRelatedController {
                         UserUniteDtos.DefaultProfile defaultProfile = UserUniteDtos.DefaultProfile.builder()
                                         .nickname(userModel.getUserNickname())
                                         .profileIndex(userModel.getUserProfileChoice())
+                                        .userStreakDays(userModel.getUserStreakDays())
                                         .build();
                         return ResponseEntity.status(HttpStatus.OK).body(defaultProfile);
                 } catch (Exception e) {
@@ -150,19 +178,25 @@ public class AuthRelatedController {
                 try {
                         OAuthToken token = kakaoApi.getOAuthToken(code);
                         String str = token.getId_token();
-                        log.info(str);
                         String[] whatIneed = str.split("\\.");
                         KakaoOpenIdToken kakaoOpenIdToken = kakaoApi.getOpenIdToken(
                                         new String(Base64.getDecoder().decode(whatIneed[1]), StandardCharsets.UTF_8));
 
-                        authService.signUp(token.getAccess_token());
+                        UserModel userModel = authService.signUp(token.getAccess_token());
                         UserUniteDtos.LoginResponse loginResponse = UserUniteDtos.LoginResponse.builder()
                                         .refreshToken(token.getRefresh_token())
                                         .accessToken(token.getAccess_token())
                                         .build();
 
-                        log.info("Request Handle: /auth/Oauth2/KakaoToken params : " + code);
-                        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+                        UserUniteDtos.DefaultProfile defaultProfile = UserUniteDtos.DefaultProfile.builder()
+                                        .nickname(userModel.getUserNickname())
+                                        .profileIndex(userModel.getUserProfileChoice())
+                                        .userStreakDays(userModel.getUserStreakDays())
+                                        .build();
+
+                        Pair<UserUniteDtos.LoginResponse, UserUniteDtos.DefaultProfile> response = Pair
+                                        .of(loginResponse, defaultProfile);
+                        return ResponseEntity.status(HttpStatus.OK).body(response);
 
                 } catch (Exception e) {
                         ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();

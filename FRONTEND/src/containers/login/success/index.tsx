@@ -5,8 +5,9 @@ import { Suspense } from 'react'
 import { useEffect, useState } from 'react';
 import LoginSuccessPage from './LoginSuccessPage';
 import Modal from './Modal';
-import { useSearchParams } from "next/navigation";
-import { usePathname, useRouter } from 'next/navigation';
+import { useSearchParams } from "next/navigation"
+import { usePathname, useRouter } from 'next/navigation'
+import { apiDecoder } from '@/global/GlobalApiDecoder';
 
 import { styled } from "@mui/material"
 import { rejects } from 'assert';
@@ -14,47 +15,48 @@ import { rejects } from 'assert';
 
 export function LoginSuccess() {
     const [loading, setLoading] = useState(true); // 로딩 상태
-    const [isSuccess, setIsSuccess] = useState(true); // 성공 여부 (null: 초기 상태)
+    const [isSuccess, setIsSuccess] = useState(false); // 성공 여부 (null: 초기 상태)
     const params = useSearchParams();
     const router = useRouter()
+    const decoder = new apiDecoder()
     const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
     
     let completeUrl: string = `${NEXT_PUBLIC_SERVER_IP}/auth/Oauth2/KakaoToken?code=${params.get('code')}`
     
     useEffect(() => {
-    (async (resolve, rejects) =>
-        {
-            try {
-                const response = await axios.get(completeUrl)
-                .then(
-                    response => {
-                        console.log(response.data[1])
-                        localStorage.setItem('accessToken', response.data[1].accessToken)
-                        localStorage.setItem('refreshToken', response.data[1].refreshToken)
-                        if (response.data[1].userNickname !== null && response.data[1].userNickname !== "")
-                        {
-                            router.push("/")
-                        }
-                        return
-                    }
-                )
-            }
-            catch (error) {
-                throw `Error initiating Kakao OAuth: ${error}`
-            }
-        }
-    )().then(
-        () => {
-            setLoading(false)
-            setIsSuccess(true)
-        }
-    ).catch(
+        
+        try {
+            const response = axios.get(completeUrl)
+            .then(
+                response => {
+                    console.log(response.data)
+                    const [token, defaultProfile] = decoder.decodeLoginReponse(response.data)
+                    localStorage.setItem('accessToken', token.accessToken)
+                    localStorage.setItem('refreshToken', token.refreshToken)
 
-    )
+                    if (defaultProfile.nickname !== null && defaultProfile.nickname !== "")
+                    {
+                        router.push("/")
+                        return true;
+                    }
+                    else
+                    {
+                        setLoading(false)
+                        setIsSuccess(true)
+                    }
+                    console.log("SERVICE ORDER : 1")
+                    return false;
+                }
+            )
+
+        }
+        catch (error) {
+            throw `Error initiating Kakao OAuth: ${error}`
+        }
     }, [params, router])
   return (
-      <div>
-          {loading && (
+      <>
+          {/* {loading && (
             <Modal isOpen={loading}>
                 {isSuccess ? (
                     <div>
@@ -71,18 +73,17 @@ export function LoginSuccess() {
                     </div>
                 )}
             </Modal>
-          )}
+          )} */}
           {!loading && isSuccess && (
               <LoginSuccessPage />
           )}
-    </div>
+    </>
   );
 };
 
 export default function LoginModal() {
     return (
-        <Suspense>
-            <LoginSuccess />
-        </Suspense>
+        <LoginSuccess
+        />
     )
 }

@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 public class KanzaUniteDtos {
     @Getter
     @Builder
@@ -26,6 +28,27 @@ public class KanzaUniteDtos {
     public static class KanziDto<T> {
         private String error;
         private List<T> data;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    public static class KanzaDto {
+        private String KANZA;
+        private String MEAN;
+        private String SOUND;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    public static class KanzaDtoList {
+        private Integer number;
+        private Integer minIdx;
+        private Integer maxIdx;
+        private ArrayList<KanzaDto> kanzaDtos;
     }
 
     @AllArgsConstructor
@@ -57,29 +80,6 @@ public class KanzaUniteDtos {
         private String problemContent;
     }
 
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    @Data
-    public static class ProblemLog {
-        private Integer problemType;
-        private Integer isFromCache;
-        private Integer level;
-        private Integer kanzaIndex;
-        private Integer isRight;
-        private Integer problemIndex;
-    }
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    @Data
-    public static class LogApi {
-        private Integer length;
-        private Integer testLevel;
-        private ProblemLog problem;
-    }
-
     // Todo: 향후 정확한 세션을 위해서 ID나 해시아이디 추가
     @AllArgsConstructor
     @NoArgsConstructor
@@ -89,7 +89,20 @@ public class KanzaUniteDtos {
         private Integer length;
         private Integer testLevel;
         private Integer days;
-        private List<Problem> problems;
+        private ArrayList<Problem> problems;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+    public static class TestUpdateDate {
+        private Integer kanzaIndex;
+        private Integer problemIndex;
+        private Integer length;
+        private Integer testLevel;
+        private Integer days;
     }
 
     @AllArgsConstructor
@@ -109,6 +122,8 @@ public class KanzaUniteDtos {
     public static class TestResultData {
         private TestMetaData testMetaData;
         private Integer userStreak;
+        private Boolean isFirstTestToday;
+        private ArrayList<Problem> wrongProblemDetail;
     }
 
     @AllArgsConstructor

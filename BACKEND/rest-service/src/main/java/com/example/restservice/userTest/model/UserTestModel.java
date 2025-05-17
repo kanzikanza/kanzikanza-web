@@ -26,4 +26,5 @@ public class UserTestModel {
     private TestModel testModel;
     @Column(nullable = true)
     private Integer userTestProgress;
+    private Integer userTestDay;
 }

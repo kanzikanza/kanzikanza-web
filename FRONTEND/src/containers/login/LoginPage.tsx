@@ -92,7 +92,7 @@ export default function LoginPage() {
         console.log(response.data)
         let queryString = `${response.data[1].link}?response_type=code&client_id=${KAKAO_API}&redirect_uri=${`${NEXT_PUBLIC_MY_IP}/login/success`}`
         console.log(queryString)
-        const popup = window.open(queryString, 'socialLoginPopup', 'width=500,height=600');
+        window.location.href = queryString;
       });
     } catch (error) {
       console.error('Error initiating Kakao OAuth:', error);

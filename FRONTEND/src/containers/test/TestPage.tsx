@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import  close   from '@/assets/test/Close.png'
 import  done   from '@/assets/test/Done.png'
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Image from "next/image"
 import { 
   Box, 
@@ -67,9 +67,13 @@ const TestPage = ({ url } : { url : string}) => {
     const ReviewProblem = useRef<kanza[]>([])
     const router = useRouter()
     const searchParams = useSearchParams()
+    const pathname = usePathname()
     const levels : number = Number(searchParams.get('levels'))
     const days : number = Number( searchParams.get('days'))
     const decoder = new apiDecoder();
+    const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
+    const isNavigating = useRef(false);
+
 
     const handleCloseCongratulationModal = () => {
         setShowCongratulationModal(false);
@@ -85,6 +89,25 @@ const TestPage = ({ url } : { url : string}) => {
         setSelectedAnswer(answer)
         console.log(answer, correctAnswer)
         const buttons = document.querySelectorAll('.MuiButton-root');
+
+
+        axios.post(
+            NEXT_PUBLIC_SERVER_IP + "/kanzi/updateTestProgress",
+            {
+                type: "KanzaUniteDtos$TestUpdateDate",
+                kanzaIndex: questionList[problemIndex][1]['kanzaIndex'],
+                problemIndex: answer === correctAnswer ? - 1 : problemIndex,
+                length: 20,
+                testLevel: levels,
+                days : days
+            },
+            {
+                headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+            }
+        ).then(() => { })
+        .catch((error) => {console.error(error)})
+
+
         buttons.forEach((button, index) => {
             if (index === answer) {
                 if (answer === correctAnswer) {
@@ -126,7 +149,7 @@ const TestPage = ({ url } : { url : string}) => {
             try {
                 await axios.get(url,
                 {
-                        headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+                    headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
                 }
                 ).then((answer) => {
                     console.log(answer.data)
@@ -152,6 +175,63 @@ const TestPage = ({ url } : { url : string}) => {
         fetchData(url, false);
     }, []);
     
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const message = "BeforeUnload 테스트가 진행중입니다. 페이지를 나가시겠습니까? ";
+            e.returnValue = message;
+            return message;
+        };
+
+        const handleClick = (e: MouseEvent) => {
+            if (isNavigating.current) return;
+            
+            const target = e.target as HTMLElement;
+            const anchor = target.closest('a');
+            if (anchor && anchor.href && !anchor.href.includes(pathname)) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (window.confirm("Click 테스트가 진행중입니다. 페이지를 나가시겠습니까? ") == false) {
+                    return;
+                }
+                isNavigating.current = true;
+                window.location.href = anchor.href;
+            }
+        };
+
+        const handlePopState = (e: PopStateEvent) => {
+            if (isNavigating.current) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (window.confirm("PopState 테스트가 진행중입니다. 페이지를 나가시겠습니까? ") == true) {
+                isNavigating.current = true;
+                window.history.back();
+            } else {
+                // 현재 상태를 유지하면서 히스토리 스택을 조작
+                const currentState = window.history.state;
+                window.history.replaceState(currentState, '', url);
+                window.history.pushState(currentState, '', url);
+            }
+        };
+
+        // 초기 상태 설정
+        const initialState = { from: url };
+        // window.history.replaceState(initialState, '', url);
+        // window.history.pushState(initialState, '', url);
+
+        window.addEventListener('beforeunload', handleBeforeUnload, { capture: true });
+        document.addEventListener('click', handleClick, { capture: true });
+        window.addEventListener('popstate', handlePopState, { capture: true });
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload, { capture: true });
+            document.removeEventListener('click', handleClick, { capture: true });
+            window.removeEventListener('popstate', handlePopState, { capture: true });
+        };
+    }, [pathname]);
 
     // 함수의 시작은 여기서부터임 
 
@@ -162,7 +242,7 @@ const TestPage = ({ url } : { url : string}) => {
         if (problemIndex >= 20)
         {
             router.push(
-                `/test/result?levels=${levels - 1}&days=${days}`,
+                `/test/result?levels=${levels}&days=${days}`,
             )
             setIsEnd(true)
             setTimeout(() => {
@@ -171,9 +251,7 @@ const TestPage = ({ url } : { url : string}) => {
             }, 1000)
             return
         }
-        console.log(questionList)
         // console.warn(`current length ${options.length}, and ${questionList[problemIndex][1]['options'][1]}`)
-        console.log(questionList[problemIndex])
         setQuestion(questionList[problemIndex][1]['problemContent'])
         setCorrectAnswer(questionList[problemIndex][1]['answer'])
         setOptions([questionList[problemIndex][1]['options'][1][0], questionList[problemIndex][1]['options'][1][1] , questionList[problemIndex][1]['options'][1][2], questionList[problemIndex][1]['options'][1][3]])
@@ -185,9 +263,8 @@ const TestPage = ({ url } : { url : string}) => {
         <Container className='topContainter' sx={{ width: '50rem', height: '100%', minHeight: '30rem', paddingY: '1rem', margin: 'auto' }}>
             
             {isEnd ? 
-                <div>
-                    <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} score={score} reviews={ReviewProblem.current} />
-                </div> :
+                <>
+                </> :
                 <Box sx={{ width: '100%', }}>
                     <LinearProgress
                         variant="determinate"

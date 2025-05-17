@@ -34,12 +34,12 @@ export function PreCheckModal({ children, isAnswered, setIsAnswered } : {childre
     useEffect(() => { 
         if (innerIsAnswer == false) 
             return 
-        url.current = answerState == false ? NEXT_PUBLIC_SERVER_IP + `/kanzi/getNewTestProblems?levels=${levels - 1}&days=${days}` : NEXT_PUBLIC_SERVER_IP + `/kanzi/getExistingSession?levels=${levels - 1}&days=${days}`
+        url.current = answerState == false ? NEXT_PUBLIC_SERVER_IP + `/kanzi/getNewTestProblems?levels=${levels}&days=${days}` : NEXT_PUBLIC_SERVER_IP + `/kanzi/getExistingSession?levels=${levels}&days=${days}`
         setIsAnswered(true)
     }, [innerIsAnswer, answerState, setIsAnswered, NEXT_PUBLIC_SERVER_IP])
 
     useEffect(() => { 
-        axios.get(NEXT_PUBLIC_SERVER_IP + `/kanzi/getSessionExisted?levels=${levels - 1}&days=${days}`,
+        axios.get(NEXT_PUBLIC_SERVER_IP + `/kanzi/getSessionExisted?levels=${levels}&days=${days}`,
             {
                 headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}`, }
             }
@@ -48,7 +48,7 @@ export function PreCheckModal({ children, isAnswered, setIsAnswered } : {childre
                 console.log(response)
                 if (response.data[1].sessionExisted == false)
                 {
-                    url.current =NEXT_PUBLIC_SERVER_IP + `/kanzi/getNewTestProblems?levels=${levels - 1}&days=${days}`
+                    url.current =NEXT_PUBLIC_SERVER_IP + `/kanzi/getNewTestProblems?levels=${levels}&days=${days}`
                     setIsAnswered(true)
                 }
                 else

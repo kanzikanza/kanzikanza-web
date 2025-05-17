@@ -3,15 +3,20 @@ package com.example.restservice.userKanza.repository;
 import com.example.restservice.kanza.model.KanzaModel;
 import com.example.restservice.user.model.UserModel;
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.restservice.userKanza.model.UserKanza;
 
 @Repository
-public interface UserKanzaRepository extends JpaRepository<UserKanza, Integer> {
+public interface UserKanzaRepository extends JpaRepository<UserKanza, Long> {
     @Transactional
     @Modifying()
     @Query(value = "insert into user_kanza (user_index, kanza_index) \n" +
@@ -23,6 +28,10 @@ public interface UserKanzaRepository extends JpaRepository<UserKanza, Integer> {
             " ) as created_view ; ", nativeQuery = true)
     void CreateAllRelationsByUser(Integer userId);
 
-    UserKanza findUserCustomizeByUserIdAndKanziId(UserModel userModel, KanzaModel kanza);
+    Optional<UserKanza> findByUserIndexAndKanzaIndex(UserModel userModel, KanzaModel kanza);
+
+    @Query(value = "select u from UserKanza u where u.userIndex = :userModel " +
+            "and u.userKanzaScore < 0 order by u.userKanzaScore asc limit :limit")
+    ArrayList<UserKanza> findReviewProblem(@Param("userModel") UserModel userModel, @Param("limit") int limit);
 
 }

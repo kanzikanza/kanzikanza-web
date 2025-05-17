@@ -32,6 +32,7 @@ public class RedisTestSessionMetadata {
         return RedisTestSessionMetadata.builder()
                 .progress(0)
                 .totalProblem(20)
+                .wrongNumbers(new ArrayList<Integer>())
                 .build();
     }
 }

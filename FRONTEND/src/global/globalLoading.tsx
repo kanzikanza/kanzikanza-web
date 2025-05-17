@@ -13,7 +13,7 @@ const LoadingScreen = () => {
     <Backdrop
       open={true}
       sx={{
-        zIndex: 10,
+        zIndex: 100,
         backdropFilter: 'blur(5px)',
         backgroundColor: 'rgba(0, 0, 0, 0.3)'
       }}

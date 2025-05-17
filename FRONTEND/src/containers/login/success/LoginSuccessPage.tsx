@@ -8,12 +8,14 @@ import { Button, styled, TextField, createTheme, alpha, getContrastRatio } from 
 import { useState } from 'react'
 import { style } from "@vanilla-extract/css";
 import { useIndexedDB, createObject, putImageInDb } from "@/global/globalFunction"
+import { useRouter } from "next/navigation"
 
 const MainContainer = styled('div')`
   min-height: 400px;
   display: flex;
   height: 70vh; 
   position: relative;
+  width : 800px;
 
   justify-content: center;
   align-items: stretch
@@ -108,6 +110,7 @@ const InputText = styled(TextField)`
 export default function LoginSuccessPage() {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [inputValue, setInputValue] = useState("")
+  const router = useRouter()
   const profiles = [
     'User_1.png',
     'User_2.png',
@@ -170,13 +173,12 @@ export default function LoginSuccessPage() {
           db = request.result
 
           createObject(db, require(`@/assets/profile-images/${profiles[selectedIndex - 1]}`).default.src)
-            // alert("success is called")
-            // console.log(db)
         }
         request.onerror = e => {
           alert("error is called");
             db = null
         }
+        router.push("/")
         // const filereader = new FileReader();
 
 
@@ -187,7 +189,9 @@ export default function LoginSuccessPage() {
   };
   
   return (
-        <MainContainer>
+    <MainContainer
+      id="LoginSuccessProfile"
+    >
       {/* <Image src={kakaoLoginImage} alt="Kakao Login" /> */}
             <TopContainer>
               <ContainerTitle>

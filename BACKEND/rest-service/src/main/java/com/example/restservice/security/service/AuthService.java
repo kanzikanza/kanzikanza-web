@@ -4,28 +4,26 @@ import com.example.restservice.config.kakao.KakaoApi;
 import com.example.restservice.user.UserService;
 import com.example.restservice.user.model.UserModel;
 import com.example.restservice.userKanza.repository.UserKanzaRepository;
+import com.example.restservice.userTest.service.UserTestService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final KakaoApi kakaoApi;
     private final UserService userService;
-    private final UserKanzaRepository userKanzaRepository;
-    public void signUp(String accessToken) throws RestClientException
-    {
+    private final UserTestService userTestService;
+
+    public UserModel signUp(String accessToken) throws RestClientException {
         KakaoApi.KakaoUserInfo kakaoUserInfo = kakaoApi.getKakaoUserInfo(accessToken);
 
         String userEmail = kakaoUserInfo.getKakao_account().getEmail();
         Long userKakaoSerial = kakaoUserInfo.getId();
-        if (userService.existsByEmail(userEmail))
-        {
-            return;
+        if (userService.existsByEmail(userEmail)) {
+            return userService.findByEmail(userEmail).orElseThrow();
         }
 
         UserModel user = UserModel.builder()
@@ -33,7 +31,9 @@ public class AuthService {
                 .userKakaoSerial(userKakaoSerial)
                 .build();
         UserModel registerUserModel = userService.create(user);
-        userKanzaRepository.CreateAllRelationsByUser(registerUserModel.getUserIndex());
+        // userKanzaRepository.CreateAllRelationsByUser(registerUserModel.getUserIndex());
+
+        return registerUserModel;
     }
 
 }
