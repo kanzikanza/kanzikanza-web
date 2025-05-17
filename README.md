@@ -30,11 +30,11 @@
       <b><a href="https://github.com/sangbumlikeagod">김상범</a></b> 
     </td>
     <td width="20%" align="center">
-      <img src="img/nyk.jpg" width="100%"/>
+      <img src="img/ksb.jpg" width="100%"/>
       <b><a href="https://github.com/sangbumlikeagod">김상범</a></b> 
     </td>
     <td width="20%" align="center">
-      <img src="img/lgh.jpg" width="100%"/>
+      <img src="img/ksb.jpg" width="100%"/>
       <b><a href="https://github.com/sangbumlikeagod">김상범</a></b> 
     </td>
     <td width="20%" align="center">
