@@ -8,28 +8,42 @@
 ### 👨‍👩‍👦 팀원 소개
 <table width="100%">  
   <tr>
-    <td width="33%" align="center">
+    <td width="20%" align="center">
       <b>BE</b>
     </td>
-    <td width="33%" align="center">
+    <td width="20%" align="center">
       <b>Infra</b>
     </td>
-    <td width="33%" align="center">
+    <td width="20%" align="center">
       <b>FE</b>
+    </td>
+        <td width="20%" align="center">
+      <b>Design</b>
+    </td>
+        <td width="20%" align="center">
+      <b>??</b>
     </td>
   </tr>
   <tr>
-    <td width="33%" align="center">
+    <td width="20%" align="center">
       <img src="img/ksb.jpg" width="100%"/>
       <b><a href="https://github.com/sangbumlikeagod">김상범</a></b> 
     </td>
-    <td width="33%" align="center">
+    <td width="20%" align="center">
       <img src="img/nyk.jpg" width="100%"/>
-      <b><a href="https://github.com/baloo365">나유경</a></b> 
+      <b><a href="https://github.com/sangbumlikeagod">김상범</a></b> 
     </td>
-    <td width="33%" align="center">
+    <td width="20%" align="center">
+      <img src="img/lgh.jpg" width="100%"/>
+      <b><a href="https://github.com/sangbumlikeagod">김상범</a></b> 
+    </td>
+    <td width="20%" align="center">
       <img src="img/lgh.jpg" width="100%"/>
       <b><a href="https://github.com/goldbutnew">이금현</a></b> 
+    </td>
+       <td width="20%" align="center">
+      <img src="img/nyk.jpg" width="100%"/>
+      <b><a href="https://github.com/baloo365">나유경</a></b> 
     </td>
   </tr>
 </table>
