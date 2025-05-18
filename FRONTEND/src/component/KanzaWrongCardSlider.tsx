@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import SwipeableViews from "react-swipeable-views";
 import { Box, Button, Typography } from "@mui/material";
 
 const CARD_BG = "#FFF8F0"; // 기존 톤과 맞는 색상
@@ -13,12 +12,12 @@ export default function KanzaWrongCardSlider({ data, limit = 3 }) {
 
   return (
     <Box sx={{ width: "100%", maxWidth: 600, mx: "auto" }}>
-      <SwipeableViews
+      {/* <SwipeableViews
         index={index}
         onChangeIndex={setIndex}
         enableMouseEvents
         style={{ minHeight: 300 }}
-      >
+      > */}
         {data.map((item, idx) => (
           <Box
             key={idx}
@@ -47,7 +46,7 @@ export default function KanzaWrongCardSlider({ data, limit = 3 }) {
             </Typography>
           </Box>
         ))}
-      </SwipeableViews>
+      {/* </SwipeableViews> */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2 }}>
         <Button onClick={handlePrev} disabled={index === 0} variant="contained" sx={{ background: "#FFCC99", color: "#333" }}>
           ←
