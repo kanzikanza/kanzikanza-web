@@ -9,8 +9,10 @@ export default function TestResult() {
         <TestResultModalPage>
         </TestResultModalPage>
         <AuthGate>
-            <TestResultPage>
-            </TestResultPage>
+            <TestResultPage
+                isAnswered={null}
+                setIsAnswered={null}
+            />
         </AuthGate>
         </>
     )

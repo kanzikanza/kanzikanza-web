@@ -47,7 +47,7 @@ export class apiDecoder {
             testMetaData: {
                 progress: 0,
                 totalProblem: 0,
-                wrongNumbers: [0]
+                wrongNumbers: ['meta', [0]]
             },
             isFirstTestToday : false,
             wrongProblemDetail : []
