@@ -83,7 +83,9 @@ export function LoginSuccess() {
 
 export default function LoginModal() {
     return (
-        <LoginSuccess
-        />
+        <Suspense>
+            <LoginSuccess
+            />
+        </Suspense>
     )
 }
