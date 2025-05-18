@@ -143,6 +143,10 @@ public class KanzaRelatedController {
     public ResponseEntity<?> getFinalResults(@RequestParam(required = true) Integer levels, Integer days) {
         UserModel userModel = userService.findCurrentUser();
         try {
+            Pair<KanzaUniteDtos.TestProblems, KanzaUniteDtos.TestMetaData> testData;
+
+            testData = redisService.getAccordingTest(userModel.getUserKakaoSerial(), days, levels)
+                    .orElseThrow();
             try {
 
                 UserTestModel userTestModel = userTestService
@@ -180,11 +184,8 @@ public class KanzaRelatedController {
             userService.update(userModel);
 
             log.info("getFinalResults: userModel Updated");
-            Pair<KanzaUniteDtos.TestProblems, KanzaUniteDtos.TestMetaData> testData;
 
             log.info(userModel.getUserKakaoSerial().toString() + " " + days.toString() + " " + levels.toString());
-            testData = redisService.getAccordingTest(userModel.getUserKakaoSerial(), days, levels)
-                    .orElseThrow();
 
             testData.getSecond().getWrongNumbers()
                     .forEach(x -> response.getWrongProblemDetail().add(testData.getFirst().getProblems().get(x)));

@@ -25,7 +25,7 @@ public interface UserTestRepository extends JpaRepository<UserTestModel, Integer
         @Transactional
         @Modifying
         @Query(value = "insert into user_test (user_index, test_index, user_test_progress, user_test_day)" +
-                        "SELECT :userId, test_index, 0, 0 from test", nativeQuery = true)
+                        "SELECT :userId, test_index, 0, 0 from test where test_index > 6", nativeQuery = true)
         void CreateInitialTestModel(@Param("userId") Integer userId);
 
         List<UserTestModel> findUserTestModelsByUserModel(UserModel userModel);
