@@ -60,7 +60,7 @@ export default function TestResultPage({isAnswered, setIsAnswered} : {isAnswered
     })
 
     return (
-        <div style={{ minHeight: "100vh", background: "#FFF8F0" }}>
+        <div style={{}}>
             <Container
                 className="topContainter"
                 sx={{
@@ -233,6 +233,7 @@ export default function TestResultPage({isAnswered, setIsAnswered} : {isAnswered
                             minWidth: '12rem',
                             fontSize: "1.2rem"
                         }}
+                        onClick={() => { router.push('/')}}
                     >
                         돌아가기
                     </Button>
