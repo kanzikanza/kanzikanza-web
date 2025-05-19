@@ -8,14 +8,14 @@ export default function TestResult() {
         <>
         <TestResultModalPage>
         </TestResultModalPage>
+        <Suspense>
             <AuthGate>
-                <Suspense>
                     <TestResultPage
                         isAnswered={null}
                         setIsAnswered={null}
                         />
-                </Suspense>
-        </AuthGate>
+            </AuthGate>
+        </Suspense>
         </>
     )
 }
