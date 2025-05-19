@@ -5,15 +5,15 @@ import { AuthGate } from '@/global/GlobalAuthGate'
 
 export default function Test() {
     return (
-        <AuthGate>
-            <Suspense>
-                <PreCheckModal
-                    isAnswered={null}
-                    setIsAnswered={null}
-                    >
-                    <TestPage url={"/kanzi/getTestProblems"} />
-                </PreCheckModal>
-            </Suspense>
-        </AuthGate>
+        <Suspense>
+            <AuthGate>
+                    <PreCheckModal
+                        isAnswered={null}
+                        setIsAnswered={null}
+                        >
+                        <TestPage url={"/kanzi/getTestProblems"} />
+                    </PreCheckModal>
+            </AuthGate>
+        </Suspense>
     )
 }

@@ -1,8 +1,9 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense} from "react";
 import LoadingScreen from "./globalLoading";
 import { checkAuthorityChain } from "./globalFunction";
 import { useRouter } from "next/navigation";
+
 // function BlurPage() {
 //     return (
 
@@ -37,10 +38,12 @@ export function AuthGate({children} : Readonly<{
     return (
         <div>
             {!isAuth || !isAnswered ? <LoadingScreen /> : <></>}
-            <div
-            id="ModalContainer">
-                {React.cloneElement(children, { isAnswered, setIsAnswered })}
-            </div>
+            <Suspense>
+                <div
+                id="ModalContainer">
+                    {React.cloneElement(children, { isAnswered, setIsAnswered })}
+                </div>
+            </Suspense>
         </div>
     )
     if (!isAuth || !isAnswered) return (<LoadingScreen/>)
