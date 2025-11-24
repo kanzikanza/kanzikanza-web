@@ -36,7 +36,7 @@
 
 import { useEffect, useState, ComponentType } from "react";
 import LoadingScreen from "./globalLoading";
-import { checkAuthorityChain } from "./globalFunction";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from 'next/navigation';
 import LocalStorage  from '@/global/globalStorage'
 import { ReactNode } from "react";
@@ -49,35 +49,24 @@ const withInitialization = <P extends object>(
   WrappedComponent: ComponentType<P>,
 ) => {
   const EnhancedComponent = (props: P) => {
-    let initState = LocalStorage.getItem('accessToken') === null
-    const [isLoading, setIsLoading] = useState<boolean>(true); // Boolean → boolean
-    const [isAuth, setIsAuth] = useState<boolean>(initState)
+    const { isAuthenticated, isLoading } = useAuth();
     const [isAnswered, setIsAnswered] = useState<boolean | null>(true);
     const [answerState, setAnswerState] = useState<boolean>(false);
     const router = useRouter()
     
     useEffect(() => {
-      const controller = new AbortController();
-      console.log("start speed")
-      checkAuthorityChain()
-        .then((result: boolean) => {
-          console.log('api come', result)
-          setIsLoading(false)
-          setIsAuth(result)
-        })
-      
-      
-      return () => controller.abort();
-    }, []);
+      // AuthContext에서 이미 인증을 처리하므로 여기서는 추가 호출 불필요
+      console.log("withInitialization: 인증 상태 확인", isAuthenticated, isLoading);
+    }, [isAuthenticated, isLoading]);
 
     useEffect(() => {
       if (router === null) return 
-      console.log(isLoading, ' ', isAuth)
-      if (isLoading === false && isAuth === false)
+      console.log("withInitialization:", isLoading, isAuthenticated)
+      if (isLoading === false && isAuthenticated === false)
       {
         router.push("/landing")
       }
-    }, [isAuth, router])
+    }, [isAuthenticated, isLoading, router])
 
     return isLoading || (!isAnswered)?
       <LoadingScreen/>

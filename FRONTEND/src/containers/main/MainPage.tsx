@@ -2,106 +2,15 @@
 import withInitialization from "@/global/globalComponent";
 import axios from "axios";
 import { ReactNode, useEffect, useState } from "react";
-import { styled } from "@mui/material/styles";
-import { Box, Typography, Button, Grid, Divider, CircularProgress } from "@mui/material";
-import LockIcon from '@mui/icons-material/Lock';
+// MUI removed
 import { apiDecoder } from "@/global/GlobalApiDecoder";
 import { TestConfigDto } from "@/global/GlobalTypeContainer";
 // import { useRouter } from 'next/navigation';
 
 import Link from "next/link";
+import api from "@/lib/api";
 
-// 상단 상태 표시 스타일
-const StatusBox = styled(Box)({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  height: '3rem',
-  marginBottom: "10px",
-  padding: "16px",
-  border: "1px solid #000000",
-  borderRadius: "8px",
-  backgroundColor: "#ffe",
-});
-
-// 급수 리스트 스타일
-const ScrollableContainer = styled(Box)({
-  height: "85vh",
-  overflowY: "auto",
-  paddingRight: "8px",
-  paddingLeft : "8px",
-});
-
-// 급수 섹션 스타일
-const LevelSection = styled(Box)({
-  marginBottom: "10px",
-  minWidth: '60rem',
-  // maxWidth: '60rem',
-  maxWidth: '100%',
-  maxHeight : '27rem',
-  overflowX:'hidden'
-});
-
-// 버튼 스타일
-const CircleButton = styled(Button)({
-    borderRadius: "50%",
-    height: "10rem",
-    minWidth: "10rem",
-    margin: "2px",
-    textTransform: "none",
-    backgroundColor: "#F9DCDC",
-    position: "relative",
-    overflow: "hidden",
-    "&:hover": {
-        backgroundColor: "#ffccbc",
-    },
-    "& .MuiTypography-root": {
-        fontSize: "1.5rem",
-        fontWeight: "bold",
-        color: "#666666",
-        position: "relative",
-        zIndex: 2,
-    },
-    "&.locked": {
-        backgroundColor: "#E0E0E0",
-        cursor: "not-allowed",
-        "&:hover": {
-            backgroundColor: "#E0E0E0",
-        },
-    },
-});
-
-const ProgressOverlay = styled(Box)({
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1,
-    "& .MuiCircularProgress-root": {
-        color: "#FF8C69",
-    },
-    "& .MuiCircularProgress-circle": {
-        strokeWidth: 8,
-    },
-});
-
-const LockOverlay = styled(Box)({
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: "50%",
-    zIndex: 2,
-});
+// Styled components removed - using Tailwind classes
 
 function UniqueName({isAnswered, setIsAnswered}) {
     const [userStreakDays, setUserStreakDays] = useState<Number>(0)
@@ -122,16 +31,19 @@ function UniqueName({isAnswered, setIsAnswered}) {
     const [useStateArrays, setUseStateArrays] = useState<any>(new Array(MaxDays * totalLevels).fill(0))
     const [useProgressArrays, setUseProgressArrays] = useState<any>(new Array(MaxDays * totalLevels).fill(0))
     const [unlockList, setUnlockList] = useState<[string, TestConfigDto][] | null>(null);
-  console.log(NEXT_PUBLIC_SERVER_IP, process, process.env)
+  // console.log(NEXT_PUBLIC_SERVER_IP, process, process.env)
 
-  setIsAnswered(true)
+  // setIsAnswered(true)
+  useEffect(() => {
+    setIsAnswered(true);  // 렌더링 끝난 후에 호출됨 → 안전!
+  }, []);
   useEffect(() => {
     const fetchData = async (url: string, isToken: boolean) => {
             try {
-                await axios.get(url,
-                {
-                  headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
-                }
+                await api.get(url,
+                // {
+                //   headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
+                // }
                 ).then((answer) => {
                     console.log(`Get Success : ${url}`, answer)
                     const [defaultProfile, testConfig] = decoder.decodeMainPageResponse(answer.data)
@@ -179,75 +91,80 @@ function UniqueName({isAnswered, setIsAnswered}) {
   };
 
   return (
-    <Box sx={{ display: "flex", padding: "16px" }}>
+    <div className="flex p-4">
       {/* 상단 상태 표시 */}
-      <Box sx={{ flexGrow: 1 }}>
-        <StatusBox>
-          <Typography variant="h6">
+      <div className="flex-grow">
+        <div className="flex items-center justify-center h-12 mb-2 p-4 border border-black rounded-lg bg-[#ffe]">
+          <h6 className="text-xl font-medium">
             🔥 {String(userStreakDays)} 일 째 도전 중!
-          </Typography>
-        </StatusBox>
+          </h6>
+        </div>
 
         {/* 스크롤 가능한 리스트 */}
-        <ScrollableContainer>
+        <div className="h-[85vh] overflow-y-auto pr-2 pl-2">
           {levels.map((level) => (
-            <LevelSection key={level}>
+            <div key={level} className="mb-2 min-w-[60rem] max-w-full max-h-[27rem] overflow-x-hidden">
               {/* 급수 제목 */}
-              <Typography variant="h4" gutterBottom>
+              <h4 className="text-3xl font-bold mb-4">
                 {level + 1}급
-              </Typography>
-              <Divider variant="middle" flexItem style={{marginBottom : '20px'}} />
+              </h4>
+              <hr className="border-t border-gray-300 mx-4 mb-5" />
             
               {/* 버튼 그리드 */}
-              <Grid container spacing={2}>
-              {/* <Grid container spacing={1} justifyContent="center"> */}
+              <div className="grid grid-cols-5 gap-4">
                 {Array.from({ length: 5 }).map((_, index) => {
                   const locked = isLocked(level, index);
                   const progress = useProgressArrays[level* MaxDays + index] || 0;
                   
                   return (
-                    <Grid item xs={2.4} key={index}>
+                    <div key={index}>
                       <Link href={locked ? '#' : `/test?levels=${level}&days=${index}`}>
-                        <CircleButton 
-                          variant="contained" 
-                          className={locked ? 'locked' : ''}
+                        <button 
+                          className={`rounded-full h-40 min-w-[10rem] m-0.5 normal-case relative overflow-hidden transition-colors ${
+                            locked 
+                              ? 'bg-[#E0E0E0] cursor-not-allowed' 
+                              : 'bg-[#F9DCDC] hover:bg-[#ffccbc]'
+                          }`}
                           disabled={locked}
                         >
-                          <Typography>
+                          <span className="text-2xl font-bold text-[#666666] relative z-[2]">
                             第 {index + 1}章
-                          </Typography>
-                          <ProgressOverlay>
-                            <CircularProgress 
-                              variant="determinate" 
-                              value={progress * 10} 
-                              size={160}
-                              thickness={8}
-                              sx={{
-                                position: 'absolute',
-                                color: '#FF8C69',
-                                '& .MuiCircularProgress-circle': {
-                                  strokeLinecap: 'round',
-                                },
-                              }}
-                            />
-                          </ProgressOverlay>
+                          </span>
+                          <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center z-[1]">
+                            <svg className="absolute w-40 h-40 -rotate-90">
+                              <circle
+                                cx="80"
+                                cy="80"
+                                r="72"
+                                fill="none"
+                                stroke="#FF8C69"
+                                strokeWidth="8"
+                                strokeDasharray={`${2 * Math.PI * 72}`}
+                                strokeDashoffset={`${2 * Math.PI * 72 * (1 - progress / 10)}`}
+                                strokeLinecap="round"
+                                className="transition-all duration-300"
+                              />
+                            </svg>
+                          </div>
                           {locked && (
-                            <LockOverlay>
-                              <LockIcon sx={{ fontSize: 40, color: 'white' }} />
-                            </LockOverlay>
+                            <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/50 rounded-full z-[2]">
+                              <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                              </svg>
+                            </div>
                           )}
-                        </CircleButton>
+                        </button>
                       </Link>
-                    </Grid>
+                    </div>
                   );
                 })}
-              </Grid>
+              </div>
               
-            </LevelSection>
+            </div>
           ))}
-        </ScrollableContainer>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }
 export default UniqueName

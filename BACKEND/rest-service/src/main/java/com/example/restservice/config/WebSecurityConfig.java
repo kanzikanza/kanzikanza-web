@@ -46,8 +46,10 @@ public class WebSecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login/page").permitAll()
+                        .requestMatchers("/kandle/generate").permitAll()
                         .requestMatchers("/auth/Oauth2/KakaoToken").permitAll()
                         .requestMatchers("/auth/Oauth2/KakaoLogin").permitAll()
+                        .requestMatchers("/auth/Oauth2/updateToken").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }
@@ -69,7 +71,7 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000"); // 프론트엔드 호스트
+        config.addAllowedOrigin("http://localhost:3001"); // 프론트엔드 호스트
         config.addAllowedOrigin(origin); // 프론트엔드 호스트
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");

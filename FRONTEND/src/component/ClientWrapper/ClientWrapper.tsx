@@ -4,72 +4,28 @@
 import { AppProvider } from '../AppContext/AppContext';
 import Navbar from '../Navbar/Navbar';
 import Sidebar from '../Sidebar/Sidebar';
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { checkAuthority } from '@/global/globalFunction';
-import { styled } from '@mui/material/';
-import LocalStorage from '@/global/globalStorage';
+import { useAuth } from '@/context/AuthContext';
 
-
-const ChildContainer = styled('div')`
-
-  margin: 2rem;
-
-  // height: 100vh;
-`;
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-    
+    const { isAuthenticated } = useAuth();
 
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false) 
-
-    useEffect(() => {
-    // URL 변경 시 API 호출
-    // console.log(`Navigated to: ${pathname}`);
-    // 예: 토큰 검증 API 호출
-    // 나중에 여기에 authenticated인지를 확인하는 절차를 넣음.
-        let initState: boolean = LocalStorage.getItem('accessToken') === null
-        setIsAuthenticated(initState)
-        
-        try {
-            // 여기선 checkAuthority가 promise를 반환하기 때문에 then과 catch와 상관없이 먼저 렌더링이 진행된다, 이건 막을 수 없다.
-            checkAuthority().then(
-                response => {
-                    console.log('authentictate success')
-                    setIsAuthenticated(true)
+    return (
+        <AppProvider>
+            <div className={`flex ${isAuthenticated ? 'flex-row' : 'flex-col'}`}>
+                { isAuthenticated ?
+                    <Sidebar />
+                    :
+                    <div className="flex-grow">
+                        <Navbar />
+                    </div>  
                 }
-            ).catch(
-                error => {
-                    console.log('authentictate failed')
-                    setIsAuthenticated(false)
-                }
-            )
-        } catch
-        {
-            console.log('authentictate failed')
-            setIsAuthenticated(false)
-        }
-        // setIsAuthenticated(true)
-  }, [pathname]);
-
-
-  return (
-      <AppProvider>
-          <div style={{ display: 'flex' , flexDirection : isAuthenticated ? 'row' : 'column'}}>
-          { isAuthenticated ?
-            <Sidebar />
-            :
-            <div style={{ flexGrow: 1, }}>
-            <Navbar />
-            </div>  
-          }
-        
-        <div style={{ flexGrow: 1,  alignItems: 'center', flexDirection :'column', padding:'auto', justifyContent: 'center', display:'flex'}}>
-            <ChildContainer>    
-                {children}
-            </ChildContainer>
-        </div>
-      </div>
-    </AppProvider>
-  );
+            
+                <div className="flex-grow flex items-center flex-col justify-center p-auto">
+                    <div className="m-8">    
+                        {children}
+                    </div>
+                </div>
+            </div>
+        </AppProvider>
+    );
 }

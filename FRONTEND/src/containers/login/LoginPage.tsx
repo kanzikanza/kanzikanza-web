@@ -6,76 +6,7 @@ import Link from 'next/link'
 
 import kakaoLoginImage from "@/assets/kakao_login_large_narrow.png"
 import { ImageStyle } from "@/global/globalImage"
-import { styled } from "@mui/material"
 import SmallButton from "../../component/Button/SmallButton";
-
-const MainContainer = styled('div')`
-  min-height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const LoginBox = styled('div')`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-`
-
-const LogoLink = styled(Link)`
-  text-decoration: none;
-  margin-bottom: 1rem;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #333;
-  text-align: center;
-  letter-spacing: -0.02em;
-  
-  span {
-    color: #FFE812;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-  }
-`
-
-const KakaoLoginButton = styled('div')`
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  width: 100%;
-  max-width: 300px;
-  
-  &:hover {
-    transform: scale(1.02);
-  }
-`
-
-const Divider = styled('div')`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: #666;
-  font-size: 0.9rem;
-  
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background-color: #e0e0e0;
-  }
-`
-
-const GoJoin = styled('p')`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #666;
-  font-size: 0.9rem;
-  margin-top: 1rem;
-  text-align: center;
-`
 
 export default function LoginPage() {
   const imageStyle: ImageStyle = {
@@ -100,13 +31,19 @@ export default function LoginPage() {
   };
 
   return (
-    <MainContainer>
-      <LoginBox>
-        <LogoLink href="/">
-          칸<span>지</span>칸<span>자</span>
-        </LogoLink>
+    <div className="min-h-[400px] flex justify-center items-center">
+      <div className="flex flex-col items-center gap-8">
+        <Link 
+          href="/" 
+          className="no-underline mb-4 font-['Pretendard',sans-serif] text-[2.5rem] font-extrabold text-[#333] text-center tracking-tight"
+        >
+          칸<span className="text-[#FFE812] [text-shadow:1px_1px_2px_rgba(0,0,0,0.1)]">지</span>칸<span className="text-[#FFE812] [text-shadow:1px_1px_2px_rgba(0,0,0,0.1)]">자</span>
+        </Link>
         
-        <KakaoLoginButton onClick={handleLogin}>
+        <div 
+          className="cursor-pointer transition-transform duration-200 w-full max-w-[300px] hover:scale-105"
+          onClick={handleLogin}
+        >
           <Image
             src={kakaoLoginImage}
             width={300}
@@ -114,15 +51,17 @@ export default function LoginPage() {
             alt="Kakao Login Button"
             style={imageStyle}
           />
-        </KakaoLoginButton>
+        </div>
 
-        <Divider>또는</Divider>
+        <div className="w-full flex items-center gap-4 text-[#666] text-[0.9rem] before:content-[''] before:flex-1 before:h-px before:bg-[#e0e0e0] after:content-[''] after:flex-1 after:h-px after:bg-[#e0e0e0]">
+          또는
+        </div>
 
-        <GoJoin>
+        <p className="flex items-center gap-2 text-[#666] text-[0.9rem] mt-4 text-center">
           보유한 아이디가 없으신가요? 
           <SmallButton onClick={handleLogin}>카카오로 1초만에 가입하기</SmallButton>
-        </GoJoin>
-      </LoginBox>
-    </MainContainer>
+        </p>
+      </div>
+    </div>
   )
 }

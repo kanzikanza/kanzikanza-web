@@ -1,115 +1,59 @@
 import React from "react";
-import { styled, Paper, Modal, Typography, IconButton, CircularProgress, TypographyProps } from "@mui/material";
-import { Close } from "@mui/icons-material"
-const StyledModal = styled(Modal)`
-  /* outline: none; */
-`;
 
 export type kanza = {
   kanza: string;
   mean: string;
   sound: string;
 }
-const ModalContainer = styled('div')`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  min-height: 400px;
-  text-align: center;
-  background-color: none;
-  box-shadow: none;
-  outline: none;
-`;
-
-const BackgroundImage = styled("div")`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('../assets/sticky-note.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  z-index: -1; /* 배경 이미지를 뒷면에 위치시키기 */
-`;
-
-const CloseButton = styled(IconButton)`
-  display: flex;
-  align-items: flex-end;
-  margin-top: 15px;
-  margin-right: 15px;
-  margin-left: auto;
-`
-
-// const Content = styled(Typography)`
-//   z-index: 1001;
-//   padding: 20px 50px 60px 50px;
-// `
-
-const Content = styled(Typography)<TypographyProps & { component?: any}>`
-  z-index: 1001;
-  padding: 20px 50px 60px 50px;
-`
-
-
-const ScrollableList = styled('div')`
-  max-height: 200px; /* 스크롤 가능한 영역의 높이 */
-  overflow-y: auto; /* 스크롤 활성화 */
-`;
-
-const ListItem = styled('div')`
-  padding: 5px;
-  &:last-child {
-    border-bottom: none;
-  }
-`;
 
 const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: any; reviews : kanza[] }> = ({ open, onClose, score, reviews}) => {
-// const CongratulationModal: React.FC<{ open: boolean; onClose: () => void; score: Number }> = ({ open, onClose, score}) => {
+  if (!open) return null;
 
   return (
-    <StyledModal
-      open={open}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      // BackdropComponent={() => null}
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
     >
-      <ModalContainer>
-        <BackgroundImage />
-        <CloseButton onClick={onClose}>
-          <Close />
-        </CloseButton>
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] min-h-[400px] text-center outline-none"
+      >
+        <div 
+          className="absolute top-0 left-0 w-full h-full bg-cover bg-no-repeat -z-10"
+          style={{ backgroundImage: "url('../assets/sticky-note.png')" }}
+        />
+        <button 
+          onClick={onClose}
+          className="flex items-end mt-4 mr-4 ml-auto p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </button>
   
-        {score === -1 ?
-          <Content variant="h6" component="h2">
-              
-              <p>점수를 계산 중입니다... </p>
-              <p>잠시만 기다려 주세요 👩‍🦰</p>
-              <CircularProgress style={{ color: "orange" }} />
-          </Content>
-          :
-          <Content variant="h6" component="h2">    
+        {score === -1 ? (
+          <div className="z-[1001] px-12 py-5 pb-16">
+            <p>점수를 계산 중입니다... </p>
+            <p>잠시만 기다려 주세요 👩‍🦰</p>
+            <div className="inline-block mt-4 w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <div className="z-[1001] px-12 py-5 pb-16">    
             <p className="score">당신은 <strong>{score}</strong>점 입니다!</p>
-             {reviews.length > 0 && (
+            {reviews.length > 0 && (
               <>
-                <strong style={{marginBottom : '5px'}}>틀린 문제</strong>
-                <ScrollableList>
+                <strong className="block mb-1 mt-4">틀린 문제</strong>
+                <div className="max-h-[200px] overflow-y-auto">
                   {reviews.map((review, index) => (
-                    <ListItem key={index}>
+                    <div key={index} className="p-1 last:border-b-0">
                       {review.kanza}  {review.mean} {review.sound}
-                    </ListItem>
+                    </div>
                   ))}
-                </ScrollableList>
+                </div>
               </>
             )}
-          </Content>
-        }
-        
-        {/* <Button onClick={onClose}>Close</Button> */}
-      </ModalContainer>
-    </StyledModal>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

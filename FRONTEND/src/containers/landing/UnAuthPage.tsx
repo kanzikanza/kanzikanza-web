@@ -1,82 +1,15 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Box, IconButton, styled } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+// MUI removed
 import Frame from '@/public/landing/Frame.png'
 import Frame2 from '@/public/landing/Frame2.png'
 import Frame3 from '@/public/landing/Frame3.png'
 import Image, { StaticImageData } from 'next/image';
-import { keyframes, minHeight } from '@mui/system';
 import { nextImage } from '@/global/globalComponent';
 // 인터페이스 정의
 interface VerticalCarouselProps {
   // 필요한 경우 props 추가
 }
-
-const ArrowButton = styled(IconButton)({
-  position: 'absolute',
-  bottom: '20px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  zIndex: 10,
-});
-
-// 애니메이션 정의
-const slideUp = keyframes`
-  0% {
-    transform: translateY(100%);
-  }
-  100% {
-    transform: translateY(0);
-  }
-`;
-
-const slideOutUp = keyframes`
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-100%);
-  }
-`;
-
-// 스타일 컴포넌트 정의
-const CarouselContainer = styled(Box)({
-  display: 'flex',
-  flexGrow : 1,
-  flexDirection: 'column',
-  alignItems: 'center',
-  maxWidth: '100%',
-  height: '85vh',
-  width: '90vw',
-  margin: '0 auto',
-  position: 'relative',
-  overflow: 'hidden',
-});
-
-const ImageContainer = styled(Box)({
-  width: '100%',
-  height: '100%',
-  position: 'relative',
-});
-
-const CarouselImageWrapper = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: '100%',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  animation: `${slideUp} 1s ${theme.transitions.easing.easeInOut} forwards`,
-}));
-
-const PreviousImageWrapper = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: '100%',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  animation: `${slideOutUp} 1s ${theme.transitions.easing.easeInOut} forwards`,
-}));
 
 
 
@@ -110,14 +43,15 @@ const VerticalCarousel: React.FC<VerticalCarouselProps> = () => {
   }, [images.length, currentIndex, interval]);
 
   return (
-    <CarouselContainer>
-      <ImageContainer className='what'>
+    <div className="flex flex-grow flex-col items-center max-w-full h-[85vh] w-[90vw] mx-auto relative overflow-hidden">
+      <div className="what w-full h-full relative">
         {images.map((source, index) => {
           if (index === previousIndex)
           {
             return (
-              <PreviousImageWrapper
+              <div
                 key={index}
+                className="w-full h-full absolute top-0 left-0 animate-[slideOutUp_1s_ease-in-out_forwards]"
               > 
               <Image
                   fill={true}
@@ -125,24 +59,23 @@ const VerticalCarousel: React.FC<VerticalCarouselProps> = () => {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 alt={`슬라이드 ${previousIndex + 1}`}
               />
-            </PreviousImageWrapper>
+            </div>
             )
           }
           else if (index === currentIndex)
           {
             return (
-              <CarouselImageWrapper
+              <div
                 key={index}
+                className="w-full h-full absolute top-0 left-0 animate-[slideUp_1s_ease-in-out_forwards]"
               >
                 <Image
                   fill
                   src={images[currentIndex]}
-                  // sizes="height: '100%' width: '100%'"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-
                   alt={`슬라이드 ${currentIndex + 1}`}
                 />
-              </CarouselImageWrapper>
+              </div>
             )
           }
           else
@@ -151,11 +84,17 @@ const VerticalCarousel: React.FC<VerticalCarouselProps> = () => {
           }
         }  
         )}
-      </ImageContainer>
-      <ArrowButton onClick={handleNext} aria-label="다음 이미지">
-        <KeyboardArrowDownIcon />
-      </ArrowButton>
-    </CarouselContainer>
+      </div>
+      <button 
+        onClick={handleNext} 
+        aria-label="다음 이미지"
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 p-2 hover:bg-gray-100 rounded-full transition-colors"
+      >
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+        </svg>
+      </button>
+    </div>
   );
 };
 

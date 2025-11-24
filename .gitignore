@@ -139,10 +139,12 @@ dist
 
 # vuepress v2.x temp and cache directory
 .temp
-
+ignore
+.vscode
 # Docusaurus cache and generated files
 .docusaurus
 
+*.sql
 # Serverless directories
 .serverless/
 

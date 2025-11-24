@@ -8,10 +8,7 @@ export default function TestResultModalPage() {
     const subtitle : string = "() 일 연속 칸지칸자 공부중"
     const [open, setOpen] = useState<boolean>(false);
     // 여기서 어마무시한 갱신확인
-    useEffect(() => { 
-        // axios.get()
 
-    }, [])
     return (
         <BaseNotiModal
             title={title}

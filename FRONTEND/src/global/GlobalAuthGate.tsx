@@ -1,52 +1,37 @@
 'use client'
 import React, { useEffect, useState, Suspense} from "react";
 import LoadingScreen from "./globalLoading";
-import { checkAuthorityChain } from "./globalFunction";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-
-// function BlurPage() {
-//     return (
-
-//     )
-// }
 
 export function AuthGate({children} : Readonly<{
   children: React.ReactElement;
 }>) {
-    const [isAuth, setIsAuth] = useState<boolean>(true)
-    const router = useRouter()
+    const { isAuthenticated, isLoading } = useAuth();
+    const router = useRouter();
+    const [isAnswered, setIsAnswered] = useState<boolean>(false);
     
     useEffect(() => {
-
-        const response = checkAuthorityChain()
-        response.then((res) => {
-            console.log("checkAuthorityChain : then", res)
-            if (res == false)
-            {
-                if (router === null) return 
-                router.push("/landing")
-            }
-            else {
-                setIsAuth(true)    
-            }
-        }).catch((res) => { 
-            console.log("checkAuthorityChain : catch", res)
-        })
-    }, [])
+        // Context에서 이미 인증을 체크했으므로, 여기서는 결과만 확인
+        if (!isLoading && !isAuthenticated) {
+            console.log("🚫 AuthGate: 인증되지 않음, /landing으로 이동");
+            router.push("/landing");
+        }
+    }, [isAuthenticated, isLoading, router]);
     
-    const [isAnswered, setIsAnswered] = useState<boolean>(false);
+    // 로딩 중이거나 인증되지 않았으면 로딩 화면 표시
+    if (isLoading || !isAuthenticated) {
+        return <LoadingScreen />;
+    }
+    
     return (
         <div>
-            {!isAuth || !isAnswered ? <LoadingScreen /> : <></>}
+            {!isAnswered ? <LoadingScreen /> : <></>}
             <Suspense>
-                <div
-                id="ModalContainer">
+                <div id="ModalContainer">
                     {React.cloneElement(children, { isAnswered, setIsAnswered })}
                 </div>
             </Suspense>
         </div>
-    )
-    if (!isAuth || !isAnswered) return (<LoadingScreen/>)
-    return React.cloneElement(children, { isAnswered, setIsAnswered});
-
+    );
 }

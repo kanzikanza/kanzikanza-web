@@ -8,8 +8,9 @@ import Modal from './Modal';
 import { useSearchParams } from "next/navigation"
 import { usePathname, useRouter } from 'next/navigation'
 import { apiDecoder } from '@/global/GlobalApiDecoder';
+import  useAuthStore  from '@/store/useStore';
 
-import { styled } from "@mui/material"
+// import { styled } from "@mui/material"
 import { rejects } from 'assert';
 
 
@@ -24,15 +25,18 @@ export function LoginSuccess() {
     let completeUrl: string = `${NEXT_PUBLIC_SERVER_IP}/auth/Oauth2/KakaoToken?code=${params.get('code')}`
     
     useEffect(() => {
-        
         try {
-            const response = axios.get(completeUrl)
+            const response = axios.get(completeUrl,
+                {withCredentials: true}
+            )
             .then(
                 response => {
                     console.log(response.data)
                     const [token, defaultProfile] = decoder.decodeLoginReponse(response.data)
-                    localStorage.setItem('accessToken', token.accessToken)
-                    localStorage.setItem('refreshToken', token.refreshToken)
+                    useAuthStore.getState().setAccessToken(token.accessToken);
+                    console.log("accessToken, refreshToken 전달받음")
+                    // localStorage.setItem('accessToken', token.accessToken)
+                    // localStorage.setItem('refreshToken', token.refreshToken)
 
                     if (defaultProfile.nickname !== null && defaultProfile.nickname !== "")
                     {
@@ -56,24 +60,6 @@ export function LoginSuccess() {
     }, [params, router])
   return (
       <>
-          {/* {loading && (
-            <Modal isOpen={loading}>
-                {isSuccess ? (
-                    <div>
-                    <h2>로그인 성공!</h2>
-                    <p>잠시 후 메인 화면으로 이동합니다...</p>
-                    </div>
-                ) : (
-                    <div>
-                    <h2>로그인 실패</h2>
-                    <p>다시 로그인해주세요.</p>
-                    <button onClick={() => (window.location.href = '/login')}>
-                        로그인 화면으로 이동
-                    </button>
-                    </div>
-                )}
-            </Modal>
-          )} */}
           {!loading && isSuccess && (
               <LoginSuccessPage />
           )}

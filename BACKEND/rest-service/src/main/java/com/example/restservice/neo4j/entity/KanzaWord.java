@@ -1,13 +1,17 @@
 package com.example.restservice.neo4j.entity;
 
 import com.example.restservice.neo4j.entity.relationship.KanzaIncluded;
+
+import jakarta.persistence.Entity;
 import lombok.*;
 import org.springframework.data.neo4j.core.schema.Id;
+import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.Set;
 
+// @Node("KanzaWord")
 @Data
 @Getter
 @Setter

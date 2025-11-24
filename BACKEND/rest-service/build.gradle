@@ -29,10 +29,11 @@ dependencies {
     api libs.org.springframework.boot.spring.boot.starter.webflux
     api libs.com.google.code.gson.gson
     api libs.mysql.mysql.connector.java
-    api 'org.springframework.boot:spring-boot-starter-data-neo4j:3.2.1'
-
+    // api 'org.springframework.boot:spring-boot-starter-data-neo4j:3.2.1'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin
+    implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
+    implementation("com.google.code.gson:gson:2.13.1")
     implementation("org.springframework.boot:spring-boot-maven-plugin:3.4.4")
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
@@ -90,5 +91,5 @@ test {
 }
 
 bootJar {
-    archiveFileName = "rest-service-0.0.1-SNAPSHOT.jar"
+    archiveFileName = "kanzikanza-0.0.1-SNAPSHOT.jar"
 }

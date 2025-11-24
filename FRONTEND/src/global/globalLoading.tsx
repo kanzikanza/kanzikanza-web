@@ -1,4 +1,3 @@
-import { Backdrop, CircularProgress, Fade, Box } from '@mui/material';
 import { useState, useEffect } from 'react';
 
 const LoadingScreen = () => {
@@ -10,28 +9,14 @@ const LoadingScreen = () => {
   }, []);
 
   return (
-    <Backdrop
-      open={true}
-      sx={{
-        zIndex: 100,
-        backdropFilter: 'blur(5px)',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
-      }}
+    <div 
+      className="fixed inset-0 z-[100] backdrop-blur-[5px] bg-black/30 flex items-center justify-center"
       id='NoWay'
     >
-      <Fade in={showSpinner}>
-        <Box sx={{ position: 'relative' }}>
-          <CircularProgress
-            size={60}
-            thickness={4}
-            sx={{
-              color: 'white',
-              animationDuration: '550ms'
-            }}
-          />
-        </Box>
-      </Fade>
-    </Backdrop>
+      <div className={`relative transition-opacity duration-300 ${showSpinner ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="w-[60px] h-[60px] border-[4px] border-white border-t-transparent rounded-full animate-spin" />
+      </div>
+    </div>
   );
 };
 

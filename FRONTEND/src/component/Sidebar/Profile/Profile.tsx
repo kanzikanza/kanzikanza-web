@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { Avatar, Typography, TextField, Box, styled } from '@mui/material';
 import { createObject, getImageFromIndexedDB } from '@/global/globalFunction';
 import Image from 'next/image';
 
@@ -8,51 +7,6 @@ import Image from 'next/image';
 const customImgLoader = ({ src }) => {
       return `${src}`
 }
-
-const ProfileIndex = styled(Box)`
-  flex-direction: row;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 2rem;
-  width: 10rem;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  background-color: #FEF7EF;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  
-  &:hover {
-    background-color: #FFE4D4;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const ProfileImage = styled('img')`
-  height: 3rem;
-  width: 3rem;
-  border-radius: 50%;
-  margin-right: 10px;
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const ProfileName = styled(Typography)`
-  transition: color 0.3s ease;
-  
-  &:hover {
-    color: #F17F42;
-  }
-`;
 
 function Profile(
   props : {userNickName: String,
@@ -79,20 +33,23 @@ function Profile(
         const arg: IDBRequest = getImageFromIndexedDB(db)
         arg.onsuccess = (event: any) => {
           let imgFile = event.target.result;
-          setImage(imgFile)
+          
+          // imgFile이 Blob 또는 File 객체인지 확인
+          if (imgFile && imgFile instanceof Blob) {
+            const objURL = URL.createObjectURL(imgFile)
+            setImage(objURL)
+          } else if (typeof imgFile === 'string') {
+            // 이미 URL 문자열인 경우
+            setImage(imgFile)
+          } else {
+            // 데이터가 없거나 올바르지 않은 경우, 기본 이미지 로드
+            createObject(db, require(`@/assets/profile-images/User_${props.userProfileIndex}.png`).default.src)
+          }
         }
         
         arg.onerror = () => {
+          // 에러 발생 시 기본 이미지 로드
           createObject(db, require(`@/assets/profile-images/User_${props.userProfileIndex}.png`).default.src)
-        }
-        const nextArg : IDBRequest= getImageFromIndexedDB(db)
-        nextArg.onsuccess = (event: any) => {
-          let imgFile = event.target.result;
-          const objURL = URL.createObjectURL(imgFile)
-          setImage(objURL)
-        }
-        nextArg.onerror = (event: any) => {
-          setImage('')
         }
       }
 
@@ -118,13 +75,14 @@ function Profile(
 
     
   return (
-    <ProfileIndex>
+    <div className="flex-row flex justify-between items-center h-8 w-40 rounded-2xl p-6 bg-[#FEF7EF] transition-all duration-300 cursor-pointer hover:bg-[#FFE4D4] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm">
       {
         image
          ?
-        <ProfileImage
+        <img
           src={image}
           alt="Profile"
+          className="h-12 w-12 rounded-full mr-2.5 transition-transform duration-300 hover:scale-105"
           // onClick={() => document.getElementById('fileInput')?.click()}
         /> :
         <></>
@@ -132,22 +90,14 @@ function Profile(
       <input
         id="fileInput"
         type="file"
-        style={{ display: 'none' }}
+        className="hidden"
         accept="image/*"
         onChange={handleImageChange}
       />
-      <ProfileName variant="h6">
+      <h6 className="text-xl font-medium transition-colors duration-300 hover:text-[#F17F42]">
         {name}
-      </ProfileName>
-      {/* <TextField
-        variant="outlined"
-        size="small"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="이름 입력"
-        sx={{ marginTop: 1 }}
-      /> */}
-    </ProfileIndex>
+      </h6>
+    </div>
   );
 }
 

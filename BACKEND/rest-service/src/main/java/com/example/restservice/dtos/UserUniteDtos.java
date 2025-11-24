@@ -54,16 +54,16 @@ public class UserUniteDtos {
     @AllArgsConstructor
     public static class LoginResponse {
         private String accessToken;
-        private String refreshToken;
+        // private String refreshToken;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UpdateRequest {
-        private String refreshToken;
-    }
+    // @Getter
+    // @Builder
+    // @NoArgsConstructor
+    // @AllArgsConstructor
+    // public static class UpdateRequest {
+    // private String refreshToken;
+    // }
 
     @Getter
     @Builder

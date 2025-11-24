@@ -1,5 +1,5 @@
 'use client'
-import { Container, Box, Typography, Paper, Button, List, ListItem, ListItemText } from "@mui/material";
+// MUI removed
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiDecoder } from "@/global/GlobalApiDecoder";
 import { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import axios from "axios";
 import ComingSoon from "@/component/ComingSoon";
 import { TestResultData, Problem } from "@/global/GlobalTypeContainer";
 import KanzaWrongCardSlider from "@/component/KanzaWrongCardSlider";
+import api from "@/lib/api";
 
 export default function TestResultPage({isAnswered, setIsAnswered} : {isAnswered : null | boolean, setIsAnswered : null | any}) {
     // 예시 데이터 (실제 데이터로 교체 필요)
@@ -23,11 +24,8 @@ export default function TestResultPage({isAnswered, setIsAnswered} : {isAnswered
     const days: number = Number(searchParams.get('days'))
     
     useEffect(() => { 
-        axios.get(NEXT_PUBLIC_SERVER_IP + `/kanzi/getFinalResults?levels=${levels}&days=${days}`
+        api.get(NEXT_PUBLIC_SERVER_IP + `/kanzi/getFinalResults?levels=${levels}&days=${days}`
             ,
-            {
-                headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
-            }
         ).then((response) => {
             console.log(response)
             let data: TestResultData = decoder.decodeGetFinalResults(response['data'][1])
@@ -60,185 +58,69 @@ export default function TestResultPage({isAnswered, setIsAnswered} : {isAnswered
     })
 
     return (
-        <div style={{}}>
-            <Container
-                className="topContainter"
-                sx={{
-                    width: "60rem",
-                    minHeight: "40rem",
-                    border: "3px solid #DDA15E",
-                    borderRadius: "2rem",
-                    margin: "2rem auto",
-                    padding: "2.5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    boxShadow: 3,
-                    backgroundColor: "#FFF",
-                }}
-            >
-                <Box sx={{ display: "flex", flex: 1, gap: 4 }}>
+        <div>
+            <div className="topContainter w-[60rem] min-h-[40rem] border-[3px] border-[#DDA15E] rounded-[2rem] my-8 mx-auto p-10 flex flex-col justify-between shadow-lg bg-white">
+                <div className="flex flex-1 gap-8">
                     {/* 틀린 문제 리스트 */}
-                    <Paper
-                        sx={{
-                            flex: 1,
-                            minHeight: "24rem",
-                            margin: "1rem",
-                            border: "2.5px solid #DDA15E",
-                            borderRadius: "1.5rem",
-                            display: "flex",
-                            flexDirection: "column",
-                            boxShadow: 2,
-                            backgroundColor: "#FFF",
-                            overflow: "hidden"
-                        }}
-                    >
-                        <Typography
-                            variant="h4"
-                            align="center"
-                            sx={{ 
-                                color: "#BC6C25", 
-                                fontWeight: 700,
-                                padding: "1rem 0",
-                                marginBottom: "0.5rem"
-                            }}
-                        >
+                    <div className="flex-1 min-h-[24rem] m-4 border-[2.5px] border-[#DDA15E] rounded-[1.5rem] flex flex-col shadow-md bg-white overflow-hidden">
+                        <h4 className="text-center text-[#BC6C25] font-bold text-3xl p-4 mb-2">
                             틀린 문제 리스트
-                        </Typography>
-                        <Box sx={{ 
-                            overflowY: "auto",
-                            padding: "0 1rem",
-                            '&::-webkit-scrollbar': {
-                                width: '8px',
-                            },
-                            '&::-webkit-scrollbar-track': {
-                                background: '#f1f1f1',
-                                borderRadius: '4px',
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                                background: '#DDA15E',
-                                borderRadius: '4px',
-                            },
-                        }}>
-                            <List>
+                        </h4>
+                        <div className="overflow-y-auto px-4 scrollbar-thin scrollbar-thumb-[#DDA15E] scrollbar-track-gray-100 scrollbar-thumb-rounded">
+                            <ul className="list-none p-0">
                                 {wrongProblems.map((problem, idx) => (
-                                    <ListItem 
+                                    <li 
                                         key={idx}
-                                        sx={{
-                                            backgroundColor: '#FFF8F0',
-                                            borderRadius: '1rem',
-                                            marginBottom: '0.5rem',
-                                            border: '1px solid #DDA15E',
-                                        }}
+                                        className="bg-[#FFF8F0] rounded-2xl mb-2 border border-[#DDA15E] p-4"
                                     >
-                                        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography sx={{ fontWeight: 700, fontSize: '1.2rem' }}>
+                                        <div className="w-full flex justify-between">
+                                            <span className="font-bold text-xl">
                                                 {problem.kanzaLetter}
-                                            </Typography>
-                                            <Typography sx={{ color: '#666' }}>
+                                            </span>
+                                            <span className="text-[#666]">
                                                 {problem.kanzaMean}
-                                            </Typography>
-                                            <Typography sx={{ color: '#BC6C25' }}>
+                                            </span>
+                                            <span className="text-[#BC6C25]">
                                                 {problem.kanzaSound}
-                                            </Typography>
-                                        </Box>
-                                    </ListItem>
+                                            </span>
+                                        </div>
+                                    </li>
                                 ))}
-                            </List>
-                        </Box>
-                    </Paper>
+                            </ul>
+                        </div>
+                    </div>
 
                     {/* 점수 및 통계 */}
-                    <Box
-                        sx={{
-                            flex: 1,
-                            minHeight: "24rem",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 4
-                        }}
-                    >
+                    <div className="flex-1 min-h-[24rem] flex flex-col gap-8">
                         {/* 점수 컴포넌트 */}
-                        <Paper
-                            sx={{
-                                flex: 1,
-                                margin: "1rem",
-                                border: "2.5px solid #DDA15E",
-                                borderRadius: "1.5rem",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                boxShadow: 2,
-                                backgroundColor: "#FFF",
-                                minHeight: "11rem"
-                            }}
-                        >
-                            <Typography
-                                variant="h4"
-                                align="center"
-                                gutterBottom
-                                sx={{ color: "#BC6C25", fontWeight: 700 }}
-                            >
+                        <div className="flex-1 m-4 border-[2.5px] border-[#DDA15E] rounded-[1.5rem] flex flex-col items-center justify-center shadow-md bg-white min-h-[11rem]">
+                            <h4 className="text-center mb-2 text-[#BC6C25] font-bold text-3xl">
                                 점수
-                            </Typography>
-                            <Typography variant="h6" align="center">
+                            </h4>
+                            <h6 className="text-center text-xl">
                                 당신은 {score}점입니다
-                            </Typography>
-                        </Paper>
+                            </h6>
+                        </div>
                         {/* 최근 점수 컴포넌트 (비활성화, 추후 공개) */}
-                        <Paper
-                            sx={{
-                                flex: 1,
-                                margin: "1rem",
-                                border: "2.5px dashed #DDA15E",
-                                borderRadius: "1.5rem",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                boxShadow: 0,
-                                backgroundColor: "#F5F5F5",
-                                opacity: 0.6,
-                                minHeight: "11rem"
-                            }}
-                        >
-                            <Typography
-                                variant="h4"
-                                align="center"
-                                gutterBottom
-                                sx={{ color: "#BC6C25", fontWeight: 700 }}
-                            >
+                        <div className="flex-1 m-4 border-[2.5px] border-dashed border-[#DDA15E] rounded-[1.5rem] flex flex-col items-center justify-center shadow-none bg-[#F5F5F5] opacity-60 min-h-[11rem]">
+                            <h4 className="text-center mb-2 text-[#BC6C25] font-bold text-3xl">
                                 최근 점수 비교
-                            </Typography>
+                            </h4>
                             <ComingSoon />
-                        </Paper>
-                    </Box>
-                </Box>
+                        </div>
+                    </div>
+                </div>
 
                 {/* 돌아가기 버튼 */}
-                <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        sx={{
-                            backgroundColor: '#FFCC99',
-                            color: '#333',
-                            fontWeight: 700,
-                            border: "2px solid #DDA15E",
-                            borderRadius: "1rem",
-                            '&:hover': {
-                                backgroundColor: '#FFB366',
-                            },
-                            minWidth: '12rem',
-                            fontSize: "1.2rem"
-                        }}
+                <div className="flex justify-center mt-8">
+                    <button
+                        className="bg-[#FFCC99] text-[#333] font-bold border-2 border-[#DDA15E] rounded-2xl hover:bg-[#FFB366] min-w-[12rem] text-xl px-6 py-3 transition-colors"
                         onClick={() => { router.push('/')}}
                     >
                         돌아가기
-                    </Button>
-                </Box>
-            </Container>
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }

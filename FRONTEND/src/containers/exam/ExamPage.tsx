@@ -2,11 +2,11 @@
 
 import { style } from '@vanilla-extract/css';
 import { useRef, useEffect, useState } from "react";
-import { Button, Grid, Typography, styled, TextField, InputAdornment, LinearProgress } from '@mui/material/';
-import { Edit } from '@mui/icons-material'
-import * as StompJs from "@stomp/stompjs";
+
+// import * as StompJs from "@stomp/stompjs";
+
+import api from '@/lib/api'
 import CongratulationModal from '../../component/Modal/CongratulationModal';
-import axios, { AxiosResponse } from 'axios';
 import SmallButton from '../../component/Button/SmallButton';
 
 // 타입 정의
@@ -22,47 +22,7 @@ type reviewsProblem = {
   answer : number | string
 }
 
-const GridContainer = styled(Grid)`
-  min-width: 768px;
-  margin: 0 auto;
-  max-width: 100%;
-  align-items: center;
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
-
-const KanjiGrid = styled(Grid)`
-  height: 500px;
-  display: flex;
-  margin: 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #3e3e3e;
-`
-
-const InputGrid = styled(Grid)`
-  height: 500px;
-  display: flex;
-  width: 100%;
-  margin: 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  color: #3e3e3e;
-`
-
-const InputForm = styled('div')`
-  height: 100px;
-  display: flex;
-  width: 100%;
-  align-items: center;
-`
-const InputText = styled(TextField)`
-  max-width : 500px;
-  width: 100%;
-`
+// Styled components removed - using Tailwind classes
 // 테스트 페이지 컴포넌트
 function ExamPage() {
   // 상태 변수 선언
@@ -209,11 +169,12 @@ function ExamPage() {
   }
 
   // 데이터 불러오기 효과적으로 처리하는 useEffect
+  // 이런거 쓰면 안된다
   useEffect(() => {
 
     const fetchData = async (url: string, isToken: boolean) => {
       try {
-        await axios.get(url,
+        await api.get(url,
           {
             // headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
           }
@@ -267,94 +228,67 @@ function ExamPage() {
           {/* <CongratulationModal open={showCongratulationModal} onClose={handleCloseCongratulationModal} score={score} /> */}
         </div>
       ) : (
-        <GridContainer container>
+        <div className="min-w-[768px] mx-auto max-w-full items-center grid grid-cols-2 md:flex-col">
 
           {/* 한자 등장 */}
-            <KanjiGrid item xs={5}
-              style={{
-                position: 'relative', // 자식 요소의 위치를 부모 기준으로 설정
-                // height: '100%', // 부모 높이를 고정
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center', // 가로 중앙 정렬
-
-
-              }}
+            <div 
+              className="h-[500px] flex m-0 flex-row justify-center items-center text-[#3e3e3e] relative"
             >
             {kanzas.length > 0 ? (
-                <Typography variant='h1' style={{
-                  fontSize: '20rem',
-                  position: 'absolute', // 고정된 위치
-                  top: '10%', // 부모의 10% 높이에 고정
-                  left: '50%', // 가로 중앙 정렬
-                  transform: 'translateX(-50%)', // 정확히 중앙으로 이동
-
-               }}>{kanzas[index].kanza}</Typography>
+                <h1 className="text-[20rem] absolute top-[10%] left-1/2 -translate-x-1/2">{kanzas[index].kanza}</h1>
               ) : null}
-              {problemReaction === true ? (<Typography variant='h6'
-                style={{
-                  fontSize: '3rem',
-                  backgroundColor: '#FFEECE',
-                  color: ((QuestionType.current && inputValue === kanzas[index].mean) ||
+              {problemReaction === true ? (<h6
+                className={`text-5xl bg-[#FFEECE] w-80 text-center absolute bottom-[10%] left-1/2 -translate-x-1/2 ${
+                  ((QuestionType.current && inputValue === kanzas[index].mean) ||
                     (!QuestionType.current && inputValue === kanzas[index].sound))
-                    ? '#4caf50'
-                    : '#ff1744', width: '20rem',
-                  textAlign: 'center',
-                  position: 'absolute', // 부모 기준으로 배치
-                  bottom: '10%', // 부모의 아래쪽에 고정
-                  left: '50%', // 가로 중앙 정렬
-                  transform: 'translateX(-50%)', // 정확히 중앙으로 이동
-                }}>{kanzas[index].mean} {kanzas[index].sound}</Typography>) : null}
-          </KanjiGrid>
+                    ? 'text-[#4caf50]'
+                    : 'text-[#ff1744]'
+                }`}>{kanzas[index].mean} {kanzas[index].sound}</h6>) : null}
+          </div>
 
 
           {/* 그외 */}
-          <InputGrid item xs={5}>
-            <Typography variant='h4'>다음 한자의 {QuestionType.current ? '뜻' : '음'}을 적으시오</Typography>
+          <div className="h-[500px] flex w-full m-0 flex-col justify-center items-start text-[#3e3e3e]">
+            <h4 className="text-3xl">다음 한자의 {QuestionType.current ? '뜻' : '음'}을 적으시오</h4>
             <br /><br />
             {/* 진행 상황 */}
-            <Typography variant='h3'>
+            <h3 className="text-5xl">
               {progress}%
-            </Typography>
+            </h3>
 
-            {/* <InputForm onSubmit={handleSubmit}> */}
-            <InputForm>
-              <InputText
-                id="message"
-                placeholder="입력창"
-                multiline
-                ref={inputRef}
-                color="warning"
-                value={inputValue}
-                onChange={(e) => {
-                  setInputValue(e.target.value)
-                  setIsInputValid(true) // 입력이 변경되면 경고 메시지를 숨김
-                }}
-                onKeyDown={handleKeyDown}
-                error={!isInputValid}
-                helperText={!isInputValid ? "입력값이 필요합니다." : ""}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Edit />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Button 
-                        type="submit"
-                        color="warning"
-                      >
-                        제출
-                      </Button>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+            {/* <form onSubmit={handleSubmit}> */}
+            <div className="h-[100px] flex w-full items-center">
+              <div className="max-w-[500px] w-full relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
+                  <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                  </svg>
+                </div>
+                <input
+                  id="message"
+                  placeholder="입력창"
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) => {
+                    setInputValue(e.target.value)
+                    setIsInputValid(true) // 입력이 변경되면 경고 메시지를 숨김
+                  }}
+                  onKeyDown={handleKeyDown}
+                  className={`w-full px-12 py-3 border ${!isInputValid ? 'border-red-500' : 'border-orange-400'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400`}
+                />
+                <button 
+                  type="submit"
+                  onClick={handleSubmit}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-1 bg-orange-400 text-white rounded hover:bg-orange-500 transition-colors"
+                >
+                  제출
+                </button>
+                {!isInputValid && <p className="text-red-500 text-sm mt-1">입력값이 필요합니다.</p>}
+              </div>
               
-            </InputForm>
-          </InputGrid>
-        </GridContainer>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

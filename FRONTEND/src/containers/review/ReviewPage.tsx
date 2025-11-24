@@ -1,4 +1,5 @@
 'use client'
+import api from "@/lib/api"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -16,11 +17,8 @@ export default function ReviewPage() {
     const [isFlipped, setIsFlipped] = useState(false)
     
     useEffect(() => { 
-        axios.get(
+        api.get(
             NEXT_PUBLIC_SERVER_IP + `/kanzi/getReviewProblems?limit=${limitPerPage}`,
-            {
-                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}`, }
-            }
         )
             .then(
                 (result) => { 

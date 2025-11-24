@@ -1,24 +1,9 @@
 'use client'
 import { BaseModal } from "@/component/Modal/BaseModal";
+import api from "@/lib/api";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-
-
-const fetchData = (url: string, isToken: boolean) => {
-
-        return axios.get(url,
-            {
-                    headers : {Authorization : `Bearer ${localStorage.getItem('accessToken')}`,}
-            })
-            let response: any[] = []
-            if (!response ) {
-                throw "response doesn't have val"
-            }
-            // console.log(response);
-            response = response.map((x) => x[1])
-            // setKanzas(response);
-};
 
 export function PreCheckModal({ children, isAnswered, setIsAnswered } : {children : React.ReactElement, isAnswered : null | boolean, setIsAnswered : null | any}
 ) {
@@ -39,10 +24,7 @@ export function PreCheckModal({ children, isAnswered, setIsAnswered } : {childre
     }, [innerIsAnswer, answerState, setIsAnswered, NEXT_PUBLIC_SERVER_IP])
 
     useEffect(() => { 
-        axios.get(NEXT_PUBLIC_SERVER_IP + `/kanzi/getSessionExisted?levels=${levels}&days=${days}`,
-            {
-                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}`, }
-            }
+        api.get(`/kanzi/getSessionExisted?levels=${levels}&days=${days}`,
         )
             .then((response) => {
                 console.log(response)

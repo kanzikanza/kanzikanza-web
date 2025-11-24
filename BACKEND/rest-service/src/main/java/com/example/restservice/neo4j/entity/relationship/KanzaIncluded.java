@@ -12,7 +12,8 @@ import org.springframework.data.neo4j.core.schema.*;
 @AllArgsConstructor
 @RelationshipProperties
 public class KanzaIncluded {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long index;
     @TargetNode
     KanzaWord kanzaWord;
@@ -20,4 +21,8 @@ public class KanzaIncluded {
     Integer order;
     @Property
     String startId;
+
+    public static KanzaWord toWord(KanzaIncluded kanzaIncluded) {
+        return kanzaIncluded.kanzaWord;
+    }
 }

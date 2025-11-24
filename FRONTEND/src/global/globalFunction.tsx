@@ -1,5 +1,6 @@
 import axios from 'axios'
-
+import useAuthStore from '@/store/useStore';
+import api from '@/lib/api';
 const NEXT_PUBLIC_SERVER_IP = process.env.NEXT_PUBLIC_SERVER_IP
 export async function getProcess(url : string) {
     return Promise;
@@ -81,19 +82,15 @@ export function putImageInDb(blob: any, db : any)
 
 
 // 나중에, 패턴, 함수별로 자동화하는게 나아보임
-export async function loginSession(){
-    const url_replace1 = NEXT_PUBLIC_SERVER_IP + "/auth/isLoggedIn"
+export async function loginSession() {
+    
+
+    const url_replace1 = "/auth/isLoggedIn"
     let isFin : boolean = false
     try 
     {
-        const response = await axios.get(
+        const response = await api.get(
             url_replace1,
-            {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    Authorization : `Bearer ${localStorage.getItem('accessToken')}`
-                }
-            }
         ).then(
             (e) => {
                 isFin = true
@@ -105,30 +102,25 @@ export async function loginSession(){
             }
         ) 
         if (isFin) return;
-        const url_replace2 = NEXT_PUBLIC_SERVER_IP + "/auth/Oauth2/updateToken"
-        const reponse2 = await axios.post(
+
+        // 여기에 그거있어야함 
+        const url_replace2 = "/auth/Oauth2/updateToken"
+        const reponse2 = await api.post(
             url_replace2,
-            {
-                data: {
-                    type: "UpdateRequest",
-                    refreshToken: localStorage.getItem('refreshToken')
-                }
-            },
+            {},
             {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
+                    withCredentials : true
                 }
             }
         ).then(
             (response) => {
                 console.log(response.data[1])
-                localStorage.setItem('accessToken', response.data[1].accessToken)
-                localStorage.setItem('refreshToken', response.data[1].refreshToken)
+                useAuthStore.getState().setAccessToken(response.data[1].accessToken)
             }
         ).catch(
             (e) => {
-                localStorage.removeItem('accessToken')
-                localStorage.removeItem('refreshToken')
                 console.log(e)
                 throw "refreshToken outdated"
             }
@@ -141,10 +133,10 @@ export async function loginSession(){
     }
 }
 function checkAccessToken() {
-    return localStorage.getItem('accessToken') !== null
+    return useAuthStore.getState().accessToken !== null 
 }
 function checkRefreshToken() {
-    return localStorage.getItem('refreshToken') !== null
+    return useAuthStore.getState().accessToken !== null 
 }
 
 async function checkRefreshValid() {
@@ -152,27 +144,19 @@ async function checkRefreshValid() {
     await axios.post(
             url_replace2,
             {
-                data: {
-                    type: "UpdateRequest",
-                    refreshToken: localStorage.getItem('refreshToken')
-                }
-            },
-            {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
+                    withCredentials : true
                 }
             }
     ).then(
             (response) => {
                 console.log(response.data[1])
-                localStorage.setItem('accessToken', response.data[1].accessToken)
-                localStorage.setItem('refreshToken', response.data[1].refreshToken)
+                useAuthStore.getState().setAccessToken(response.data[1].accessToken)
                 return true
             }
     ).catch(
         (e) => {
-            localStorage.removeItem('accessToken')
-            localStorage.removeItem('refreshToken')
             console.log(e)
             return false
             throw "refreshToken outdated"
@@ -189,7 +173,7 @@ async function checkAccessValid() {
         {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
-                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                Authorization: `Bearer ${useAuthStore.getState().accessToken}`
             }
         }
     ).then(
@@ -212,38 +196,50 @@ export async function checkAuthorityChain() {
     let accLogin = checkAccessToken()
     if (accLogin)
     {
-        await checkAccessValid()
+        const res = await checkAccessValid()
             .then((result : boolean) => { 
                 console.log('access token valid')
                 accLogin = result
-
-        })
+                return true
+            }).catch(() => { return false })
+        if (res === true)
+        {
+            return true
+        }
     }
-    if (accLogin === false)
-    {
-        accLogin = checkRefreshToken()
-    }
-    else
-    {
-        return true    
-    }
-    if (accLogin)
-    {
-        await checkRefreshValid()
-        .then((result: boolean) => { 
-            return result
-        })
-    }
-    return false    
+    // 여기서 업데이트 토큰 박아버리는게 확실함 왜냐면 애초에 한번쓰면 버린다고했으니까
+    const url_replace2 = "/auth/Oauth2/updateToken"
+    return await api.post(
+        url_replace2,
+        {},
+        {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                withCredentials : true
+            }
+        }
+    ).then(
+        (response) => {
+            useAuthStore.getState().setAccessToken(response.data[1].accessToken)
+            return true
+        }
+    ).catch(
+        (e) => {
+            console.error(e)
+            return false
+        }
+    )
 }
 
+// 지금 chain 자체가 의미가 없음, access 없으면 바로 update 때려버리는거임
 export async function checkAuthority() {
     
-    const url_replace1 = NEXT_PUBLIC_SERVER_IP + "/auth/isLoggedIn"
 
+    const url_replace1 = NEXT_PUBLIC_SERVER_IP + "/auth/isLoggedIn"
+    
     try
     {
-        if (localStorage.getItem('accessToken') === null) 
+        if (useAuthStore.getState().accessToken === null) 
         {
             throw "accessToken is missing"
         }

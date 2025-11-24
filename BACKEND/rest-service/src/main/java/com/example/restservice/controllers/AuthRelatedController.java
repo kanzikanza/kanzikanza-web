@@ -26,7 +26,9 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.client.HttpClientErrorException;
@@ -53,7 +55,7 @@ public class AuthRelatedController {
                         userService.update(userModel);
                         return ResponseEntity.ok("프로필 변경이 완료되었습니다");
                 } catch (NoSuchElementException e) {
-                        log.info(e.getMessage());
+                        log.error(e.getMessage());
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자를 찾을 수 없습니다");
                 } catch (Exception e) {
                         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -141,18 +143,34 @@ public class AuthRelatedController {
         }
 
         @PostMapping("/auth/Oauth2/updateToken")
-        public ResponseEntity<?> updateToken(@RequestBody UserUniteDtos.UpdateRequest updateRequest) {
+        public ResponseEntity<?> updateToken(
+                        // @RequestBody UserUniteDtos.UpdateRequest updateRequest,
+                        @CookieValue String refreshToken) {
 
                 try {
-                        OAuthToken oAuthToken = kakaoApi.updateToken(updateRequest.getRefreshToken());
+                        OAuthToken oAuthToken = kakaoApi.updateToken(refreshToken);
+                        String newRefreshToken = oAuthToken.getRefresh_token();
+                        ResponseCookie cookie = null;
+                        if (newRefreshToken != null) {
+                                cookie = ResponseCookie.from("refreshToken",
+                                                newRefreshToken)
+                                                .httpOnly(true)
+                                                .path("/")
+                                                .maxAge(3600)
+                                                .build();
 
-                        // 리턴
+                        }
                         UserUniteDtos.LoginResponse loginResponse = UserUniteDtos.LoginResponse.builder()
                                         .accessToken(oAuthToken.getAccess_token())
-                                        .refreshToken(oAuthToken.getRefresh_token())
                                         .build();
                         // 코드를 받을거임
-                        return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
+                        if (cookie != null) {
+                                return ResponseEntity.status(HttpStatus.CREATED)
+                                                .header(HttpHeaders.SET_COOKIE, cookie.toString()).body(loginResponse);
+                        } else {
+                                return ResponseEntity.status(HttpStatus.CREATED)
+                                                .body(loginResponse);
+                        }
                 } catch (HttpClientErrorException | JsonSyntaxException e) {
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 리프레쉬 토큰 정보");
                 }
@@ -174,7 +192,8 @@ public class AuthRelatedController {
 
         @GetMapping("/auth/Oauth2/KakaoToken")
         public ResponseEntity<?> KakaoLoginServer(@RequestParam String code) {
-                log.info("Request Arrive: /auth/Oauth2/KakaoToken params : " + code);
+                // 여기서 쿠키 주는것으로 바꿀것
+                // log.info("Request Arrive: /auth/Oauth2/KakaoToken params : " + code);
                 try {
                         OAuthToken token = kakaoApi.getOAuthToken(code);
                         String str = token.getId_token();
@@ -184,8 +203,15 @@ public class AuthRelatedController {
 
                         UserModel userModel = authService.signUp(token.getAccess_token());
                         UserUniteDtos.LoginResponse loginResponse = UserUniteDtos.LoginResponse.builder()
-                                        .refreshToken(token.getRefresh_token())
                                         .accessToken(token.getAccess_token())
+                                        .build();
+
+                        String refreshToken = token.getRefresh_token();
+                        ResponseCookie cookie = ResponseCookie.from("refreshToken",
+                                        refreshToken)
+                                        .httpOnly(true)
+                                        .path("/")
+                                        .maxAge(3600)
                                         .build();
 
                         UserUniteDtos.DefaultProfile defaultProfile = UserUniteDtos.DefaultProfile.builder()
@@ -196,7 +222,8 @@ public class AuthRelatedController {
 
                         Pair<UserUniteDtos.LoginResponse, UserUniteDtos.DefaultProfile> response = Pair
                                         .of(loginResponse, defaultProfile);
-                        return ResponseEntity.status(HttpStatus.OK).body(response);
+                        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString())
+                                        .body(response);
 
                 } catch (Exception e) {
                         ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();

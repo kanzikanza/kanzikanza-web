@@ -1,4 +1,3 @@
-import { Extension } from "@mui/icons-material"
 import axios from "axios";
 
 interface BaseActionInterface {

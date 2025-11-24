@@ -1,51 +1,31 @@
 'use client'
 import React from 'react';
-import * as style from './navbar.css';
-import { styled } from "@mui/material"
-
-const NavContainer = styled('nav')`
-  height: 100px;
-  display: flex;
-  background-color: #ffdd9e;
-  margin: 0;
-  padding: 0 20px 0 20px;
-  align-items: center;
-`
-
-const HoverLink = styled('a')`
-  color: #444;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  
-  &:hover {
-    color: #222;
-  }
-`
-
-const Logo = styled(HoverLink)`
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 2.2rem;
-  font-weight: 500;
-  letter-spacing: -0.5px;
-  margin-right: 40px;
-`
-
-const MenuLink = styled(HoverLink)`
-  font-size: 1.3rem;
-  margin: 0 15px;
-  font-weight: 500;
-`
 
 export default function Navbar() {
   return (
-    <NavContainer >
-      <Logo href="/">칸지칸자</Logo>
-      <div className={style.leftMenu}>
-        <MenuLink href="/">홈</MenuLink>
+    <nav className="h-[100px] flex bg-[#ffdd9e] m-0 px-5 items-center">
+      <a 
+        href="/" 
+        className="font-['Noto_Sans_KR',sans-serif] text-[2.2rem] font-medium tracking-[-0.5px] mr-10 text-[#444] no-underline transition-colors duration-300 hover:text-[#222]"
+      >
+        칸지칸자
+      </a>
+      <div className="mr-auto pr-12">
+        <a 
+          href="/" 
+          className="text-[1.3rem] mx-4 font-medium text-[#444] no-underline transition-colors duration-300 hover:text-[#222]"
+        >
+          홈
+        </a>
       </div>
-      <div className={style.rightMenu}>
-        <MenuLink href="/login">로그인</MenuLink>
+      <div className="ml-auto">
+        <a 
+          href="/login" 
+          className="text-[1.3rem] mx-4 font-medium text-[#444] no-underline transition-colors duration-300 hover:text-[#222]"
+        >
+          로그인
+        </a>
       </div>
-    </NavContainer>
+    </nav>
   );
 }

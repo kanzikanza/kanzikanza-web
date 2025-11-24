@@ -109,7 +109,6 @@ public class KakaoApi {
 
         Gson gson = new Gson();
         OAuthToken oAuthToken = gson.fromJson(responseBody, OAuthToken.class);
-        log.info(oAuthToken.getId_token());
         return oAuthToken;
     }
 
@@ -138,8 +137,10 @@ public class KakaoApi {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
+        // params.add("grant_type", "refresh_token");
         params.add("client_id", clientId);
         params.add("refresh_token", code);
+        // params.add("refresh_token", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
         try {
